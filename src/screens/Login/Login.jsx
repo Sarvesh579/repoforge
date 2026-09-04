@@ -33,7 +33,7 @@ export default function Login() {
 
   const form = useForm({
     resolver: zodResolver(loginSchema),
-    defaultValues: { email: 'admin@crucible.dev', password: 'Admin@2026!' },
+    defaultValues: { email: '', password: '' },
   });
 
   const onSubmit = form.handleSubmit(async (values) => {
