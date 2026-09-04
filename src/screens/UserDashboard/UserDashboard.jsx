@@ -393,6 +393,7 @@ export default function UserDashboard() {
   const [selectedProb, setSelectedProb] = useState(null);
   const [submission, setSubmissionState] = useState(null);
   const [paymentRecord, setPaymentRecord] = useState(null);
+  const paymentStatus = paymentRecord?.status || null;
 
   // UI state
   const [searchQuery, setSearchQuery] = useState('');
