@@ -32,13 +32,14 @@ const rewards = [
 ];
 
 const sponsorRow1 = [
-  { name: 'SATPrep1600', tier: 'TITLE SPONSOR', tierClass: 'tierGreen', bg: '#1a5c35', logoimg: '/SAT_Prep.jpeg' },
-  { name: 'Infraon', tier: 'SPONSOR', tierClass: 'tierOrange', bg: '#7a2d00', logoimg: '/infraon_logo.svg' },
+  { name: 'Infraon', tier: 'TITLE SPONSOR', tierClass: 'tierGreen', bg: '#1a5c35', logoimg: '/infraon_logo.svg' },
+  { name: 'SATPrep1600', tier: 'SPONSOR', tierClass: 'tierOrange', bg: '#7a2d00', logoimg: '/SAT_Prep.png' },
 ];
 const sponsorRow2 = [
-  { name: 'Mumbai Tech Community', tier: 'COMMUNITY PARTNER', tierClass: 'tierBlue', bg: '#1a237e', logoimg: '/Mumbai_Tech_Community.jpeg' },
-  { name: 'Third Wave Coffee', tier: 'DRINKS PARTNER', tierClass: 'tierBlue', bg: '#3b1a0d', logoimg: '/Third_Wave_Coffee.jpg' },
-  { name: 'Pizza Hut', tier: 'SNACKS PARTNER', tierClass: 'tierBlue', bg: '#1a237e', logoimg: '/Pizza_Hut.jpg' },
+  { name: 'Mumbai Tech Community', tier: 'COMMUNITY PARTNER', tierClass: 'tierBlue', bg: '#1a237e', logoimg: '/Mumbai_Tech_Community.png' },
+  { name: 'Third Wave Coffee', tier: 'DRINKS PARTNER', tierClass: 'tierBlue', bg: '#3b1a0d', logoimg: '/Third_Wave_Coffee.png' },
+  { name: 'Pizza Hut', tier: 'SNACKS PARTNER', tierClass: 'tierBlue', bg: '#1a237e', logoimg: '/Pizza_Hut.png' },
+  { name: 'Scroll Connect', tier: 'PARTNER', tierClass: 'tierBlue', bg: '#1a237e', logoimg: '/Pizza_Hut.jpg' }
 ];
 
 const stats = [
