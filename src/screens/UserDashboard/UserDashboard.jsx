@@ -387,6 +387,7 @@ export default function UserDashboard() {
   const [paymentFile, setPaymentFile] = useState(null);
   const [isDragging, setIsDragging] = useState(false);
   const [toast, setToast] = useState('');
+  const [actionLoading, setActionLoading] = useState(false);
 
   // Fetch live tracks, announcements, team, submission, and payment data on mount
   useEffect(() => {
@@ -438,6 +439,8 @@ export default function UserDashboard() {
           date: new Date(subRes.data.uploaded_at || Date.now()).toLocaleDateString(),
         });
       }
+    }).finally(() => {
+      if (!cancelled) setTeamLoading(false);
     });
 
     const refreshPaymentStatus = async () => {
@@ -506,6 +509,7 @@ export default function UserDashboard() {
     }
 
     try {
+      setActionLoading(true);
       const res = await uploadPaymentProof(file);
       if (res.success) {
         // Update local UI state with server response data
@@ -519,6 +523,8 @@ export default function UserDashboard() {
       }
     } catch (err) {
       alert(err.message || 'Payment upload failed. Please try again.');
+    } finally {
+      setActionLoading(false);
     }
   };
 
@@ -542,6 +548,7 @@ export default function UserDashboard() {
     }
 
     try {
+      setActionLoading(true);
       // Call update API
       await updateTeamMembers(currentTeam?.id || teamId, membersForm);
 
@@ -552,6 +559,8 @@ export default function UserDashboard() {
     } catch (error) {
       console.error('Failed to update members:', error);
       alert('Failed to update team members. Please try again.');
+    } finally {
+      setActionLoading(false);
     }
   };
 
@@ -586,6 +595,7 @@ export default function UserDashboard() {
 
   const handleSelectProblem = async (prob) => {
     try {
+      setActionLoading(true);
       // Call your API helper to save selection on the backend
       const response = await apiFetch('/api/team/select-track', {
         method: 'POST',
@@ -612,6 +622,8 @@ export default function UserDashboard() {
     } catch (err) {
       console.error('Failed to select problem statement:', err);
       alert(err.message || 'Failed to select problem statement.');
+    } finally {
+      setActionLoading(false);
     }
   };
 
@@ -635,6 +647,7 @@ export default function UserDashboard() {
     }
 
     try {
+      setActionLoading(true);
       const res = await uploadSubmission(file);
       if (res.success) {
         setSubmissionState({
@@ -657,6 +670,8 @@ export default function UserDashboard() {
       }
     } catch (err) {
       alert(err.message || 'Upload failed. Please try again.');
+    } finally {
+      setActionLoading(false);
     }
   };
   const handleDrop = (e) => {
@@ -695,6 +710,12 @@ export default function UserDashboard() {
 
   return (
     <div className={styles.dashboardContainer}>
+      {(teamLoading || loadingProblems || actionLoading) && (
+        <div className={styles.loadingOverlay} role="status" aria-live="polite" aria-label="Loading dashboard">
+          <div className={styles.loadingSpinner} aria-hidden="true" />
+          <span>{actionLoading ? 'Saving changes...' : 'Loading dashboard...'}</span>
+        </div>
+      )}
       {/* Toast Notification */}
       <AnimatePresence>
         {toast && (

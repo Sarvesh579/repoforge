@@ -4,6 +4,7 @@ import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import FixedBackground from './components/background/MoltenMetal';
 import CustomCursor from './components/cursor/CustomCursor.jsx';
 import LoaderCurtain from './components/ui/LoaderCurtain.jsx';
+import LoadingOverlay from './components/ui/LoadingOverlay.jsx';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { CursorProvider } from './context/CursorContext.jsx';
 import { LenisProvider } from './context/LenisContext.jsx';
@@ -51,7 +52,7 @@ function AppShell() {
       {/* Loading Screen */}
       {showLoader && <LoaderCurtain stage={loaderStage} title="REPOFORGE" />}
 
-      <Suspense fallback={<div className="app-loading" aria-label="Loading" />}>
+      <Suspense fallback={<LoadingOverlay visible label="Loading page..." />}>
         <FixedBackground
           color1="#140600"
           color2="#B02501"

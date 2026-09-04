@@ -20,6 +20,7 @@ import {
   verifyTeamPayment,
   updatePaymentStatus
 } from '../../lib/api'; // <--- Switch from portalStorage to real api.js
+import LoadingOverlay from '../../components/ui/LoadingOverlay';
 
 import styles from './AdminDashboard.module.css';
 
@@ -194,6 +195,7 @@ export default function AdminDashboard() {
   const [winners, setWinners] = useState({ first: null, second: null, third: null, fourth: null });
   const [searchQuery, setSearchQuery] = useState('');
   const [toast, setToast] = useState('');
+  const [actionLoading, setActionLoading] = useState(false);
 
   // Modals state
   const [showAddModal, setShowAddModal] = useState(false);
@@ -279,12 +281,15 @@ export default function AdminDashboard() {
   // Handlers connected to Backend APIs
   const handleSaveSettings = async (e) => {
     e.preventDefault();
+    setActionLoading(true);
     try {
       const response = await updateHackathonSettings(settings);
       if (response?.data) setSettings(response.data);
       showToast('Settings saved & submission rules updated!');
     } catch (err) {
       showToast('Error saving settings');
+    } finally {
+      setActionLoading(false);
     }
   };
 
@@ -294,15 +299,19 @@ export default function AdminDashboard() {
       return;
     }
 
+    setActionLoading(true);
     try {
       const response = await updateHackathonSettings(settings);
       if (response?.data) setSettings(response.data);
       showToast('Payment deadline set successfully!');
     } catch (err) {
       showToast('Error setting payment deadline.');
+    } finally {
+      setActionLoading(false);
     }
   };
   const handleVerify = async (teamId) => {
+    setActionLoading(true);
     try {
       const res = await verifyTeamPayment(teamId);
       if (res?.success) {
@@ -313,9 +322,12 @@ export default function AdminDashboard() {
       }
     } catch (error) {
       alert("An error occurred while verifying.");
+    } finally {
+      setActionLoading(false);
     }
   };
   const handleStatusChange = async (teamId, newStatus) => {
+    setActionLoading(true);
     try {
       // Call the imported function directly
       const res = await updatePaymentStatus(teamId, newStatus);
@@ -336,6 +348,8 @@ export default function AdminDashboard() {
     } catch (error) {
       console.error("Failed to update status:", error);
       alert(error.message || "An error occurred.");
+    } finally {
+      setActionLoading(false);
     }
   };
   const handleCreateProblem = async (e) => {
@@ -481,6 +495,7 @@ export default function AdminDashboard() {
 
   return (
     <div className={styles.container}>
+      <LoadingOverlay visible={actionLoading} label="Saving changes..." />
       {/* Toast Notification */}
       <AnimatePresence>
         {toast && (
