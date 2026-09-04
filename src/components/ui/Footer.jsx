@@ -70,6 +70,9 @@ export default function Footer() {
             <a href="https://linkedin.com/company/xie-csi/" target="_blank" rel="noopener noreferrer">
               LinkedIn
             </a>
+            <p>Soham Bagal : +91 9324575153</p>
+            <p>Vignesh Pardeshi : +91 9136345007</p>
+            <p>Alakshya Salvi : +91 9833580098</p>
           </div>
         </div>
       </div>
