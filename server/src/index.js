@@ -121,11 +121,13 @@ process.on('uncaughtException', (err) => {
 
 // ─── Start server ─────────────────────────────────────────────────────────────
 const PORT = process.env.PORT || 4000;
+const HOST = process.env.RENDER_EXTERNAL_URL || `http://localhost:${PORT}`;
 
 if (require.main === module) {
   app.listen(PORT, () => {
-    console.log(`\n✦  Crucible API running on http://localhost:${PORT}`);
-    console.log(`   Health: http://localhost:${PORT}/api/health\n`);
+    console.log(`\n✦  Crucible API running on ${HOST}`);
+    console.log(`   Health: ${HOST}/api/health\n`);
+    console.log(`   Health: https://project-crucible.onrender.com/api/health`)
   });
 }
 

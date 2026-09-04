@@ -62,7 +62,7 @@ export default function Footer() {
           <h4 className="footer-col-title">Connect</h4>
           <div className="footer-links-list">
             <a href="mailto:admincsi26@gmail.com" target="_blank" rel="noopener noreferrer">
-              email: admincsi26@gmail.com
+              Email: admincsi26@gmail.com
             </a>
             <a href="https://instagram.com/xie.csi" target="_blank" rel="noopener noreferrer">
               Instagram
