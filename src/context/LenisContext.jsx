@@ -1,4 +1,4 @@
-import Lenis from '@studio-freight/lenis';
+import Lenis from 'lenis';
 import { createContext, useContext, useEffect, useRef, useState } from 'react';
 
 const LenisContext = createContext(null);
