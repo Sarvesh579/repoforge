@@ -7,20 +7,6 @@ import { useAuth } from '../../context/AuthContext';
 import { useLenis } from '../../context/LenisContext.jsx';
 import useLiveRefresh from '../../hooks/useLiveRefresh';
 import {
-
-  getProblemStatements,
-  getTeamsData,
-  getSelectedProblem,
-  setSelectedProblem,
-  getUserSubmission,
-  getUserPayment,
-  saveUserPayment,
-  getNotifications,
-  markNotificationsRead,
-
-} from '../../lib/portalStorage';
-
-import {
   getParticipantTracks,
   uploadSubmission,
   getMySubmission,
@@ -28,7 +14,8 @@ import {
   getMyTeam,
   apiFetch,
   updateTeamMembers,
-  getHackathonSettings, getTeamDashboardSettings
+  getHackathonSettings,
+  getTeamDashboardSettings,
 } from '../../lib/api';
 
 import qrCodeImg from '../../assets/kesar-300-qr-code.png';
@@ -71,12 +58,6 @@ const Icons = {
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
       <rect x="2" y="5" width="20" height="14" rx="2" />
       <line x1="2" y1="10" x2="22" y2="10" />
-    </svg>
-  ),
-  bell: (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
-      <path d="M13.73 21a2 2 0 0 1-3.46 0" />
     </svg>
   ),
   target: (
@@ -243,12 +224,9 @@ export default function UserDashboard() {
   const navigate = useNavigate();
 
   const [activeTab, setActiveTab] = useState('dashboard');
-  const [settings, setSettings] = useState(getHackathonSettings());
+  const [settings, setSettings] = useState({ name: 'RepoForge Hackathon', year: 2026, hackathonStatus: 'Live', acceptingSubmissions: true });
   const [problems, setProblems] = useState([]);
   const [loadingProblems, setLoadingProblems] = useState(true);
-  const [teams, setTeams] = useState(getTeamsData());
-  const [notifications, setNotifications] = useState(getNotifications());
-
 
   // Current logged in team info
   const teamId = auth?.teamId || auth?.user?.id || 'PHX024';
@@ -399,7 +377,6 @@ export default function UserDashboard() {
   const [searchQuery, setSearchQuery] = useState('');
   const [viewProblemModal, setViewProblemModal] = useState(null);
   const [confirmSelectModal, setConfirmSelectModal] = useState(null);
-  const [showNotifModal, setShowNotifModal] = useState(false);
   const [showEditTeamModal, setShowEditTeamModal] = useState(false);
   const [membersForm, setMembersForm] = useState([]);
   const [txnIdInput, setTxnIdInput] = useState('');
@@ -407,26 +384,14 @@ export default function UserDashboard() {
   const [isDragging, setIsDragging] = useState(false);
   const [toast, setToast] = useState('');
 
-  // Sync localStorage state
+  // Fetch live tracks, announcements, team, submission, and payment data on mount
   useEffect(() => {
     let cancelled = false;
 
-    // 1. Function to sync local storage states (your existing logic)
-    const handleSync = () => {
-      if (cancelled) return;
-      setSettings(getHackathonSettings());
-      setProblems(getProblemStatements());
-      setTeams(getTeamsData());
-      setNotifications(getNotifications());
-      setSelectedProb(getSelectedProblem(teamId));
-      setSubmissionState(getUserSubmission(teamId));
-      setPaymentRecord(getUserPayment(teamId));
-    };
+    // 1. Fetch participant tracks
     getParticipantTracks()
       .then((res) => {
         if (!cancelled && res?.data) {
-          // Map backend track/problem response structure if necessary 
-          // (Ensures it matches id, title, description, domain, tags shape)
           const mappedProblems = res.data.map(track => ({
             id: track.id || track.track_id,
             title: track.title || track.name,
@@ -438,16 +403,13 @@ export default function UserDashboard() {
         }
       })
       .catch((err) => {
-        console.warn('Failed to fetch backend tracks, falling back to local storage:', err);
-        // Fallback to local storage helper if backend is offline
-        setProblems(getProblemStatements());
+        console.warn('Failed to fetch backend tracks:', err);
       })
       .finally(() => {
         if (!cancelled) setLoadingProblems(false);
       });
 
-
-    // 2. Fetch live data from the backend on mount
+    // 3. Fetch live team and submission from the backend
     Promise.all([
       getMyTeam().catch(() => null),
       getMySubmission().catch(() => null),
@@ -456,7 +418,6 @@ export default function UserDashboard() {
 
       if (teamRes?.data) {
         setLiveTeam(teamRes.data);
-        // If your backend team object contains the payment info, update state & local storage
         if (teamRes.data.payment) {
           const paymentData = {
             fileName: teamRes.data.payment.original_name,
@@ -465,7 +426,6 @@ export default function UserDashboard() {
           setPaymentRecord(paymentData);
         }
       }
-
 
       if (subRes?.data) {
         setSubmissionState({
@@ -491,19 +451,15 @@ export default function UserDashboard() {
 
     window.addEventListener('focus', refreshPaymentStatus);
 
-    // 3. Keep the event listener for local storage updates
-    window.addEventListener('repoforge_storage_update', handleSync);
-
     return () => {
       cancelled = true;
       window.removeEventListener('focus', refreshPaymentStatus);
-      window.removeEventListener('repoforge_storage_update', handleSync);
     };
   }, [teamId]);
   const lenis = useLenis();
 
   // Lock background body scroll & pause Lenis smooth scroll when any modal is open
-  const isAnyModalOpen = Boolean(showNotifModal || viewProblemModal || confirmSelectModal || showEditTeamModal);
+  const isAnyModalOpen = Boolean(viewProblemModal || confirmSelectModal || showEditTeamModal);
   useEffect(() => {
     if (isAnyModalOpen) {
       document.body.style.overflow = 'hidden';
@@ -582,12 +538,11 @@ export default function UserDashboard() {
     }
 
     try {
-      // Call your update API function here (await it)
+      // Call update API
       await updateTeamMembers(currentTeam?.id || teamId, membersForm);
 
       const teamRes = await getMyTeam();
       if (teamRes?.data) setLiveTeam(teamRes.data);
-      setTeams(getTeamsData());
       setShowEditTeamModal(false);
       showToast('Team member details updated successfully!');
     } catch (error) {
@@ -648,7 +603,7 @@ export default function UserDashboard() {
         const teamRes = await getMyTeam();
         if (teamRes?.data) setLiveTeam(teamRes.data);
 
-        alert('Problem statement selected successfully!');
+        showToast(`Selected Problem ${prob.id}!`);
       }
     } catch (err) {
       console.error('Failed to select problem statement:', err);
@@ -656,12 +611,11 @@ export default function UserDashboard() {
     }
   };
 
-  const confirmProblemSelection = () => {
+  const confirmProblemSelection = async () => {
     if (!confirmSelectModal) return;
-    setSelectedProblem(teamId, confirmSelectModal);
-    setSelectedProbState(confirmSelectModal);
+    const probToSelect = confirmSelectModal;
     setConfirmSelectModal(null);
-    showToast(`Selected Problem ${confirmSelectModal.id}!`);
+    await handleSelectProblem(probToSelect);
   };
 
   const handleFileUpload = async (file) => {
@@ -725,8 +679,6 @@ export default function UserDashboard() {
         (Array.isArray(p.tags) && p.tags.some((t) => t.toLowerCase().includes(q))),
     );
   }, [problems, searchQuery]);
-
-  const hasUnreadNotifs = useMemo(() => notifications.some((n) => n.unread), [notifications]);
 
   const getRoleIcon = (role = '') => {
     const r = (role || '').toLowerCase();
@@ -801,21 +753,6 @@ export default function UserDashboard() {
             </div>
           </div>
 
-          <div style={{ display: 'flex', marginTop: 8, width: '100%' }}>
-            <button
-              type="button"
-              className={styles.sidebarAction}
-              onClick={() => {
-                setShowNotifModal(true);
-                setNotifications(markNotificationsRead());
-              }}
-            >
-              <span style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 6, position: 'relative', width: '100%' }}>
-                {Icons.bell} Notifications
-                {hasUnreadNotifs && <span className={styles.notifDot} />}
-              </span>
-            </button>
-          </div>
 
           <div style={{ marginTop: 8, width: '100%' }}>
             <button type="button" className={`${styles.sidebarAction} ${styles.sidebarActionDanger}`} onClick={handleLogout}>
@@ -965,33 +902,6 @@ export default function UserDashboard() {
             </div>
 
             <div className={styles.panelsLayout}>
-              {/* Left Column: Announcements & Selected Problem */}
-              <div>
-                <div className={styles.panel}>
-                  <div className={styles.panelHeader}>
-                    <h3 className={styles.panelTitle} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                      {Icons.megaphone} Announcements
-                    </h3>
-                  </div>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-                    {notifications.map((n) => (
-                      <div
-                        key={n.id}
-                        style={{
-                          padding: '12px 16px',
-                          background: 'rgba(255,255,255,0.03)',
-                          border: '1px solid rgba(255,255,255,0.08)',
-                          borderRadius: 14,
-                        }}
-                      >
-                        <strong style={{ fontSize: '0.92rem', color: '#ffffff' }}>{n.title}</strong>
-                        <p style={{ margin: '4px 0 0', fontSize: '0.85rem', color: 'rgba(255,255,255,0.65)' }}>{n.detail}</p>
-                        <span style={{ fontSize: '0.7rem', color: '#FAB600', fontFamily: 'JetBrains Mono' }}>{n.time}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
 
               {/* Right Column: Your Team Quick View */}
               <div>
@@ -1571,59 +1481,6 @@ export default function UserDashboard() {
         </div>
       )}
 
-      {/* Notifications Modal */}
-      {showNotifModal && (
-        <div
-          className={styles.modalBackdrop}
-          onClick={() => setShowNotifModal(false)}
-          data-lenis-prevent="true"
-          onWheel={(e) => e.stopPropagation()}
-        >
-          <div
-            className={styles.modal}
-            onClick={(e) => e.stopPropagation()}
-            data-lenis-prevent="true"
-          >
-            <div className={styles.modalHeader}>
-              <h2 style={{ display: 'flex', alignItems: 'center', gap: 10, margin: 0, fontSize: '1.4rem' }}>
-                {Icons.bell} Notifications
-              </h2>
-              <button
-                type="button"
-                className={styles.modalCloseBtn}
-                onClick={() => setShowNotifModal(false)}
-                aria-label="Close notifications"
-              >
-                ✕
-              </button>
-            </div>
-            <div
-              className={styles.modalScrollBody}
-              data-lenis-prevent="true"
-              onWheel={(e) => e.stopPropagation()}
-            >
-              {notifications.map((n) => (
-                <div
-                  key={n.id}
-                  style={{
-                    padding: '16px 20px',
-                    background: 'rgba(255, 255, 255, 0.04)',
-                    backdropFilter: 'blur(12px)',
-                    WebkitBackdropFilter: 'blur(12px)',
-                    border: '1px solid rgba(255, 255, 255, 0.1)',
-                    borderRadius: 16,
-                    boxShadow: '0 4px 16px rgba(0, 0, 0, 0.25)',
-                  }}
-                >
-                  <strong style={{ fontSize: '0.96rem', color: '#ffffff' }}>{n.title}</strong>
-                  <p style={{ margin: '6px 0 0', fontSize: '0.86rem', color: 'rgba(255, 255, 255, 0.7)', lineHeight: 1.5 }}>{n.detail}</p>
-                  <span style={{ fontSize: '0.72rem', color: '#FAB600', fontFamily: 'JetBrains Mono', marginTop: 8, display: 'inline-block' }}>{n.time}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* Edit Team Members Modal */}
       {showEditTeamModal && (

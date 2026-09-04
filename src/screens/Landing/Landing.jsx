@@ -8,9 +8,6 @@ import CountdownTimer from '../../components/ui/CountdownTimer';
 import MagneticButton from '../../components/ui/MagneticButton';
 import SpecularButton from '../../components/ui/SpecularButton';
 import GlareHover from '../../components/ui/GlareHover';
-import TrackModal from '../../components/ui/TrackModal';
-import { mockTracks } from '../../data/mockTracks';
-import { mockAnnouncements } from '../../data/mockAnnouncements';
 import { useParallax } from '../../hooks/useParallax';
 import { smoothScrollTo } from '../../utils/smoothScroll';
 import styles from './Landing.module.css';
@@ -39,7 +36,7 @@ const sponsorRow2 = [
   { name: 'Mumbai Tech Community', tier: 'COMMUNITY PARTNER', tierClass: 'tierBlue', bg: '#1a237e', logoimg: '/Mumbai_Tech_Community.png' },
   { name: 'Third Wave Coffee', tier: 'DRINKS PARTNER', tierClass: 'tierBlue', bg: '#3b1a0d', logoimg: '/Third_Wave_Coffee.png' },
   { name: 'Pizza Hut', tier: 'SNACKS PARTNER', tierClass: 'tierBlue', bg: '#1a237e', logoimg: '/Pizza_Hut.png' },
-  { name: 'Scroll Connect', tier: 'PARTNER', tierClass: 'tierBlue', bg: '#1a237e', logoimg: '/Pizza_Hut.jpg' }
+  { name: 'Scroll Connect', tier: 'PARTNER', tierClass: 'tierBlue', bg: '#1a237e', logoimg: '/scroll-connect-small.png' }
 ];
 
 const stats = [
@@ -91,12 +88,10 @@ const isDateReached = (dateStr) => {
 export default function Landing() {
   const location = useLocation();
   const [openFaq, setOpenFaq] = useState(-1);
-  const [selectedTrack, setSelectedTrack] = useState(null);
 
   // ── Parallax refs ────────────────────────────────────────────────────────
   const hero = useParallax(80);   // hero visual drifts up
   const orbit = useParallax(50);   // decorative orbit ring – slower
-  const tracksHeading = useParallax(40);
   const statsSection = useParallax(50);
   const rewardsHeading = useParallax(40);
   const faqHeading = useParallax(30);
@@ -118,7 +113,7 @@ export default function Landing() {
       <main className={styles.main}>
 
         {/* ── HERO ──────────────────────────────────────────────────────────── */}
-        <section className={styles.heroSection}>
+        <section id="herosec1" className={styles.heroSection}>
           <div className={styles.heroGlow} />
           <div className="container">
             <motion.div
@@ -198,6 +193,9 @@ export default function Landing() {
               {/* Digital Countdown Timer */}
               <div className={styles.countdownContainer}>
                 <CountdownTimer targetDate="2026-09-26T00:00:00Z" />
+              </div>
+              <div className={styles.heroMetaLine} style={{ margin: '5px 0' }}>
+                REMAINING FOR REGISTRATION
               </div>
             </motion.div>
           </div>
@@ -284,70 +282,6 @@ export default function Landing() {
         </motion.section>
 
 
-        {/* ── PROBLEM STATEMENTS ────────────────────────────────────────────── *
-        <motion.section
-          id="problem-statements"
-          className="section"
-          initial="hidden"
-          whileInView="show"
-          viewport={{ once: true, amount: 0.15 }}
-          variants={sectionVariants}
-        >
-          <div className="container">
-            <motion.div
-              ref={tracksHeading.ref}
-              className={styles.tracksHeaderCentered}
-              style={{ y: tracksHeading.y }}
-            >
-              <p className={styles.eyebrowBlue}>PROBLEM STATEMENTS</p>
-              <h2 className={styles.tracksTitle}>
-                Build for <span>impact.</span>
-              </h2>
-              <p className={styles.tracksSubtitle}>
-                Choose a problem space. Build an AI-first solution that can make a real difference.
-              </p>
-            </motion.div>
-
-            <motion.div
-              className={styles.tracksGridFiveCol}
-              variants={staggerContainer}
-              initial="hidden"
-              whileInView="show"
-              viewport={{ once: true, amount: 0.1 }}
-            >
-              {mockTracks.map((track) => (
-                <MotionGlareHover
-                  className={styles.trackCardRef}
-                  key={track.id}
-                  variants={cardReveal}
-                  whileHover={{ y: -6, transition: { duration: 0.25 } }}
-                  glareColor="#ffffff"
-                  glareOpacity={0.15}
-                  glareSize={250}
-                  transitionDuration={600}
-                >
-                  <div className={styles.trackCircleNumber}>{track.id}</div>
-                  <div className={styles.trackCardContent}>
-                    <h3>{track.title}</h3>
-                    <p>{track.shortDescription}</p>
-                    <SpecularButton
-                      size="sm"
-                      radius={12}
-                      lineColor="#FAB600"
-                      baseColor="#261005"
-                      textColor="#FAB600"
-                      intensity={1}
-                      speed={0.35}
-                      onClick={() => setSelectedTrack(track)}
-                    >
-                      Explore &rarr;
-                    </SpecularButton>
-                  </div>
-                </MotionGlareHover>
-              ))}
-            </motion.div>
-          </div>
-        </motion.section>*/}
 
         {/* ── ROADMAP / EVENT FLOW ───────────────────────────────────────────── */}
         <motion.section
@@ -726,20 +660,32 @@ export default function Landing() {
                       {openFaq === index ? '-' : '+'}
                     </motion.strong>
                   </button>
-                  <AnimatePresence>
+                  <AnimatePresence initial={false}>
                     {openFaq === index && (
                       <motion.div
-                        layout
+                        key="content"
                         initial={{ height: 0, opacity: 0 }}
-                        animate={{ height: 'auto', opacity: 1 }}
-                        exit={{ height: 0, opacity: 0 }}
-                        transition={{
-                          height: { type: 'spring', stiffness: 260, damping: 30, mass: 0.8 },
-                          opacity: { duration: 0.28, ease: 'easeOut' },
+                        animate={{
+                          height: 'auto',
+                          opacity: 1,
+                          transition: {
+                            height: { duration: 0.35, ease: [0.16, 1, 0.3, 1] },
+                            opacity: { duration: 0.3, delay: 0.05, ease: 'easeOut' },
+                          },
                         }}
-                        className={styles.faqAnswer}
+                        exit={{
+                          height: 0,
+                          opacity: 0,
+                          transition: {
+                            height: { duration: 0.35, ease: [0.16, 1, 0.3, 1] },
+                            opacity: { duration: 0.2, ease: 'easeIn' },
+                          },
+                        }}
+                        style={{ overflow: 'hidden' }}
                       >
-                        <p>{item.a}</p>
+                        <div className={styles.faqAnswer}>
+                          <p>{item.a}</p>
+                        </div>
                       </motion.div>
                     )}
                   </AnimatePresence>
@@ -831,15 +777,6 @@ export default function Landing() {
       </main>
 
       <Footer />
-
-      <AnimatePresence>
-        {selectedTrack && (
-          <TrackModal
-            track={selectedTrack}
-            onClose={() => setSelectedTrack(null)}
-          />
-        )}
-      </AnimatePresence>
     </div>
   );
 }

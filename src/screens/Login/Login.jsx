@@ -82,8 +82,7 @@ export default function Login() {
             {form.formState.errors.root && <div className={styles.error}>{form.formState.errors.root.message}</div>}
 
             <div className={styles.helperRow}>
-              <Link to="/forgot-password">Forgot password?</Link>
-              <Link to="/register">Create account</Link>
+              <Link to="/register">Create account / Register</Link>
             </div>
 
             <SqBtn type="submit" fullWidth intensity={1.2}>Login</SqBtn>

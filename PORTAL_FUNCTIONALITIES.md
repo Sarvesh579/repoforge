@@ -20,7 +20,7 @@
 - **Quick Actions**: Add Problem Statement button
 
 ### 2. Problem Statements Management
-- **View All Problems**: Display all 10 problem statements (PS001-PS010) in card format
+- **View All Problems**: Display all 5 problem statements (PS01-PS05) in card format
 - **Search Functionality**: Filter problems by ID, title, domain, or tags
 - **Add Problem Statement**: 
   - Form with fields: ID, title, description, domain, tags
@@ -98,7 +98,7 @@
 - **Selected Problem Panel**: Preview of currently selected problem with "View Full Problem" option
 
 ### 2. Problem Statements Section
-- **Explore Challenges**: View all 10 available problem statements (PS001-PS010)
+- **Explore Challenges**: View all 10 available problem statements (PS01-PS05)
 - **Search Functionality**: Filter problems by:
   - Problem ID
   - Problem title
@@ -112,18 +112,6 @@
   - Select Problem button (leader only)
 - **Empty State**: Message when no search results found
 - **View Details Modal**: See full problem information with domain and technology tags
-
-#### Available Problem Statements:
-1. **PS001** - Smart Campus: IoT, Smart City
-2. **PS002** - Healthcare Innovation: Healthcare, AI
-3. **PS003** - Green Technology: Environment, Sustainability
-4. **PS004** - AI Education Assistant: AI, EdTech
-5. **PS005** - Smart Traffic Management: IoT, Smart City
-6. **PS006** - Cybersecurity Shield: Security, AI
-7. **PS007** - AgriTech Innovation: AI, IoT
-8. **PS008** - Disaster Management: AI, Data
-9. **PS009** - FinTech Innovation: FinTech, Blockchain
-10. **PS010** - Smart Waste Management: IoT, Sustainability
 
 ### 3. Problem Selection (Leader Only)
 - **Select Problem**: Only Team Leader can select problem statement

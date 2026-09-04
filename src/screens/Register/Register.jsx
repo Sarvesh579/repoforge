@@ -198,7 +198,7 @@ export default function Register() {
       <main className={styles.shell}>
         {/* Back to home button */}
         <div className={styles.backRow}>
-            <SqBtn onClick={() => navigate('/')}>
+          <SqBtn onClick={() => navigate('/')}>
             ← Back
           </SqBtn>
         </div>
@@ -392,8 +392,8 @@ export default function Register() {
                           <div key={i} className={styles.reviewMemberRow}>
                             <div>
                               <strong>{m.name || `Member ${i + 1}`}</strong>
-                              {m.role && <span style={{ marginLeft: 8, opacity: 0.7 }}>({m.role})</span>}
-                              <div style={{ fontSize: '12px', opacity: 0.6, marginTop: '2px' }}>
+                              {m.role && <span style={{ marginLeft: 8, color: '#fab600', opacity: 0.9 }}>({m.role})</span>}
+                              <div style={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.65)', marginTop: '3px' }}>
                                 {m.email || 'No email'} · {m.phone || 'No phone'} · {m.dept || 'No dept'} · {m.year || '1st Year'}
                               </div>
                             </div>
@@ -402,27 +402,32 @@ export default function Register() {
                       </div>
 
                       {/* Participant ID proofs (single combined PDF) */}
-                      <div style={{ marginTop: '20px', paddingTop: '18px', borderTop: '1px solid rgba(255,255,255,0.08)' }}>
-                        <h3 className={styles.reviewHeading} style={{ marginBottom: '6px' }}>Participant ID Proofs</h3>
-                        <p style={{ fontSize: '0.8rem', color: '#8f9bba', margin: '0 0 14px' }}>
-                          Upload one PDF containing the ID proof of every team member (combined into a single file).
-                        </p>
+                      <div className={styles.reviewSection}>
+                        <div className={styles.reviewSectionHeader}>
+                          <h4 className={styles.reviewSectionTitle}>Participant ID Proofs</h4>
+                          <p className={styles.reviewDesc}>
+                            Upload one PDF containing the ID proof of every team member (combined into a single file).
+                          </p>
+                        </div>
                         <div className={styles.field}>
                           <label>Combined ID Proofs (PDF)</label>
                           <input type="file" accept="application/pdf" onChange={handleIdsFileChange} />
                           {idsFile && (
-                            <small style={{ color: '#6fe3a0' }}>{idsFile.name} selected</small>
+                            <small style={{ color: '#fab600' }}>✓ {idsFile.name} selected</small>
                           )}
                           {idsFileError && <small>{idsFileError}</small>}
                         </div>
                       </div>
 
                       {/* Password setup for team login */}
-                      <div style={{ marginTop: '20px', paddingTop: '18px', borderTop: '1px solid rgba(255,255,255,0.08)' }}>
-                        <h3 className={styles.reviewHeading} style={{ marginBottom: '6px' }}>Set Team Password</h3>
-                        <p style={{ fontSize: '0.8rem', color: '#8f9bba', margin: '0 0 14px' }}>
-                          Create a password to access your team dashboard after registration.
-                        </p>
+                      <div className={styles.reviewSection}>
+                        <div className={styles.reviewSectionHeader}>
+                          <h4 className={styles.reviewSectionTitle}>Set Team Password</h4>
+                          <h4 className={styles.reviewSectionTitle}>Login ID is the same as Team Leader Email</h4>
+                          <p className={styles.reviewDesc}>
+                            Create a password to access your team dashboard after registration.
+                          </p>
+                        </div>
                         <div className={styles.splitFields}>
                           <div className={styles.field}>
                             <label>Password</label>

@@ -78,7 +78,6 @@ function AppShell() {
             <Route path="/" element={<Landing />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
-            <Route path="/forgot-password" element={<div className="container auth-shell"><div className="glass-panel"><h1>Reset flow pending</h1><p>Mock flow for future backend integration.</p></div></div>} />
             <Route path="/dashboard/user" element={<ProtectedRoute allowedRoles={['user']}><UserDashboard /></ProtectedRoute>} />
             <Route path="/dashboard/admin" element={<ProtectedRoute allowedRoles={['admin', 'judge']}><AdminDashboard /></ProtectedRoute>} />
             <Route path="*" element={<Navigate to="/" replace />} />

@@ -18,9 +18,6 @@ import {
   publishHackathonResults,
   verifyTeamPayment,
   updatePaymentStatus
-
-
-
 } from '../../lib/api'; // <--- Switch from portalStorage to real api.js
 
 import styles from './AdminDashboard.module.css';
@@ -384,7 +381,7 @@ export default function AdminDashboard() {
     // status is one of: 'Shortlisted' | 'Waitlisted' | 'Under-Review' | 'Eliminated'
     try {
       await stageShortlist(teamId, status);
-  await fetchData();
+      await fetchData();
       showToast(`Status updated to: ${status}`);
     } catch (err) {
       console.error('Error updating shortlist status:', err);

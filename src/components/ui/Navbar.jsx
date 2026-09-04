@@ -7,6 +7,7 @@ import SpecularButton from './SpecularButton';
 
 const NAV_ITEMS = [
   /* { id: 'problem-statements', label: 'Problem Statements' }, */
+  { id: 'herosec1', label: 'Home' },
   { id: 'roadmap', label: 'Roadmap' },
   { id: 'rewards', label: 'Rewards' },
   { id: 'faq', label: 'FAQ' },

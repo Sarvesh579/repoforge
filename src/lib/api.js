@@ -3,17 +3,6 @@
  * runs smoothly whether the backend server is online or offline.
  */
 
-import {
-  
-  getProblemStatements,
-  addProblemStatement,
-  updateProblemStatement,
-  deleteProblemStatement,
-  getTeamsData,
-  toggleTeamShortlist,
-  getUserSubmission,
-  getNotifications,
-} from './portalStorage';
 
 const BASE = (import.meta.env.VITE_API_BASE_URL || 'http://localhost:4000').replace(/\/$/, '');
 const STORAGE_KEY = 'crucible-auth';
@@ -219,13 +208,7 @@ export async function toggleRegistration() {
 // ─── Team data ────────────────────────────────────────────────────────────────
 
 export async function getMyTeam() {
-  try {
-    return await apiFetch('/api/team/me');
-
-  } catch {
-    const teams = getTeamsData();
-    return { success: true, data: teams[0] };
-  }
+  return await apiFetch('/api/team/me');
 }
 
 // ─── Tracks / Problem Statements ─────────────────────────────────────────────
@@ -233,113 +216,60 @@ export async function getParticipantTracks() {
   return await apiFetch('/api/team/participant_tracks');
 }
 export async function getTracks() {
-  try {
-    return await apiFetch('/api/admin/tracks');
-  } catch (err) {
-    if (err?.message && !err.message.includes('Failed to fetch')) throw err;
-    const problems = getProblemStatements();
-    return { success: true, data: problems };
-  }
+  return await apiFetch('/api/admin/tracks');
 }
 
 export async function createTrack(track) {
-  try {
-    return await apiFetch('/api/admin/tracks', {
-      method: 'POST',
-      body: JSON.stringify(track),
-    });
-  } catch (err) {
-    if (err?.message && !err.message.includes('Failed to fetch')) throw err;
-    const newProb = addProblemStatement(track);
-    return { success: true, data: newProb };
-  }
+  return await apiFetch('/api/admin/tracks', {
+    method: 'POST',
+    body: JSON.stringify(track),
+  });
 }
 
 export async function updateTrack(id, changes) {
-  try {
-    return await apiFetch(`/api/admin/tracks/${id}`, {
-      method: 'PATCH',
-      body: JSON.stringify(changes),
-    });
-  } catch (err) {
-    if (err?.message && !err.message.includes('Failed to fetch')) throw err;
-    const updated = updateProblemStatement({ id, ...changes });
-    return { success: true, data: updated };
-  }
+  return await apiFetch(`/api/admin/tracks/${id}`, {
+    method: 'PATCH',
+    body: JSON.stringify(changes),
+  });
 }
 
 export async function deleteTrack(id) {
-  try {
-    return await apiFetch(`/api/admin/tracks/${id}`, { method: 'DELETE' });
-  } catch (err) {
-    if (err?.message && !err.message.includes('Failed to fetch')) throw err;
-    deleteProblemStatement(id);
-    return { success: true, data: { id } };
-  }
+  return await apiFetch(`/api/admin/tracks/${id}`, { method: 'DELETE' });
 }
 
 // ─── Announcements ────────────────────────────────────────────────────────────
 
 export async function getAnnouncements() {
-  try {
-    return await apiFetch('/api/admin/announcements');
-  } catch {
-    const notifs = getNotifications();
-    return { success: true, data: notifs };
-  }
+  return await apiFetch('/api/admin/announcements');
 }
 
 export async function postAnnouncement(announcement) {
-  try {
-    return await apiFetch('/api/admin/announcements', {
-      method: 'POST',
-      body: JSON.stringify(announcement),
-    });
-  } catch {
-    return { success: true, data: announcement };
-  }
+  return await apiFetch('/api/admin/announcements', {
+    method: 'POST',
+    body: JSON.stringify(announcement),
+  });
 }
 
 // ─── Submission ───────────────────────────────────────────────────────────────
 
 export async function uploadSubmission(file) {
-  try {
-    const formData = new FormData();
-    formData.append('file', file);
-    return await apiFetchFormData('/api/submission/upload', formData);
-  } catch {
-    return { success: true, data: { filename: file.name, date: new Date().toISOString() } };
-  }
+  const formData = new FormData();
+  formData.append('file', file);
+  return await apiFetchFormData('/api/submission/upload', formData);
 }
 
 export async function getMySubmission() {
-  try {
-    return await apiFetch('/api/submission/me');
-  } catch {
-    const sub = getUserSubmission('PHX024');
-    return { success: true, data: sub };
-  }
+  return await apiFetch('/api/submission/me');
 }
 
 // ─── Admin / Judge ────────────────────────────────────────────────────────────
 
 export async function getAdminSubmissions() {
-  try {
-    return await apiFetch('/api/admin/submissions');
-  } catch {
-    const teams = getTeamsData();
-    const subs = teams.filter((t) => t.submitted).map((t) => ({ id: t.id, teamName: t.teamName, filename: t.submissionFile, createdAt: t.submissionDate }));
-    return { success: true, data: subs };
-  }
+  return await apiFetch('/api/admin/submissions');
 }
 
 export async function getAdminTeams() {
-  try {
-    return await apiFetch('/api/admin/teams');
-  } catch {
-    const teams = getTeamsData();
-    return { success: true, data: teams };
-  }
+  return await apiFetch('/api/admin/teams');
 }
 
 export async function stageShortlist(teamId, status) {
