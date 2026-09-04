@@ -16,6 +16,7 @@ import {
   getHackathonSettings,
   updateHackathonSettings,
   publishHackathonResults,
+  unpublishHackathonResults,
   verifyTeamPayment,
   updatePaymentStatus
 } from '../../lib/api'; // <--- Switch from portalStorage to real api.js
@@ -190,7 +191,7 @@ export default function AdminDashboard() {
   const [problems, setProblems] = useState([]);
   const [teams, setTeams] = useState([]);
   const [submissions, setSubmissions] = useState([]);
-  const [winners, setWinners] = useState({ first: null, second: null, third: null });
+  const [winners, setWinners] = useState({ first: null, second: null, third: null, fourth: null });
   const [searchQuery, setSearchQuery] = useState('');
   const [toast, setToast] = useState('');
 
@@ -205,6 +206,7 @@ export default function AdminDashboard() {
     name: 'RepoForge Hackathon',
     year: 2026,
     deadline: '',
+    payment_deadline: '',
     hackathonStatus: 'Live',
     registrationStatus: 'Open',
     acceptingSubmissions: true,
@@ -230,11 +232,12 @@ export default function AdminDashboard() {
       if (subsRes.success) setSubmissions(subsRes.data);
 
       // Map existing ranks from team result objects to the winners state
-      const winnerMap = { first: null, second: null, third: null };
+      const winnerMap = { first: null, second: null, third: null, fourth: null };
       teamsRes.data.forEach(t => {
         if (t.result?.rank === 1) winnerMap.first = t.id;
         if (t.result?.rank === 2) winnerMap.second = t.id;
         if (t.result?.rank === 3) winnerMap.third = t.id;
+        if (t.result?.rank === 4) winnerMap.fourth = t.id;
       });
       setWinners(winnerMap);
     } catch (err) {
@@ -282,6 +285,21 @@ export default function AdminDashboard() {
       showToast('Settings saved & submission rules updated!');
     } catch (err) {
       showToast('Error saving settings');
+    }
+  };
+
+  const handleSetPaymentDeadline = async () => {
+    if (!settings.payment_deadline) {
+      showToast('Choose a payment deadline first.');
+      return;
+    }
+
+    try {
+      const response = await updateHackathonSettings(settings);
+      if (response?.data) setSettings(response.data);
+      showToast('Payment deadline set successfully!');
+    } catch (err) {
+      showToast('Error setting payment deadline.');
     }
   };
   const handleVerify = async (teamId) => {
@@ -418,6 +436,21 @@ export default function AdminDashboard() {
       alert("An error occurred while publishing.");
     } finally {
       setIsPublishing(false);
+    }
+  };
+  const handleUnpublishResults = async () => {
+    if (!window.confirm('Are you sure you want to hide the published results from all user dashboards?')) return;
+
+    try {
+      const res = await unpublishHackathonResults();
+      if (res?.success) {
+        alert('Results are now hidden from user dashboards.');
+        await fetchData();
+      } else {
+        alert(res?.error || 'Failed to unpublish results.');
+      }
+    } catch (err) {
+      alert('An error occurred while unpublishing results.');
     }
   };
   const handleLogout = () => {
@@ -919,6 +952,21 @@ export default function AdminDashboard() {
                     onChange={(teamId) => handleAssignWinner('third', teamId)}
                   />
                 </div>
+
+                {/* 4th Place */}
+                <div className={`${styles.winnerBox} ${winners.fourth ? styles.assigned : ''}`}>
+                  <span className={styles.medalIcon}>{NavIcons.medal('#60a5fa')}</span>
+                  <strong>4th Place Winner</strong>
+                  <span style={{ fontSize: '0.85rem', color: '#60a5fa' }}>
+                    {teams.find((t) => t.id === winners.fourth)?.teamName || 'Unassigned'}
+                  </span>
+                  <WinnerTeamSelect
+                    teams={teams}
+                    value={winners.fourth}
+                    accentColor="#60a5fa"
+                    onChange={(teamId) => handleAssignWinner('fourth', teamId)}
+                  />
+                </div>
               </div>
 
               {/* ─── ADD THIS BELOW YOUR RESULTS SECTION ─── */}
@@ -945,6 +993,21 @@ export default function AdminDashboard() {
                   }}
                 >
                   {isPublishing ? 'Publishing...' : '🚀 Publish All Results'}
+                </button>
+                <button
+                  type="button"
+                  onClick={handleUnpublishResults}
+                  style={{
+                    background: 'transparent',
+                    border: '1px solid rgba(255, 107, 117, 0.65)',
+                    color: '#ff6b75',
+                    padding: '0.75rem 1.5rem',
+                    borderRadius: '6px',
+                    fontWeight: '600',
+                    cursor: 'pointer',
+                  }}
+                >
+                  Unpublish Results
                 </button>
               </div>
             </div>
@@ -992,6 +1055,24 @@ export default function AdminDashboard() {
                   value={settings.deadline}
                   onChange={(e) => setSettings({ ...settings, deadline: e.target.value })}
                 />
+              </div>
+
+              <div className={styles.field}>
+                <label>Payment Deadline</label>
+                <input
+                  type="datetime-local"
+                  value={settings.payment_deadline ? settings.payment_deadline.slice(0, 16) : ''}
+                  onChange={(e) => setSettings({ ...settings, payment_deadline: e.target.value })}
+                />
+                <SqBtn
+                  type="button"
+                  onClick={handleSetPaymentDeadline}
+                  lineColor="#FAB600"
+                  baseColor="#261005"
+                  style={{ marginTop: 10, width: 'fit-content' }}
+                >
+                  Set Payment Deadline
+                </SqBtn>
               </div>
 
               <div className={styles.field}>

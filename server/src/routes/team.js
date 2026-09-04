@@ -11,6 +11,7 @@ const { verifyTurnstile } = require('../middleware/turnstile');
 const { uploadParticipantIds, validatePaymentMimeType } = require('../middleware/upload');
 const { uploadParticipantId } = require('../lib/paymentStorage');
 const { getSubmissionSettings } = require('../lib/submissionSettings');
+const { checkPaymentEligibility } = require('../lib/paymentEligibility');
 
 const router = Router();
 
@@ -518,12 +519,14 @@ router.get('/settings-and-results', requireAuth, requireRole('team'), async (req
     const result = await prisma.result.findUnique({
       where: { team_id: req.user.teamId }
     });
+    const paymentEligibility = await checkPaymentEligibility(prisma, req.user.teamId);
 
     return res.json({
       success: true,
       data: {
         settings,
-        result: result || { shortlisted: false, shortlist_status: 'Under-Review', rank: null, published: false }
+        result: result || { shortlisted: false, shortlist_status: 'Under-Review', rank: null, published: false },
+        paymentEligibility,
       }
     });
   } catch (err) {

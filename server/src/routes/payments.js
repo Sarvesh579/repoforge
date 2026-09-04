@@ -4,14 +4,15 @@ const { uploadPaymentScreenshot: storePaymentScreenshot } = require('../lib/paym
 const { uploadParticipantId } = require('../lib/paymentStorage');
 const { requireAuth, requireRole } = require('../middleware/auth');
 const { uploadPayment, uploadPaymentScreenshot, validatePaymentMimeType } = require('../middleware/upload');
+const { checkPaymentEligibility } = require('../lib/paymentEligibility');
 
 const router = Router();
 
-async function requireShortlistedTeam(req, res, next) {
+async function requirePaymentEligibility(req, res, next) {
     try {
-        const result = await prisma.result.findUnique({ where: { team_id: req.user.teamId } });
-        if (result?.shortlist_status !== 'Shortlisted' && !result?.shortlisted) {
-            return res.status(403).json({ success: false, error: 'Payment screenshot upload is available only to shortlisted teams.' });
+        const eligibility = await checkPaymentEligibility(prisma, req.user.teamId);
+        if (!eligibility.eligible) {
+            return res.status(403).json({ success: false, error: eligibility.reason, data: { eligibility } });
         }
         next();
     } catch (err) {
@@ -24,7 +25,7 @@ router.post(
     '/upload-screenshot',
     requireAuth,
     requireRole('team'),
-    requireShortlistedTeam,
+    requirePaymentEligibility,
     (req, res, next) => {
         console.log('[Payment Route] Hit /upload-screenshot endpoint');
         next();
