@@ -14,16 +14,19 @@ require('dotenv').config();
 
 const { PrismaClient } = require('@prisma/client');
 const bcrypt = require('bcryptjs');
-
 const prisma = new PrismaClient();
 
 async function main() {
   console.log('🌱 Seeding Hackathon 2026 database...\n');
 
   // ─── Admin + Judges ──────────────────────────────────────────────────────────
+  const adminPassword = process.env.ADMIN_PASSWORD;
+  const judgePassword = process.env.JUDGE_PASSWORD;
+  const participantPassword = process.env.PARTICIPANT_PASSWORD;
 
-  const adminHash = await bcrypt.hash('Admin@2026!', 12);
-  const judgeHash = await bcrypt.hash('Judge@2026!', 12);
+  const adminHash = await bcrypt.hash(adminPassword, 12);
+  const judgeHash = await bcrypt.hash(judgePassword, 12);
+  const participantHash = await bcrypt.hash(participantPassword, 12);
 
   const admin = await prisma.judgeUser.upsert({
     where: { email: 'admin@crucible.dev' },
@@ -62,8 +65,6 @@ async function main() {
   console.log(`✅ Judge 2: ${judge2.email} / Judge@2026!\n`);
 
   // ─── Sample Participant Team ──────────────────────────────────────────────────
-
-  const participantHash = await bcrypt.hash('TeamLead@2026!', 12);
   const sampleTeam = await prisma.team.upsert({
     where: { lead_email: 'participant@crucible.dev' },
     update: {},
@@ -108,49 +109,6 @@ async function main() {
   }
 
   // ─── Problem statement tracks ─────────────────────────────────────────────────
-
-  const tracks = [
-    {
-      title: 'Sustainable Smart Cities',
-      category: 'Environment & Society',
-      short_description: 'Build tech solutions for a sustainable urban future.',
-      description: 'Design innovative applications addressing urban sustainability challenges — from waste management and energy efficiency to smart transportation and green infrastructure.',
-      difficulty: 'Intermediate',
-      reward: '₹5,000 cash prize + mentorship',
-    },
-    {
-      title: 'HealthTech & Well-being',
-      category: 'Healthcare',
-      short_description: 'Revolutionize how we approach health and well-being.',
-      description: 'Create tools that democratize healthcare access, improve patient outcomes, or support mental and physical well-being using AI, wearables, or telemedicine.',
-      difficulty: 'Intermediate',
-      reward: '₹5,000 cash prize + internship offer',
-    },
-    {
-      title: 'EdTech for Bharat',
-      category: 'Education',
-      short_description: 'Make education accessible and engaging for all.',
-      description: 'Build solutions that bridge the digital divide in education — personalized learning, regional language support, skill development platforms, and offline-first tools for rural students.',
-      difficulty: 'Beginner-friendly',
-      reward: '₹4,000 cash prize',
-    },
-    {
-      title: 'FinTech & Financial Inclusion',
-      category: 'Finance',
-      short_description: 'Bringing financial services to the unbanked.',
-      description: 'Design fintech solutions that address financial inclusion, fraud prevention, micro-lending, budgeting tools, or UPI innovations for underserved communities.',
-      difficulty: 'Advanced',
-      reward: '₹6,000 cash prize + VC pitch opportunity',
-    },
-    {
-      title: 'Open Innovation',
-      category: 'Open',
-      short_description: 'Any domain — your idea, your rules.',
-      description: 'No restrictions — build anything impactful. This track is for ideas that don\'t fit neatly into other categories but have the potential to make a real difference.',
-      difficulty: 'Any level',
-      reward: '₹3,000 cash prize',
-    },
-  ];
 
   for (const track of tracks) {
     await prisma.track.upsert({

@@ -1,4 +1,4 @@
-import { motion, useScroll, useTransform } from 'framer-motion';
+import { motion, useScroll, useTransform, useMotionTemplate } from 'framer-motion';
 import { useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
@@ -26,7 +26,7 @@ export default function Navbar() {
   const { scrollY } = useScroll();
   const headerHeight = useTransform(scrollY, [0, 160], [76, 68]);
   const blurValue = useTransform(scrollY, [0, 120], [20, 28]);
-
+  const backdropBlur = useMotionTemplate`blur(${blurValue}px)`;
   const [activeSection, setActiveSection] = useState('');
 
   useEffect(() => {
@@ -71,7 +71,7 @@ export default function Navbar() {
   return (
     <motion.header
       className="site-header"
-      style={{ height: headerHeight, backdropFilter: `blur(${blurValue})`, WebkitBackdropFilter: `blur(${blurValue})` }}
+      style={{ height: headerHeight }}
     >
       <div className="container nav-shell">
         <Link to="/" className="brand" aria-label="RepoForge home">

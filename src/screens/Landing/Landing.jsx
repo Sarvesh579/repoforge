@@ -15,17 +15,17 @@ import styles from './Landing.module.css';
 const MotionGlareHover = motion.create ? motion.create(GlareHover) : motion(GlareHover);
 
 const faqItems = [
-  { q: 'Who can participate?', a: 'Any student or early career builder with a passion for shipping impactful ideas.' },
-  { q: 'Do we need a fully working product?', a: 'No. Teams can submit a compelling prototype, workflow, or concept backed by a strong demo.' },
-  { q: 'Is there a theme?', a: 'The event focuses on real-world impact with themes across AI, sustainable systems, health, and creator tech.' },
-  { q: 'Are there mentorship sessions?', a: 'Yes. Selected teams get access to technical and product mentors throughout the event.' },
+  { q: 'Who can participate?', a: 'Any year engineering student with a passion for shipping impactful ideas.' },
+  { q: 'Do we need a fully working product?', a: 'Ideally yes. Teams shall show a proototype or demo in the first offline judging round, but final judging round would require a product.' },
+  { q: 'Is there a theme?', a: 'The event focuses on real-world impact with PSs across various domains. No limitation on APP/WEB deployment' },
+  { q: 'Are the PS same for PPT and Offline rounds?', a: 'Yes. Your PS for offline round will be same as your selected PS for PPT round.' },
 ];
 
 const rewards = [
-  { title: '₹25k+ Pool', text: 'For the top teams across tracks and the grand prize.' },
+  { title: '₹25k+ Prize Pool', text: 'Goodies and Prizes for the top teams.' },
   { title: 'Mentor access', text: 'Direct sessions with founders, operators, and product leaders.' },
   { title: 'Career network', text: 'Introductions to hiring partners and startup communities.' },
-  { title: 'Internship Opportunities', text: 'Confirm Internship to one top team' },
+  { title: 'Internship Opportunities', text: 'Internship opportunities to selected students who show promising passion' },
 ];
 
 const sponsorRow1 = [
@@ -447,12 +447,12 @@ export default function Landing() {
                   <p>Last date to register for RepoForge hackathon 2026.</p>
                 </div>
 
-                {/* 04: PPT & SOP Submission Deadline */}
+                {/* 04: PPT Submission Deadline */}
                 <div className={`${styles.milestoneCard} ${isDateReached(milestoneDates['04']) ? styles.cardActive : styles.cardDark}`}>
                   <div className={styles.dateLabelDark}>27 SEPT</div>
                   <div className={styles.dateSubtextDark}></div>
-                  <h3>PPT & SOP Submission Deadline</h3>
-                  <p>Last date to Submit your Project Presentation (PPT) and SOP for the qualifier round.</p>
+                  <h3>PPT Submission Deadline</h3>
+                  <p>Last date to select your PS and submit your Project Presentation (PPT) for the qualifier round.</p>
                 </div>
 
                 {/* 05: Shortlisting */}

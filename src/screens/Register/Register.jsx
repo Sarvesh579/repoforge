@@ -47,7 +47,8 @@ export default function Register() {
   const [turnstileToken, setTurnstileToken] = useState('');
   const [idsFile, setIdsFile] = useState(null);
   const [idsFileError, setIdsFileError] = useState('');
-  const [isBusy, setIsBusy] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const form = useForm({
     resolver: zodResolver(registerSchema),
@@ -72,11 +73,15 @@ export default function Register() {
   useEffect(() => {
     async function init() {
       try {
-        const [tracksRes, statusRes] = await Promise.all([getTracks(), getRegistrationStatus()]);
+        const [tracksRes, statusRes] = await Promise.all([
+          getTracks(),
+          getRegistrationStatus()
+        ]);
+
         setTracks(tracksRes.data || []);
         setStatus(statusRes.data || { open: true });
       } finally {
-        setIsBusy(false);
+        setIsLoading(false);
       }
     }
     init();
@@ -136,15 +141,22 @@ export default function Register() {
       setIdsFileError('Please upload a combined PDF of all participant ID proofs.');
       return;
     }
-    setIsBusy(true);
+    setIsSubmitting(true);
+
     try {
-      const response = await registerTeam({ ...payload, cf_turnstile_response: turnstileToken }, idsFile);
+      const response = await registerTeam(
+        { ...payload, cf_turnstile_response: turnstileToken },
+        idsFile
+      );
+
       setSuccessData(response.data);
       setSubmitted(true);
     } catch (err) {
-      form.setError('root', { message: err.message || 'Registration failed. Please try again.' });
+      form.setError('root', {
+        message: err.message || 'Registration failed. Please try again.'
+      });
     } finally {
-      setIsBusy(false);
+      setIsSubmitting(false);
     }
   };
 
@@ -203,7 +215,7 @@ export default function Register() {
 
   return (
     <div className={styles.page}>
-      <LoadingOverlay visible={isBusy} label={submitted ? 'Registration complete...' : 'Creating your team...'} />
+      <LoadingOverlay visible={isSubmitting} label="Creating your team..." />
       <Navbar />
       <main className={styles.shell}>
         {/* Back to home button */}
