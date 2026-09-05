@@ -113,7 +113,7 @@
   font-family: 'JetBrains Mono', monospace;
   font-size: 0.85rem;
   letter-spacing: 0.18em;
-  color: var(--blue-primary);
+  color: var(--orange-primary);
   font-weight: 600;
   margin-bottom: 36px;
   text-transform: uppercase;
@@ -166,7 +166,7 @@
 }
 
 .btnOutlineDark:hover {
-  border-color: var(--blue-primary);
+  border-color: var(--orange-primary);
   background: rgba(250, 182, 0, 0.1);
   color: #ffffff;
 }
@@ -185,7 +185,7 @@
   font-family: 'JetBrains Mono', monospace;
   font-size: 0.75rem;
   letter-spacing: 0.25em;
-  color: var(--blue-primary);
+  color: var(--orange-primary);
   text-transform: uppercase;
   margin-bottom: 12px;
 }
@@ -199,7 +199,7 @@
 }
 
 .tracksTitle span {
-  color: var(--blue-primary);
+  color: var(--orange-primary);
 }
 
 .tracksSubtitle {
@@ -240,7 +240,7 @@
 }
 
 .trackCardRef:hover {
-  border-color: var(--blue-primary);
+  border-color: var(--orange-primary);
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.45), 0 0 25px rgba(250, 182, 0, 0.25);
 }
 
@@ -253,8 +253,8 @@
   height: 44px;
   border-radius: 50%;
   background: #080d14;
-  border: 1.5px solid var(--blue-primary);
-  color: var(--blue-primary);
+  border: 1.5px solid var(--orange-primary);
+  color: var(--orange-primary);
   font-family: 'JetBrains Mono', monospace;
   font-size: 0.95rem;
   font-weight: 700;
@@ -294,7 +294,7 @@
 .exploreBtn {
   background: transparent;
   border: none;
-  color: var(--blue-primary);
+  color: var(--orange-primary);
   font-family: 'JetBrains Mono', monospace;
   font-size: 0.82rem;
   font-weight: 700;
@@ -364,7 +364,7 @@
   left: 5%;
   right: 5%;
   height: 2px;
-  background: linear-gradient(90deg, var(--blue-primary) 0%, var(--blue-primary) 75%, rgba(176, 37, 1, 0.2) 100%);
+  background: linear-gradient(90deg, var(--orange-primary) 0%, var(--orange-primary) 75%, rgba(176, 37, 1, 0.2) 100%);
   transform: translateY(-50%);
   z-index: 1;
 }
@@ -375,7 +375,7 @@
   border-radius: 50%;
   background: #080d14;
   border: 1.5px solid rgba(250, 182, 0, 0.35);
-  color: var(--blue-primary);
+  color: var(--orange-primary);
   font-family: 'JetBrains Mono', monospace;
   font-size: 0.9rem;
   font-weight: 700;
@@ -389,9 +389,9 @@
 }
 
 .badgeActive {
-  background: var(--blue-primary);
+  background: var(--orange-primary);
   color: #050b14;
-  border-color: var(--blue-primary);
+  border-color: var(--orange-primary);
   box-shadow: 0 0 20px rgba(250, 182, 0, 0.7);
 }
 
@@ -512,7 +512,7 @@
   font-family: 'JetBrains Mono', monospace;
   font-size: 0.9rem;
   font-weight: 800;
-  color: var(--blue-primary);
+  color: var(--orange-primary);
   letter-spacing: 0.05em;
   text-transform: uppercase;
 }
@@ -528,7 +528,7 @@
   font-family: 'JetBrains Mono', monospace;
   font-size: 0.82rem;
   font-weight: 800;
-  color: var(--blue-primary);
+  color: var(--orange-primary);
   letter-spacing: 0.05em;
   text-transform: uppercase;
 }
@@ -536,7 +536,7 @@
 .dateSubtextGreen {
   font-family: 'JetBrains Mono', monospace;
   font-size: 0.7rem;
-  color: var(--blue-primary);
+  color: var(--orange-primary);
   margin-top: 2px;
   opacity: 0.85;
 }
@@ -675,7 +675,7 @@
 .valueCard:hover,
 .rewardCard:hover,
 .statCard:hover {
-  border-color: var(--blue-primary);
+  border-color: var(--orange-primary);
   box-shadow: 0 12px 36px rgba(0, 0, 0, 0.5), 0 0 25px rgba(250, 182, 0, 0.25);
 }
 
@@ -729,7 +729,7 @@
   border-radius: 50%;
   background: rgba(250, 182, 0, 0.12);
   border: 1px solid rgba(250, 182, 0, 0.3);
-  color: var(--blue-primary);
+  color: var(--orange-primary);
   font-family: 'JetBrains Mono', monospace;
   font-size: 0.8rem;
   font-weight: 700;
@@ -800,7 +800,7 @@
   place-items: center;
   font-family: 'JetBrains Mono', monospace;
   font-size: 0.7rem;
-  color: var(--blue-primary);
+  color: var(--orange-primary);
   position: relative;
   z-index: 1;
 }
@@ -883,7 +883,7 @@
   display: grid;
   place-items: center;
   background: linear-gradient(135deg, rgba(176, 37, 1, 0.18), rgba(61, 26, 0, 0.18));
-  color: var(--blue-deep);
+  color: var(--orange-deep);
   font-weight: 700;
 }
 
@@ -920,7 +920,7 @@
 }
 
 .faqItem:hover {
-  border-color: var(--blue-primary);
+  border-color: var(--orange-primary);
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.45), 0 0 25px rgba(250, 182, 0, 0.2);
 }
 
@@ -978,7 +978,7 @@
   border-radius: 999px;
   border: 1px solid rgba(250, 182, 0, 0.35);
   background: rgba(250, 182, 0, 0.08);
-  color: var(--blue-primary);
+  color: var(--orange-primary);
   font-family: 'JetBrains Mono', monospace;
   font-size: 0.73rem;
   letter-spacing: 0.18em;
@@ -1044,7 +1044,7 @@
 
 
 .channelCard:hover {
-  border-color: var(--blue-primary);
+  border-color: var(--orange-primary);
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.45), 0 0 25px rgba(250, 182, 0, 0.22);
 }
 
@@ -1265,7 +1265,7 @@
   align-items: stretch;
   gap: 24px;
   flex-wrap: wrap;
-  width: 100%;
+  width: 85%;
 }
 
 .sponsorCard {
@@ -1294,7 +1294,7 @@
 }
 
 .sponsorCard:hover {
-  border-color: var(--blue-primary);
+  border-color: var(--orange-primary);
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.45), 0 0 25px rgba(250, 182, 0, 0.25);
 }
 
@@ -1361,7 +1361,50 @@
 }
 
 .tierBlue {
-  color: var(--blue-primary);
+  color: var(--orange-primary);
+}
+
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.7);
+}
+
+.sponsorModal {
+  position: relative;
+  width: min(90%, 500px);
+  padding: 32px;
+  background: var(--bg-deep);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-strong);
+}
+
+.modalClose {
+  position: absolute;
+  top: 12px;
+  right: 16px;
+  border: 0;
+  background: none;
+  color: var(--ink);
+  font-size: 28px;
+  cursor: pointer;
+}
+
+.sponsorLinks {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.sponsorLinks a {
+  color: var(--orange-primary);
+  text-decoration: none;
 }
 
 @media (max-width: 900px) {

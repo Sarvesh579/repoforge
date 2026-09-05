@@ -631,7 +631,7 @@ button {
   font-family: 'JetBrains Mono', monospace;
   font-size: 0.68rem;
   font-weight: 700;
-  color: var(--blue-primary);
+  color: var(--orange-primary);
   letter-spacing: 0.16em;
   text-transform: uppercase;
   margin-top: 10px;

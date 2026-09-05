@@ -22,28 +22,29 @@ const faqItems = [
 ];
 
 const rewards = [
-  { title: '₹15k+ payouts', text: 'For the top teams across tracks and the grand prize.' },
+  { title: '₹25k+ Pool', text: 'For the top teams across tracks and the grand prize.' },
   { title: 'Mentor access', text: 'Direct sessions with founders, operators, and product leaders.' },
   { title: 'Career network', text: 'Introductions to hiring partners and startup communities.' },
   { title: 'Internship Opportunities', text: 'Confirm Internship to one top team' },
 ];
 
 const sponsorRow1 = [
-  { name: 'Infraon', tier: 'TITLE SPONSOR', tierClass: 'tierGreen', bg: '#1a5c35', logoimg: '/infraon_logo.svg' },
-  { name: 'SATPrep1600', tier: 'SPONSOR', tierClass: 'tierOrange', bg: '#7a2d00', logoimg: '/SAT_Prep.png' },
+  { name: 'Infraon', tier: 'TITLE SPONSOR', tierClass: 'tierGreen', bg: '#1a5c35', logoimg: '/infraon_logo_white.png', links: { linkedin: 'https://www.linkedin.com/company/infraon/', instagram: 'https://www.instagram.com/infraoncorp' } },
+  { name: 'SATPrep1600', tier: 'SPONSOR', tierClass: 'tierOrange', bg: '#7a2d00', logoimg: '/SAT_Prep.png', links: { website: 'https://www.satprep1600.com/' } },
 ];
 const sponsorRow2 = [
-  { name: 'Mumbai Tech Community', tier: 'COMMUNITY PARTNER', tierClass: 'tierBlue', bg: '#1a237e', logoimg: '/Mumbai_Tech_Community.png' },
-  { name: 'Third Wave Coffee', tier: 'DRINKS PARTNER', tierClass: 'tierBlue', bg: '#3b1a0d', logoimg: '/Third_Wave_Coffee.png' },
-  { name: 'Pizza Hut', tier: 'SNACKS PARTNER', tierClass: 'tierBlue', bg: '#1a237e', logoimg: '/Pizza_Hut.png' },
-  { name: 'Scroll Connect', tier: 'PARTNER', tierClass: 'tierBlue', bg: '#1a237e', logoimg: '/scroll-connect-small.png' }
+  { name: 'Mumbai Tech Community', tier: 'COMMUNITY PARTNER', tierClass: 'tierBlue', bg: '#1a237e', logoimg: '/Mumbai_Tech_Community.png', links: { linkedin: 'https://www.linkedin.com/company/mumbai-tech-community/', instagram: 'https://www.instagram.com/mumbaitechcommunity' } },
+  { name: 'Third Wave Coffee', tier: 'DRINKS PARTNER', tierClass: 'tierBlue', bg: '#3b1a0d', logoimg: '/Third_Wave_Coffee.png', links: { website: 'https://www.thirdwavecoffeeroasters.com/' } },
+  { name: 'Pizza Hut', tier: 'SNACKS PARTNER', tierClass: 'tierBlue', bg: '#1a237e', logoimg: '/Pizza_Hut.png', links: { website: 'https://www.pizzahut.co.in/' } },
+  { name: 'Scroll Connect', tier: 'PARTNER', tierClass: 'tierBlue', bg: '#1a237e', logoimg: '/scroll-connect-light.png', links: { website: 'https://www.scrollconnect.com/' } },
+  { name: 'MiniMoth.dev', tier: 'PARTNER', tierClass: 'tierBlue', bg: '#1a237e', logoimg: '/moth-light.png', links: { linkedin: 'https://www.linkedin.com/company/minimoth', X: 'https://x.com/minimoth_dev' } },
 ];
 
 const stats = [
   { label: 'Members', value: '200+' },
   { label: 'Location', value: 'Mahim' },
   { label: 'Problem Statements', value: '5' },
-  { label: 'Prize pool', value: '₹15k' },
+  { label: 'Prize pool', value: '₹25k' },
 ];
 
 const sectionVariants = {
@@ -88,6 +89,7 @@ const isDateReached = (dateStr) => {
 export default function Landing() {
   const location = useLocation();
   const [openFaq, setOpenFaq] = useState(-1);
+  const [selectedSponsor, setSelectedSponsor] = useState(null);
 
   // ── Parallax refs ────────────────────────────────────────────────────────
   const hero = useParallax(80);   // hero visual drifts up
@@ -213,9 +215,13 @@ export default function Landing() {
           <div className="container">
             <div className={styles.sponsorsHeader}>
               <p className={styles.sponsorsEyebrow}>BACKED BY THE BEST</p>
-              <h2 className={styles.sponsorsTitle}>Our <span>Sponsors</span></h2>
+              <h2 className={styles.sponsorsTitle}>
+                Our <span>Sponsors</span>
+              </h2>
             </div>
+
             <div className={styles.sponsorsContainer}>
+
               {/* Row 1 – Title Sponsor & Sponsor */}
               <motion.div
                 className={styles.sponsorCardsRow}
@@ -225,27 +231,59 @@ export default function Landing() {
                 viewport={{ once: true, amount: 0.2 }}
               >
                 {sponsorRow1.map((sponsor) => (
-                  <MotionGlareHover
+                  <div
                     key={sponsor.name}
-                    className={styles.sponsorCard}
-                    variants={cardReveal}
-                    whileHover={{ y: -6, scale: 1.02, transition: { duration: 0.25 } }}
-                    glareColor="#ffffff"
-                    glareOpacity={0.15}
-                    glareSize={250}
-                    transitionDuration={600}
+                    onClick={() => setSelectedSponsor(sponsor)}
+                    style={{ cursor: 'pointer' }}
                   >
-                    <div className={styles.sponsorLogoBox} style={{ background: sponsor.logoimg ? 'rgba(255,255,255,0.1)' : sponsor.bg }}>
-                      {sponsor.logoimg
-                        ? <img src={sponsor.logoimg} alt={sponsor.name} className={styles.sponsorLogoImg} />
-                        : <span className={styles.sponsorFallbackLetters}>{sponsor.name.slice(0, 2).toUpperCase()}</span>
-                      }
-                    </div>
-                    <h3 className={styles.sponsorName}>{sponsor.name}</h3>
-                    <p className={`${styles.sponsorTier} ${styles[sponsor.tierClass]}`}>{sponsor.tier}</p>
-                  </MotionGlareHover>
+                    <MotionGlareHover
+                      className={styles.sponsorCard}
+                      variants={cardReveal}
+                      whileHover={{
+                        y: -6,
+                        scale: 1.02,
+                        transition: { duration: 0.25 }
+                      }}
+                      glareColor="#ffffff"
+                      glareOpacity={0.15}
+                      glareSize={250}
+                      transitionDuration={600}
+                    >
+                      <div
+                        className={styles.sponsorLogoBox}
+                        style={{
+                          background: sponsor.logoimg
+                            ? 'rgba(255,255,255,0.1)'
+                            : sponsor.bg
+                        }}
+                      >
+                        {sponsor.logoimg ? (
+                          <img
+                            src={sponsor.logoimg}
+                            alt={sponsor.name}
+                            className={styles.sponsorLogoImg}
+                          />
+                        ) : (
+                          <span className={styles.sponsorFallbackLetters}>
+                            {sponsor.name.slice(0, 2).toUpperCase()}
+                          </span>
+                        )}
+                      </div>
+
+                      <h3 className={styles.sponsorName}>
+                        {sponsor.name}
+                      </h3>
+
+                      <p
+                        className={`${styles.sponsorTier} ${styles[sponsor.tierClass]}`}
+                      >
+                        {sponsor.tier}
+                      </p>
+                    </MotionGlareHover>
+                  </div>
                 ))}
               </motion.div>
+
 
               {/* Row 2 – Community & Drinks Partners */}
               <motion.div
@@ -256,31 +294,100 @@ export default function Landing() {
                 viewport={{ once: true, amount: 0.2 }}
               >
                 {sponsorRow2.map((sponsor) => (
-                  <MotionGlareHover
+                  <div
                     key={sponsor.name}
-                    className={styles.sponsorCard}
-                    variants={cardReveal}
-                    whileHover={{ y: -6, scale: 1.02, transition: { duration: 0.25 } }}
-                    glareColor="#ffffff"
-                    glareOpacity={0.12}
-                    glareSize={200}
-                    transitionDuration={600}
+                    onClick={() => setSelectedSponsor(sponsor)}
+                    style={{ cursor: 'pointer' }}
                   >
-                    <div className={styles.sponsorLogoBox} style={{ background: sponsor.logoimg ? 'rgba(255,255,255,0.1)' : sponsor.bg }}>
-                      {sponsor.logoimg
-                        ? <img src={sponsor.logoimg} alt={sponsor.name} className={styles.sponsorLogoImg} />
-                        : <span className={styles.sponsorFallbackLetters}>{sponsor.name.slice(0, 2).toUpperCase()}</span>
-                      }
-                    </div>
-                    <h3 className={styles.sponsorName}>{sponsor.name}</h3>
-                    <p className={`${styles.sponsorTier} ${styles[sponsor.tierClass]}`}>{sponsor.tier}</p>
-                  </MotionGlareHover>
+                    <MotionGlareHover
+                      className={styles.sponsorCard}
+                      variants={cardReveal}
+                      whileHover={{
+                        y: -6,
+                        scale: 1.02,
+                        transition: { duration: 0.25 }
+                      }}
+                      glareColor="#ffffff"
+                      glareOpacity={0.12}
+                      glareSize={200}
+                      transitionDuration={600}
+                    >
+                      <div
+                        className={styles.sponsorLogoBox}
+                        style={{
+                          background: sponsor.logoimg
+                            ? 'rgba(255,255,255,0.1)'
+                            : sponsor.bg
+                        }}
+                      >
+                        {sponsor.logoimg ? (
+                          <img
+                            src={sponsor.logoimg}
+                            alt={sponsor.name}
+                            className={styles.sponsorLogoImg}
+                          />
+                        ) : (
+                          <span className={styles.sponsorFallbackLetters}>
+                            {sponsor.name.slice(0, 2).toUpperCase()}
+                          </span>
+                        )}
+                      </div>
+
+                      <h3 className={styles.sponsorName}>
+                        {sponsor.name}
+                      </h3>
+
+                      <p
+                        className={`${styles.sponsorTier} ${styles[sponsor.tierClass]}`}
+                      >
+                        {sponsor.tier}
+                      </p>
+                    </MotionGlareHover>
+                  </div>
                 ))}
               </motion.div>
+
+
+              {/* Sponsor Modal */}
+              {selectedSponsor && (
+                <div
+                  className={styles.modalOverlay}
+                  onClick={() => setSelectedSponsor(null)}
+                >
+                  <div
+                    className={styles.sponsorModal}
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <button
+                      className={styles.modalClose}
+                      onClick={() => setSelectedSponsor(null)}
+                    >
+                      ×
+                    </button>
+
+                    <h2>{selectedSponsor.name}</h2>
+
+                    <div className={styles.sponsorLinks}>
+                      {Object.entries(selectedSponsor.links || {}).map(
+                        ([name, url]) => (
+                          <a
+                            key={name}
+                            href={url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            Follow on {name}
+                          </a>
+                        )
+                      )}
+                    </div>
+                  </div>
+                </div>
+              )}
+
             </div>
           </div>
         </motion.section>
-
 
 
         {/* ── ROADMAP / EVENT FLOW ───────────────────────────────────────────── */}

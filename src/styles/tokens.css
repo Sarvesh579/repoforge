@@ -1,9 +1,9 @@
 :root {
   --bg-canvas: #0c0502;
   --bg-deep: #100703;
-  --blue-primary: #FAB600;
-  --blue-deep: #3D1A00;
-  --blue-mist: #FFF5E0;
+  --orange-primary: #FAB600;
+  --orange-deep: #3D1A00;
+  --orange-mist: #FFF5E0;
   --ink: #f4f8ff;
   --ink-soft: rgba(244, 248, 255, 0.74);
   --paper: rgba(26, 12, 5, 0.72);
