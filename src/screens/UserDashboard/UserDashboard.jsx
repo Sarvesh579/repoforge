@@ -244,6 +244,7 @@ export default function UserDashboard() {
   const [teamLoading, setTeamLoading] = useState(!liveTeam);
   const [dynamicSettings, setDynamicSettings] = useState(getHackathonSettings());
   const [teamResult, setTeamResult] = useState(null);
+  const [paymentEligibility, setPaymentEligibility] = useState(null);
   // Prefer live API data; fall back strictly to neutral placeholder (Member 1, Member 2, Member 3)
   const currentTeam = useMemo(() => {
     if (liveTeam) {
@@ -299,13 +300,14 @@ export default function UserDashboard() {
 
   const shortlistStatus = currentTeam?.shortlistStatus || teamResult?.shortlist_status || (currentTeam?.shortlisted || teamResult?.shortlisted ? 'Shortlisted' : 'Under-Review');
   const isShortlisted = shortlistStatus === 'Shortlisted';
+  const canAccessPayment = paymentEligibility?.eligible ?? isShortlisted;
   const isLeader = auth?.role === 'user' || auth?.role === 'leader' || true;
 
   useEffect(() => {
-    if (!isShortlisted && activeTab === 'payment') {
+    if (!canAccessPayment && activeTab === 'payment') {
       setActiveTab('dashboard');
     }
-  }, [activeTab, isShortlisted]);
+  }, [activeTab, canAccessPayment]);
 
   // Fetch live team data from backend on mount
   useEffect(() => {
@@ -319,6 +321,7 @@ export default function UserDashboard() {
             setDynamicSettings(res.data.settings);
           }
           if (res.data.result) setTeamResult(res.data.result);
+          if (res.data.paymentEligibility) setPaymentEligibility(res.data.paymentEligibility);
         }
       })
       .catch(() => { });
@@ -354,6 +357,7 @@ export default function UserDashboard() {
       setSettings(settingsRes.data.settings || settingsRes.data);
       setDynamicSettings(settingsRes.data.settings || settingsRes.data);
       if (settingsRes.data.result) setTeamResult(settingsRes.data.result);
+      if (settingsRes.data.paymentEligibility) setPaymentEligibility(settingsRes.data.paymentEligibility);
     }
     if (tracksRes?.data) {
       setProblems(tracksRes.data.map((track) => ({
@@ -730,7 +734,7 @@ export default function UserDashboard() {
         </div>
 
         <nav className={styles.tabs}>
-          {NAV_TABS.filter((tab) => tab.id !== 'payment' || isShortlisted).map((tab) => (
+          {NAV_TABS.filter((tab) => tab.id !== 'payment' || canAccessPayment).map((tab) => (
             <button
               key={tab.id}
               className={`${styles.tabItem} ${activeTab === tab.id ? styles.active : ''}`}
@@ -852,7 +856,7 @@ export default function UserDashboard() {
               </div>
 
               {/* Col 4, Row 2: Offline Round Eligibility / Payment */}
-              {isShortlisted && (
+              {canAccessPayment && (
                 <div className={styles.statusCard}>
                   <span className={styles.cardIcon}>{Icons.creditCard}</span>
                   <span className={styles.cardLabel}>Offline Round Eligibility</span>
@@ -892,7 +896,7 @@ export default function UserDashboard() {
                   <span className={styles.cardIcon} style={{ color: '#eab308' }}>{Icons.award}</span>
                   <span className={styles.cardLabel}>Final Hackathon Verdict</span>
                   <span className={styles.cardValue} style={{ fontSize: '1.1rem', color: '#eab308', fontWeight: 800 }}>
-                    {teamResult.rank >= 1 && teamResult.rank <= 3
+                    {teamResult.rank >= 1 && teamResult.rank <= 4
                       ? `🎉 Winner! Secured Rank #${teamResult.rank}`
                       : '💡 Results are out. Better luck next time!'}
                   </span>
@@ -1144,7 +1148,7 @@ export default function UserDashboard() {
         )}
 
         {/* ── 5. OFFLINE ROUND PAYMENT TAB ── */}
-        {activeTab === 'payment' && isShortlisted && (
+        {activeTab === 'payment' && canAccessPayment && (
           <div className={styles.panel} style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', marginBottom: 0, padding: 24, boxSizing: 'border-box' }}>
             <div className={styles.panelHeader} style={{ marginBottom: 16 }}>
               <div>

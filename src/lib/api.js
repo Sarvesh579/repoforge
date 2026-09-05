@@ -343,7 +343,7 @@ export async function getHackathonSettings() {
   try {
     return await apiFetch('/api/admin/settings');
   } catch {
-    return { success: true, data: { name: 'RepoForge Hackathon', year: 2026, deadline: '', hackathonStatus: 'Live', registrationStatus: 'Open', acceptingSubmissions: true } };
+    return { success: true, data: { name: 'RepoForge Hackathon', year: 2026, deadline: '', payment_deadline: '', hackathonStatus: 'Live', registrationStatus: 'Open', acceptingSubmissions: true } };
   }
 }
 
@@ -387,6 +387,11 @@ export async function publishHackathonResults(teamIds = []) {
   return await apiFetch('/api/admin/results/publish', {
     method: 'POST',
     body: JSON.stringify({ teamIds }),
+  });
+}
+export async function unpublishHackathonResults() {
+  return await apiFetch('/api/admin/results/unpublish', {
+    method: 'POST',
   });
 }
 export async function updatePaymentStatus(teamId, status) {

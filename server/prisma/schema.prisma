@@ -191,6 +191,7 @@ model Payment {
   file_path     String
   original_name String
   status        String   @default("Pending")
+  is_paid       Boolean  @default(false)
   uploaded_at   DateTime @default(now())
 
   @@map("payments")
@@ -225,6 +226,7 @@ model HackathonSetting {
   name                 String   @default("CRUCIBLE Hackathon 2026")
   year                 Int      @default(2026)
   deadline             String   @default("2026-08-30")
+  payment_deadline     String   @default("")
   hackathonStatus      String   @default("Live") // 'Live' | 'Paused' | 'Closed'
   registrationStatus   String   @default("Open") // 'Open' | 'Closed'
   acceptingSubmissions Boolean  @default(true)   // <--- Controls PPT submissions

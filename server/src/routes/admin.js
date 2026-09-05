@@ -306,6 +306,20 @@ router.post('/results/publish', requireAuth, requireRole('admin'), async (req, r
   }
 });
 
+router.post('/results/unpublish', requireAuth, requireRole('admin'), async (req, res) => {
+  try {
+    const updated = await prisma.result.updateMany({ data: { published: false } });
+    return res.json({
+      success: true,
+      message: `Successfully unpublished ${updated.count} results.`,
+      data: { count: updated.count },
+    });
+  } catch (err) {
+    console.error('[Admin/UnpublishResults]', err);
+    return res.status(500).json({ success: false, error: 'Failed to unpublish results.' });
+  }
+});
+
 
 // ─── Announcements ────────────────────────────────────────────────────────────
 
@@ -419,6 +433,7 @@ const settingsSchema = z.object({
   name: z.string().min(1),
   year: z.number().int(),
   deadline: z.string(),
+  payment_deadline: z.string(),
   hackathonStatus: z.enum(['Live', 'Paused', 'Closed']),
   registrationStatus: z.enum(['Open', 'Closed']),
   acceptingSubmissions: z.boolean(),
@@ -453,7 +468,7 @@ router.put('/settings', requireAuth, requireRole('admin'), async (req, res) => {
 });
 
 const rankSchema = z.object({
-  position: z.enum(['first', 'second', 'third']),
+  position: z.enum(['first', 'second', 'third', 'fourth']),
   teamId: z.string().min(1),
 });
 
@@ -464,7 +479,7 @@ router.post('/results/winners', requireAuth, requireRole('admin'), async (req, r
   }
 
   const { position, teamId } = parsed.data;
-  const rankMap = { first: 1, second: 2, third: 3 };
+  const rankMap = { first: 1, second: 2, third: 3, fourth: 4 };
   const targetRank = rankMap[position];
 
   try {
@@ -499,9 +514,18 @@ router.post('/teams/:teamId/verify-payment', requireAuth, requireRole('admin'), 
       return res.status(404).json({ success: false, error: 'Payment has not been uploaded for this team.' });
     }
 
+    if (payment.status !== 'Verified' && !payment.is_paid) {
+      const successfulPaymentCount = await prisma.payment.count({
+        where: { OR: [{ is_paid: true }, { status: 'success' }, { status: 'Verified' }] },
+      });
+      if (successfulPaymentCount >= 30) {
+        return res.status(409).json({ success: false, error: 'Payment capacity has been reached.' });
+      }
+    }
+
     const updatedPayment = await prisma.payment.update({
       where: { id: payment.id },
-      data: { status: 'Verified' },
+      data: { status: 'Verified', is_paid: true },
     });
 
     return res.json({ success: true, data: updatedPayment });
@@ -515,7 +539,7 @@ router.patch('/teams/:teamId/payment-status', requireAuth, requireRole('admin', 
   try {
     const { teamId } = req.params;
     const { status } = req.body;
-    const validStatuses = new Set(['Pending', 'Verified', 'Rejected']);
+    const validStatuses = new Set(['Pending', 'Verified', 'success', 'Rejected']);
 
     if (!validStatuses.has(status)) {
       return res.status(400).json({ success: false, error: 'Invalid payment status.' });
@@ -526,9 +550,18 @@ router.patch('/teams/:teamId/payment-status', requireAuth, requireRole('admin', 
       return res.status(404).json({ success: false, error: 'Payment has not been uploaded for this team.' });
     }
 
+    if ((status === 'Verified' || status === 'success') && !payment.is_paid && payment.status !== 'Verified' && payment.status !== 'success') {
+      const successfulPaymentCount = await prisma.payment.count({
+        where: { OR: [{ is_paid: true }, { status: 'success' }, { status: 'Verified' }] },
+      });
+      if (successfulPaymentCount >= 30) {
+        return res.status(409).json({ success: false, error: 'Payment capacity has been reached.' });
+      }
+    }
+
     const updatedPayment = await prisma.payment.update({
       where: { id: payment.id },
-      data: { status },
+      data: { status, is_paid: status === 'Verified' || status === 'success' },
     });
 
     return res.json({ success: true, data: updatedPayment });
