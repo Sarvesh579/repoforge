@@ -360,7 +360,7 @@ export default function Register() {
                             <div className={styles.field}>
                               <label>Year</label>
                               <select {...form.register(`members.${index}.year`)}>
-                                {['1st Year', '2nd Year', '3rd Year', '4th Year'].map((y) => <option key={y}>{y}</option>)}
+                                {['1st Year', '2nd Year', '3rd Year', '4th Year'].map((y) => <option key={y} style={{ backgroundColor: '#3f1200ff', color: '#fff' }}>{y}</option>)}
                               </select>
                             </div>
                             <div className={styles.field}>

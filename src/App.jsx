@@ -4,7 +4,6 @@ import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import FixedBackground from './components/background/MoltenMetal';
 import CustomCursor from './components/cursor/CustomCursor.jsx';
 import LoaderCurtain from './components/ui/LoaderCurtain.jsx';
-import LoadingOverlay from './components/ui/LoadingOverlay.jsx';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { CursorProvider } from './context/CursorContext.jsx';
 import { LenisProvider } from './context/LenisContext.jsx';
@@ -33,13 +32,13 @@ function AppShell() {
     // 1. Wait for progress bar (1.8s) + a 1s pause before opening curtain
     const openTimer = window.setTimeout(() => {
       setLoaderStage('darkOpen');
-    }, 2800);
+    }, 2000);
 
     // 2. Unmount from DOM after curtain slide animation completes (2800ms + 1250ms)
     const doneTimer = window.setTimeout(() => {
       setLoaderStage('done');
       setShowLoader(false);
-    }, 4050);
+    }, 3100);
 
     return () => {
       clearTimeout(openTimer);
@@ -52,7 +51,7 @@ function AppShell() {
       {/* Loading Screen */}
       {showLoader && <LoaderCurtain stage={loaderStage} title="REPOFORGE" />}
 
-      <Suspense fallback={<LoadingOverlay visible label="Loading page..." />}>
+      <Suspense fallback={<LoaderCurtain stage={loaderStage} title="REPOFORGE" />}>
         <FixedBackground
           color1="#140600"
           color2="#B02501"

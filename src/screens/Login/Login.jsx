@@ -11,7 +11,18 @@ import { loginSchema } from '../../lib/validators';
 import styles from './Login.module.css';
 
 // Squircle SpecularButton wrapper for consistent styling
-const SqBtn = ({ children, onClick, type = 'button', lineColor = '#FAB600', baseColor = '#261005', textColor = '#ffffff', intensity = 1, fullWidth = false, danger = false }) => (
+const SqBtn = ({
+  children,
+  onClick,
+  type = 'button',
+  lineColor = '#FAB600',
+  baseColor = '#261005',
+  textColor = '#ffffff',
+  intensity = 1,
+  fullWidth = false,
+  danger = false,
+  disabled = false,
+}) => (
   <SpecularButton
     size="md"
     radius={16}
@@ -23,6 +34,7 @@ const SqBtn = ({ children, onClick, type = 'button', lineColor = '#FAB600', base
     onClick={onClick}
     type={type}
     className={fullWidth ? styles.fullWidthBtn : ''}
+    disabled={disabled}
   >
     {children}
   </SpecularButton>
@@ -87,7 +99,14 @@ export default function Login() {
               <Link to="/register">Create account / Register</Link>
             </div>
 
-            <SqBtn type="submit" fullWidth intensity={1.2}>Login</SqBtn>
+            <SqBtn
+              type="submit"
+              fullWidth
+              intensity={1.2}
+              disabled={form.formState.isSubmitting}
+            >
+              Login
+            </SqBtn>
           </form>
         </motion.div>
       </main>

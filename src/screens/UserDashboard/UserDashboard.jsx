@@ -517,8 +517,8 @@ export default function UserDashboard() {
           fileName: res.data.fileName,
           status: res.data.status,
         });
-          const teamRes = await getMyTeam();
-          if (teamRes?.data) setLiveTeam(teamRes.data);
+        const teamRes = await getMyTeam();
+        if (teamRes?.data) setLiveTeam(teamRes.data);
         showToast('Payment screenshot uploaded successfully! Pending verification.');
       }
     } catch (err) {
@@ -569,7 +569,18 @@ export default function UserDashboard() {
       alert('Add Member is available only when the team has 3 members.');
       return;
     }
-    setMembersForm([...membersForm, { name: '', role: 'Developer', avatar: 'TM' }]);
+    setMembersForm([...membersForm,
+    {
+      id: null,
+      name: '',
+      email: '',
+      phone: '',
+      role: 'Developer',
+      year: '',
+      dept: '',
+      avatar: 'TM',
+    },
+    ]);
   };
 
   const handleRemoveMemberForm = (index) => {
@@ -708,6 +719,50 @@ export default function UserDashboard() {
     return Icons.user;
   };
 
+  const fieldLabelStyle = {
+    fontSize: '0.78rem',
+    color: 'rgba(255,255,255,0.7)',
+    fontWeight: 600,
+  };
+
+  const fieldInputStyle = {
+    width: '100%',
+    boxSizing: 'border-box',
+    background: 'rgba(255, 255, 255, 0.05)',
+    border: '1px solid rgba(255, 255, 255, 0.1)',
+    borderRadius: 14,
+    padding: '13px 16px',
+    color: '#ffffff',
+    fontSize: '0.95rem',
+    fontFamily: "'Inter', system-ui, sans-serif",
+    outline: 'none',
+    transition: 'border-color 0.2s, background 0.2s',
+    WebkitAppearance: 'none',
+    colorScheme: 'dark',
+  };
+
+  const downloadTemplate = async () => {
+    const href = '/Repoforge_2026_Template.pptx';
+
+    try {
+      const response = await fetch(href, { method: 'HEAD' });
+
+      if (!response.ok) {
+        console.log('Please try later. Template unavailable at the moment');
+        return;
+      }
+
+      const link = document.createElement('a');
+      link.href = href;
+      link.download = 'Repoforge_2026_Template.pptx';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } catch (error) {
+      console.log('Please try later. Template unavailable at the moment');
+    }
+  };
+
   return (
     <div className={styles.dashboardContainer}>
       {(teamLoading || loadingProblems || actionLoading) && (
@@ -824,7 +879,7 @@ export default function UserDashboard() {
                   </p>
                 </div>
 
-                <div style={{ marginTop: 24, display: 'flex', justifyContent: 'flex-start' }}>
+                <div style={{ marginTop: 24, display: 'flex', gap: '5px', flexDirection: 'row' }}>
                   <StarBorder
                     as="button"
                     color="#FAB600"
@@ -833,6 +888,15 @@ export default function UserDashboard() {
                     onClick={() => setActiveTab('problems')}
                   >
                     {selectedProb ? 'Change / Explore Problems →' : 'Select a Problem Statement →'}
+                  </StarBorder>
+                  <StarBorder
+                    as="button"
+                    color="#FAB600"
+                    backgroundColor="#261005"
+                    borderColor="rgba(250, 182, 0, 0.4)"
+                    onClick={() => downloadTemplate}
+                  >
+                    Download PPT Template ⤓
                   </StarBorder>
                 </div>
               </div>
@@ -933,7 +997,7 @@ export default function UserDashboard() {
                 <div className={styles.panel}>
                   <div className={styles.panelHeader}>
                     <h3 className={styles.panelTitle} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                      {Icons.team} Your Team ({currentTeam?.members?.length || 4})
+                      {Icons.team} Your Team ({currentTeam?.members?.length || 0})
                     </h3>
                     <SqBtn onClick={() => setActiveTab('team')}>View All</SqBtn>
                   </div>
@@ -1531,69 +1595,121 @@ export default function UserDashboard() {
             <div className={styles.editMembersScroll} data-lenis-prevent="true">
               <form onSubmit={handleSaveTeamMembers} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
                 {membersForm.map((m, idx) => (
-                <div
-                  key={idx}
-                  style={{
-                    padding: 16,
-                    background: 'rgba(255,255,255,0.04)',
-                    border: '1px solid rgba(255,255,255,0.1)',
-                    borderRadius: 14,
-                    display: 'flex',
-                    flexDirection: 'column',
-                    gap: 12,
-                  }}
-                >
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <span style={{ fontFamily: 'JetBrains Mono', color: '#FAB600', fontSize: '0.85rem', fontWeight: 700 }}>
-                      Member {idx + 1} {idx === 0 ? '(Team Leader)' : ''}
-                    </span>
-                    {membersForm.length === 4 && idx > 0 && (
-                      <SqBtn onClick={() => handleRemoveMemberForm(idx)} danger size="sm">
-                        Remove
-                      </SqBtn>
-                    )}
-                  </div>
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-                      <label style={{ fontSize: '0.78rem', color: 'rgba(255,255,255,0.7)', fontWeight: 600 }}>Full Name</label>
-                      <input
-                        type="text"
-                        value={m.name}
-                        onChange={(e) => handleMemberChange(idx, 'name', e.target.value)}
-                        placeholder="Member Name"
-                        required
-                        style={{
-                          background: 'rgba(255,255,255,0.06)',
-                          border: '1px solid rgba(255,255,255,0.15)',
-                          borderRadius: 8,
-                          padding: '8px 12px',
-                          color: '#fff',
-                          fontSize: '0.9rem',
-                          outline: 'none',
-                        }}
-                      />
+                  <div
+                    key={idx}
+                    style={{
+                      padding: 16,
+                      background: 'rgba(255,255,255,0.04)',
+                      border: '1px solid rgba(255,255,255,0.1)',
+                      borderRadius: 14,
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: 12,
+                    }}
+                  >
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <span style={{ fontFamily: 'JetBrains Mono', color: '#FAB600', fontSize: '0.85rem', fontWeight: 700 }}>
+                        Member {idx + 1} {idx === 0 ? '(Team Leader)' : ''}
+                      </span>
+                      {membersForm.length === 4 && idx > 0 && (
+                        <SqBtn onClick={() => handleRemoveMemberForm(idx)} danger size="sm">
+                          Remove
+                        </SqBtn>
+                      )}
                     </div>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-                      <label style={{ fontSize: '0.78rem', color: 'rgba(255,255,255,0.7)', fontWeight: 600 }}>Role</label>
-                      <input
-                        type="text"
-                        value={m.role}
-                        onChange={(e) => handleMemberChange(idx, 'role', e.target.value)}
-                        placeholder="e.g. Developer, Designer, AI Lead"
-                        required
-                        style={{
-                          background: 'rgba(255,255,255,0.06)',
-                          border: '1px solid rgba(255,255,255,0.15)',
-                          borderRadius: 8,
-                          padding: '8px 12px',
-                          color: '#fff',
-                          fontSize: '0.9rem',
-                          outline: 'none',
-                        }}
-                      />
+                    <div
+                      style={{
+                        display: 'grid',
+                        gridTemplateColumns: '1fr 1fr',
+                        gap: 12,
+                      }}
+                    >
+                      {/* Full Name */}
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                        <label style={fieldLabelStyle}>Full Name</label>
+                        <input
+                          type="text"
+                          value={m.name || ''}
+                          onChange={(e) => handleMemberChange(idx, 'name', e.target.value)}
+                          placeholder="Member Name"
+                          required
+                          style={fieldInputStyle}
+                        />
+                      </div>
+
+                      {/* Email */}
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                        <label style={fieldLabelStyle}>Email</label>
+                        <input
+                          type="email"
+                          value={m.email || ''}
+                          onChange={(e) => handleMemberChange(idx, 'email', e.target.value)}
+                          placeholder="member@example.com"
+                          required
+                          style={fieldInputStyle}
+                        />
+                      </div>
+
+                      {/* Phone */}
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                        <label style={fieldLabelStyle}>Phone</label>
+                        <input
+                          type="tel"
+                          value={m.phone || ''}
+                          onChange={(e) => handleMemberChange(idx, 'phone', e.target.value)}
+                          placeholder="10-digit phone number"
+                          required
+                          style={fieldInputStyle}
+                        />
+                      </div>
+
+                      {/* Year */}
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                        <label style={fieldLabelStyle}>Year</label>
+                        <select
+                          value={m.year || ''}
+                          onChange={(e) => handleMemberChange(idx, 'year', e.target.value)}
+                          required
+                          style={fieldInputStyle}
+                        >
+                          <option value="" disabled style={{ backgroundColor: '#3f1200ff', color: '#fff' }}>
+                            Select Year
+                          </option>
+                          {['1st Year', '2nd Year', '3rd Year', '4th Year'].map((y) => (
+                            <option key={y} value={y} style={{ backgroundColor: '#3f1200ff', color: '#fff' }}>
+                              {y}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+
+                      {/* Department */}
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                        <label style={fieldLabelStyle}>Department</label>
+                        <input
+                          type="text"
+                          value={m.dept || ''}
+                          onChange={(e) => handleMemberChange(idx, 'dept', e.target.value)}
+                          placeholder="e.g. Computer Engineering"
+                          required
+                          style={fieldInputStyle}
+                        />
+                      </div>
+
+                      {/* Role */}
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                        <label style={fieldLabelStyle}>Role</label>
+                        <input
+                          type="text"
+                          value={m.role || ''}
+                          onChange={(e) => handleMemberChange(idx, 'role', e.target.value)}
+                          placeholder="e.g. Developer"
+                          required
+                          style={fieldInputStyle}
+                        />
+                      </div>
                     </div>
                   </div>
-                </div>
                 ))}
 
                 <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 12, marginTop: 12 }}>
@@ -1607,8 +1723,9 @@ export default function UserDashboard() {
               </form>
             </div>
           </div>
-        </div>
-      )}
-    </div>
+        </div >
+      )
+      }
+    </div >
   );
 }
