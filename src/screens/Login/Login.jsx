@@ -4,6 +4,7 @@ import { useForm } from 'react-hook-form';
 import { Link, useNavigate } from 'react-router-dom';
 import SpecularButton from '../../components/ui/SpecularButton';
 import Navbar from '../../components/ui/Navbar';
+import LoadingOverlay from '../../components/ui/LoadingOverlay';
 import { useAuth } from '../../context/AuthContext';
 import { login as loginUser } from '../../lib/api';
 import { loginSchema } from '../../lib/validators';
@@ -55,6 +56,7 @@ export default function Login() {
 
   return (
     <div className={styles.page}>
+      <LoadingOverlay visible={form.formState.isSubmitting} label="Signing you in..." />
       <Navbar />
       <main className={styles.shell}>
         {/* Back to home button */}

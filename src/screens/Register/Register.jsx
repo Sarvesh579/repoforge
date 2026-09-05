@@ -7,6 +7,7 @@ import { getRegistrationStatus, getTracks, register as registerTeam } from '../.
 import { registerSchema } from '../../lib/validators';
 import Navbar from '../../components/ui/Navbar';
 import SpecularButton from '../../components/ui/SpecularButton';
+import LoadingOverlay from '../../components/ui/LoadingOverlay';
 import styles from './Register.module.css';
 
 const steps = ['Team', 'Lead', 'Members', 'Review'];
@@ -46,6 +47,7 @@ export default function Register() {
   const [turnstileToken, setTurnstileToken] = useState('');
   const [idsFile, setIdsFile] = useState(null);
   const [idsFileError, setIdsFileError] = useState('');
+  const [isBusy, setIsBusy] = useState(true);
 
   const form = useForm({
     resolver: zodResolver(registerSchema),
@@ -69,9 +71,13 @@ export default function Register() {
 
   useEffect(() => {
     async function init() {
-      const [tracksRes, statusRes] = await Promise.all([getTracks(), getRegistrationStatus()]);
-      setTracks(tracksRes.data || []);
-      setStatus(statusRes.data || { open: true });
+      try {
+        const [tracksRes, statusRes] = await Promise.all([getTracks(), getRegistrationStatus()]);
+        setTracks(tracksRes.data || []);
+        setStatus(statusRes.data || { open: true });
+      } finally {
+        setIsBusy(false);
+      }
     }
     init();
   }, []);
@@ -130,12 +136,15 @@ export default function Register() {
       setIdsFileError('Please upload a combined PDF of all participant ID proofs.');
       return;
     }
+    setIsBusy(true);
     try {
       const response = await registerTeam({ ...payload, cf_turnstile_response: turnstileToken }, idsFile);
       setSuccessData(response.data);
       setSubmitted(true);
     } catch (err) {
       form.setError('root', { message: err.message || 'Registration failed. Please try again.' });
+    } finally {
+      setIsBusy(false);
     }
   };
 
@@ -194,6 +203,7 @@ export default function Register() {
 
   return (
     <div className={styles.page}>
+      <LoadingOverlay visible={isBusy} label={submitted ? 'Registration complete...' : 'Creating your team...'} />
       <Navbar />
       <main className={styles.shell}>
         {/* Back to home button */}
