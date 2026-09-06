@@ -506,7 +506,7 @@ export default function Landing() {
                 {/* 08: Inauguration */}
                 <div className={`${styles.milestoneCard} ${isDateReached(milestoneDates['08']) ? styles.cardActive : styles.cardDark}`}>
                   <div className={styles.dateLabelDark}>8:30 AM</div>
-                  <h3>Inuguration Ceremony</h3>
+                  <h3>Inauguration Ceremony</h3>
                   <p>A short ceremony to declare the hackathon open.</p>
                 </div>
 
