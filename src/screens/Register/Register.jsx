@@ -178,6 +178,7 @@ export default function Register() {
             <div className={styles.successIcon}>✦</div>
             <p className={styles.eyebrow}>REGISTRATION COMPLETE</p>
             <h1 className={styles.successTitle}>You're in.</h1>
+            <p className={styles.successDesc}>Credentials also sent to your mail. Please check the Spam Folder.</p>
             <p className={styles.successDesc}>{successData.message}</p>
             <div className={styles.teamIdBox}>
               <span>Team ID</span>

@@ -48,7 +48,7 @@ const registerSchema = z.object({
 });
 
 const joinSchema = z.object({
-  joinCode: z.string().min(4, 'Join code is required.'),
+  joinCode: z.string().optional(),
   name: z.string().min(2, 'Your name is required.'),
   email: z.string().email('Valid email required.'),
   phone: z.string().min(8, 'Phone required.').default(''),
@@ -67,6 +67,28 @@ const changePasswordSchema = z.object({
 
 function generateTempPassword(length = 10) {
   return crypto.randomBytes(length).toString('base64url').slice(0, length);
+}
+
+/**
+ * Generate serial team ID formatted as "CSI26-###"
+ * Finds the current maximum sequential number in DB and increments by 1.
+ */
+async function generateNextTeamId(tx = prisma) {
+  const teams = await tx.team.findMany({
+    select: { id: true },
+  });
+
+  let maxNum = 0;
+  for (const t of teams) {
+    const match = String(t.id).match(/^CSI26-(\d{3,})$/i);
+    if (match) {
+      const num = parseInt(match[1], 10);
+      if (num > maxNum) maxNum = num;
+    }
+  }
+
+  const nextNum = maxNum + 1;
+  return `CSI26-${String(nextNum).padStart(3, '0')}`;
 }
 
 // ─── POST /api/team/register ──────────────────────────────────────────────────
@@ -136,6 +158,14 @@ router.post(
       });
     }
 
+    // Check if team name already registered (case-insensitive)
+    const existingTeamName = await prisma.team.findFirst({
+      where: { name: { equals: teamName.trim(), mode: 'insensitive' } },
+    });
+    if (existingTeamName) {
+      return res.status(409).json({ success: false, error: 'This team name is already taken. Please choose another name.' });
+    }
+
     // Check if lead email already registered
     const existingTeam = await prisma.team.findUnique({ where: { lead_email: leadEmail.toLowerCase() } });
     if (existingTeam) {
@@ -143,13 +173,11 @@ router.post(
     }
 
     try {
-      const joinCode = await generateJoinCode();
       const finalPassword = password || generateTempPassword();
       const passwordHash = await bcrypt.hash(finalPassword, 12);
 
-      // Generate the team id upfront so the storage path (and the DB row) can
-      // reference it, and so the PDF is safely on Supabase before we touch the DB.
-      const teamId = crypto.randomUUID();
+      // Generate serial team ID formatted as "CSI26-###"
+      const teamId = await generateNextTeamId();
       const idsExt = idsFile.originalname.slice(idsFile.originalname.lastIndexOf('.')).toLowerCase() || '.pdf';
       const idsStoragePath = `${teamId}/participant-ids${idsExt}`;
 
@@ -165,8 +193,8 @@ router.post(
         const newTeam = await tx.team.create({
           data: {
             id: teamId,
-            name: teamName,
-            join_code: joinCode,
+            name: teamName.trim(),
+            join_code: teamId, // default to teamId for schema uniqueness
             theme_track: themeTrack || problemStatementId || '',
             problem_statement_id: problemStatementId || '',
             problem_statement: problemStatement || '',
@@ -224,9 +252,8 @@ router.post(
       // Send credential email (non-blocking — don't fail registration if email fails)
       sendRegistrationEmail({
         to: leadEmail,
-        teamName,
+        teamName: team.name,
         teamId: team.id,
-        joinCode,
         password: finalPassword,
       })
         .then(() => prisma.credential.update({
@@ -239,7 +266,6 @@ router.post(
         success: true,
         data: {
           teamId: team.id,
-          joinCode,
           email: leadEmail.toLowerCase(),
           message: 'Registration successful! Login credentials have been sent to your email.',
         },
@@ -265,13 +291,19 @@ router.post('/join', publicWriteLimiter, verifyTurnstile, async (req, res) => {
   const { joinCode, name, email, phone, role } = parsed.data;
 
   try {
-    const team = await prisma.team.findUnique({
-      where: { join_code: joinCode.toUpperCase() },
+    const lookupKey = (joinCode || '').toUpperCase().trim();
+    const team = await prisma.team.findFirst({
+      where: {
+        OR: [
+          { id: { equals: lookupKey, mode: 'insensitive' } },
+          { join_code: { equals: lookupKey, mode: 'insensitive' } },
+        ],
+      },
       include: { members: true },
     });
 
     if (!team) {
-      return res.status(404).json({ success: false, error: 'No team found with that join code.' });
+      return res.status(404).json({ success: false, error: 'No team found with that Team ID.' });
     }
 
     if (team.members.length >= MAX_TEAM_SIZE) {

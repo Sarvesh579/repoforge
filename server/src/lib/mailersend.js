@@ -65,129 +65,173 @@ async function sendRegistrationEmail({
       margin: 0;
       padding: 0;
       background: #0a0e17;
-      font-family: 'Segoe UI', Arial, sans-serif;
+      font-family: "Segoe UI", Arial, sans-serif;
       color: #e8eeff;
     }
 
     .container {
-      max-width: 560px;
+      max-width: 600px;
       margin: 40px auto;
-      background: rgba(255,255,255,0.04);
-      border: 1px solid rgba(255,255,255,0.08);
+      background: #101722;
+      border: 1px solid rgba(255, 255, 255, 0.08);
       border-radius: 16px;
       overflow: hidden;
     }
 
+    /* Header */
     .header {
       background: linear-gradient(
         135deg,
         #0a0e17 0%,
         #142034 100%
       );
-      padding: 40px 40px 32px;
-      border-bottom: 1px solid rgba(45,91,255,0.3);
+      padding: 40px;
+      border-bottom: 1px solid rgba(45, 91, 255, 0.3);
     }
 
     .logo {
+      margin: 0 0 14px;
       font-size: 11px;
-      letter-spacing: 3px;
+      line-height: 1.4;
+      letter-spacing: 2.5px;
       color: #71a7ff;
       font-weight: 600;
-      margin-bottom: 12px;
     }
 
     .title {
+      margin: 0;
       font-size: 28px;
+      line-height: 1.25;
       font-weight: 700;
       color: #e8eeff;
-      margin: 0;
-      line-height: 1.2;
     }
 
+    /* Body */
     .body {
       padding: 36px 40px;
     }
 
     .greeting {
-      font-size: 16px;
-      line-height: 1.6;
-      color: #a0b4d0;
-      margin-bottom: 24px;
+      margin: 0 0 28px;
+      font-size: 15px;
+      line-height: 1.7;
+      color: #aebbd0;
     }
 
+    .greeting strong {
+      color: #e8eeff;
+      font-weight: 600;
+    }
+
+    /* Credentials Card */
     .card {
-      background: rgba(45,91,255,0.08);
-      border: 1px solid rgba(45,91,255,0.25);
-      border-radius: 12px;
-      padding: 24px;
       margin-bottom: 24px;
+      padding: 22px 24px;
+      background: rgba(45, 91, 255, 0.07);
+      border: 1px solid rgba(45, 91, 255, 0.24);
+      border-radius: 12px;
     }
 
     .row {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 10px 0;
-      border-bottom: 1px solid rgba(255,255,255,0.05);
-      gap: 20px;
+      gap: 24px;
+      padding: 13px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .row:first-child {
+      padding-top: 2px;
     }
 
     .row:last-child {
+      padding-bottom: 2px;
       border-bottom: none;
     }
 
     .label {
-      font-size: 12px;
-      letter-spacing: 1px;
+      flex-shrink: 0;
+      font-size: 11px;
+      line-height: 1.4;
+      letter-spacing: 1.2px;
       color: #71a7ff;
       font-weight: 600;
-      white-space: nowrap;
     }
 
     .value {
-      font-size: 16px;
-      font-weight: 700;
-      color: #e8eeff;
-      font-family: 'Courier New', monospace;
-      letter-spacing: 1px;
+      max-width: 65%;
+      font-size: 14px;
+      line-height: 1.5;
+      font-weight: 600;
+      color: #0032baff;
       text-align: right;
       word-break: break-word;
+      overflow-wrap: anywhere;
     }
 
+    /* Security Notice */
     .warning {
-      background: rgba(255,160,0,0.08);
-      border: 1px solid rgba(255,160,0,0.25);
-      border-radius: 10px;
-      padding: 16px 20px;
       margin-bottom: 24px;
+      padding: 15px 18px;
+      background: rgba(255, 160, 0, 0.07);
+      border: 1px solid rgba(255, 160, 0, 0.22);
+      border-radius: 10px;
       font-size: 13px;
-      line-height: 1.5;
-      color: #ffa000;
+      line-height: 1.6;
+      color: #d9a94a;
+    }
+
+    .warning strong {
+      color: #f0b84b;
+      font-weight: 600;
+    }
+
+    /* CTA */
+    .cta-wrapper {
+      margin-bottom: 24px;
     }
 
     .cta {
       display: inline-block;
+      padding: 12px 26px;
       background: #2d5bff;
+      border-radius: 8px;
       color: #ffffff !important;
       text-decoration: none;
-      font-weight: 600;
       font-size: 14px;
-      padding: 12px 28px;
-      border-radius: 8px;
-      margin: 4px 0 20px;
+      line-height: 1.4;
+      font-weight: 600;
     }
 
+    /* Submission Information */
+    .submission {
+      margin: 0;
+      padding-top: 2px;
+      font-size: 13px;
+      line-height: 1.7;
+      color: #8fa3c0;
+    }
+
+    .submission strong {
+      color: #71a7ff;
+      font-weight: 600;
+    }
+
+    /* Footer */
     .footer {
       padding: 24px 40px;
-      border-top: 1px solid rgba(255,255,255,0.06);
-      font-size: 12px;
-      line-height: 1.5;
-      color: #506080;
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+      font-size: 11px;
+      line-height: 1.7;
+      color: #c00000ff;
       text-align: center;
     }
 
+    /* Mobile */
     @media only screen and (max-width: 600px) {
       .container {
+        width: 100%;
         margin: 0;
         border-radius: 0;
       }
@@ -199,14 +243,34 @@ async function sendRegistrationEmail({
         padding-right: 24px;
       }
 
+      .header {
+        padding-top: 32px;
+        padding-bottom: 28px;
+      }
+
+      .body {
+        padding-top: 30px;
+        padding-bottom: 30px;
+      }
+
+      .title {
+        font-size: 25px;
+      }
+
       .row {
-        align-items: flex-start;
         flex-direction: column;
-        gap: 4px;
+        align-items: flex-start;
+        gap: 5px;
       }
 
       .value {
+        max-width: 100%;
         text-align: left;
+      }
+
+      .cta {
+        display: block;
+        text-align: center;
       }
     }
   </style>
@@ -216,6 +280,7 @@ async function sendRegistrationEmail({
 
   <div class="container">
 
+    <!-- Header -->
     <div class="header">
 
       <div class="logo">
@@ -228,16 +293,16 @@ async function sendRegistrationEmail({
 
     </div>
 
+    <!-- Main Content -->
     <div class="body">
 
       <p class="greeting">
         Hi there, <strong>${teamName}</strong> —
         your team is officially registered for
         <strong>REPOFORGE 2026</strong>.
-        Share the join code below with your teammates
-        so they can join your team.
       </p>
 
+      <!-- Team Credentials -->
       <div class="card">
 
         <div class="row">
@@ -248,11 +313,6 @@ async function sendRegistrationEmail({
         <div class="row">
           <span class="label">TEAM ID</span>
           <span class="value">${teamId}</span>
-        </div>
-
-        <div class="row">
-          <span class="label">JOIN CODE</span>
-          <span class="value">${joinCode}</span>
         </div>
 
         <div class="row">
@@ -267,32 +327,37 @@ async function sendRegistrationEmail({
 
       </div>
 
+      <!-- Security Notice -->
       <div class="warning">
-        ⚠️ Keep your team login credentials private.
-        Only share the <strong>Join Code</strong> with your teammates.
+        Keep your team login credentials private.
+        Do not share your password with anyone.
       </div>
 
-      <a
-        class="cta"
-        href="${frontendUrl}/login"
-      >
-        Login to your dashboard →
-      </a>
+      <!-- Dashboard CTA -->
+      <div class="cta-wrapper">
+        <a
+          class="cta"
+          href="${frontendUrl}/login"
+        >
+          Login to Your Dashboard →
+        </a>
+      </div>
 
-      <p style="font-size:13px; line-height:1.6; color:#71a7ff; margin:0;">
-        <strong>Round 1 Submission Window:</strong>
-        Sept 22 – Sept 25, 2026<br/>
+      <!-- Submission Information -->
+      <p class="submission">
+        <strong>Round 1 Submission Window:</strong><br />
+        September 22 – September 25, 2026<br />
         Upload your PPT/PDF abstract from the dashboard before the deadline.
       </p>
 
     </div>
 
+    <!-- Footer -->
     <div class="footer">
 
-      CSI Student Chapter · Xavier Institute of Engineering ·
-      REPOFORGE 2026<br/>
+      CSI Student Chapter · Xavier Institute of Engineering · REPOFORGE 2026<br />
 
-      You are receiving this because you registered for the hackathon.
+      You are receiving this email because your team registered for the hackathon.
 
     </div>
 
@@ -300,6 +365,7 @@ async function sendRegistrationEmail({
 
 </body>
 </html>
+
 `;
 
   const emailParams = new EmailParams()

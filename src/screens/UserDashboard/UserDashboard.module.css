@@ -30,6 +30,7 @@
     transform: rotate(360deg);
   }
 }
+
 /* UserDashboard.module.css */
 
 .dashboardContainer {
@@ -40,6 +41,7 @@
   font-family: 'Inter', system-ui, sans-serif;
   position: relative;
   z-index: 1;
+  overflow-x: hidden;
 }
 
 .sqBtn {
@@ -540,7 +542,7 @@
   border-radius: 28px;
   padding: 32px;
   width: min(100%, 540px);
-  box-shadow: 
+  box-shadow:
     0 24px 60px rgba(0, 0, 0, 0.65),
     inset 0 1px 0 rgba(255, 255, 255, 0.2),
     0 0 35px rgba(250, 182, 0, 0.15);
@@ -662,10 +664,135 @@
   background: rgba(250, 182, 0, 0.6);
 }
 
+/* ── Team Tab ────────────────────────────────────────────────────────────── */
+.teamHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 4px;
+}
+
+.teamMeta {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+  flex: 1;
+}
+
+.teamName {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 800;
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+.teamId {
+  font-family: 'JetBrains Mono', monospace;
+  color: #FAB600;
+  font-size: 0.85rem;
+  word-break: break-all;
+}
+
+.teamActions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.memberInfo {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.teamLeadBadge {
+  background: rgba(234, 179, 8, 0.15);
+  color: #eab308;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-family: 'JetBrains Mono', monospace;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.downloadBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 11px 22px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  font-family: 'Inter', system-ui, sans-serif;
+  letter-spacing: 0.01em;
+  border-radius: 14px;
+  border: 1px solid rgba(250, 182, 0, 0.45);
+  background: linear-gradient(135deg, rgba(38, 16, 5, 0.95) 0%, rgba(50, 22, 5, 0.9) 100%);
+  color: #FAB600;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: border-color 0.22s ease, box-shadow 0.22s ease, transform 0.18s ease, color 0.18s ease;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  margin-bottom: 20px;
+}
+
+.downloadBtn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(105deg, transparent 40%, rgba(250, 182, 0, 0.12) 55%, transparent 70%);
+  transform: translateX(-100%);
+  transition: transform 0.5s ease;
+}
+
+.downloadBtn:hover::before {
+  transform: translateX(100%);
+}
+
+.downloadBtn:hover {
+  border-color: #FAB600;
+  color: #ffe066;
+  box-shadow: 0 6px 26px rgba(250, 182, 0, 0.32), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  transform: translateY(-2px);
+}
+
+.downloadBtn:active {
+  transform: translateY(0) scale(0.98);
+  box-shadow: 0 3px 12px rgba(250, 182, 0, 0.22);
+}
+
+.downloadBtn svg {
+  flex-shrink: 0;
+  opacity: 0.9;
+}
+
+.starborderContainer {
+  margin-top: 24px;
+  display: flex;
+  gap: 10px;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
 @media (max-width: 900px) {
   .dashboardContainer {
     flex-direction: column;
+    width: 100%;
+    overflow-x: hidden;
   }
+
   .sidebar {
     width: 100%;
     min-width: 100%;
@@ -675,26 +802,46 @@
     border-right: none;
     border-bottom: 1px solid rgba(255, 255, 255, 0.12);
   }
+
   .brandGroup {
     margin-bottom: 14px;
     padding-bottom: 14px;
   }
+
   .tabs {
     flex-direction: row;
     overflow-x: auto;
     padding-bottom: 8px;
   }
+
   .tabItem {
     white-space: nowrap;
     width: auto;
   }
+
   .mainContent {
     margin-left: 0;
     max-width: 100%;
-    padding: 24px 16px 60px;
+    width: 100%;
+    padding: 20px 16px 60px;
+    box-sizing: border-box;
+    overflow-x: hidden;
   }
+
+  .welcomeCard {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 20px 16px;
+  }
+
   .panelsLayout {
     grid-template-columns: 1fr;
+    width: 100%;
+  }
+
+  .panel {
+    width: 100%;
+    box-sizing: border-box;
   }
 }
 
@@ -707,9 +854,61 @@
 @media (max-width: 640px) {
   .statusGrid {
     grid-template-columns: 1fr;
+    width: 100%;
+    box-sizing: border-box;
   }
+
   .featuredProblemCard {
     grid-column: span 1;
     grid-row: span 1;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 20px 16px;
   }
-}
+
+  .statusCard {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 20px 16px;
+  }
+
+  .starborderContainer {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .starborderContainer button,
+  .starborderContainer > * {
+    width: 100%;
+  }
+
+  .downloadBtn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  /* Team tab mobile */
+  .teamHeader {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .teamActions {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .teamName {
+    font-size: 1.25rem;
+  }
+
+  .memberItem {
+    flex-wrap: wrap;
+    padding: 14px 12px;
+    gap: 10px;
+  }
+
+  .teamLeadBadge {
+    margin-left: auto;
+  }
+}

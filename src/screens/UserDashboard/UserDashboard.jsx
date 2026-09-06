@@ -875,29 +875,37 @@ export default function UserDashboard() {
                   <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.9rem', lineHeight: 1.6, margin: 0 }}>
                     {selectedProb
                       ? selectedProb.description || 'Focus on building an automated, scalable solution with high real-world impact for jury evaluation.'
-                      : 'Explore available hackathon problem statements (PS001–PS010) and select your official track to get started.'}
+                      : 'Explore available hackathon problem statements (PS001-PS010) and select your official track to get started.'}
                   </p>
                 </div>
 
-                <div style={{ marginTop: 24, display: 'flex', gap: '5px', flexDirection: 'row' }}>
-                  <StarBorder
-                    as="button"
-                    color="#FAB600"
-                    backgroundColor="#261005"
-                    borderColor="rgba(250, 182, 0, 0.4)"
+                <div className={styles.starborderContainer}>
+                  <button
+                    type="button"
+                    className={styles.downloadBtn}
+                    style={{ marginBottom: 0 }}
                     onClick={() => setActiveTab('problems')}
                   >
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                      <path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2" />
+                      <rect x="9" y="3" width="6" height="4" rx="1" />
+                      <path d="M9 14l2 2 4-4" />
+                    </svg>
                     {selectedProb ? 'Change / Explore Problems →' : 'Select a Problem Statement →'}
-                  </StarBorder>
-                  <StarBorder
-                    as="button"
-                    color="#FAB600"
-                    backgroundColor="#261005"
-                    borderColor="rgba(250, 182, 0, 0.4)"
-                    onClick={() => downloadTemplate}
+                  </button>
+                  <button
+                    type="button"
+                    className={styles.downloadBtn}
+                    style={{ marginBottom: 0 }}
+                    onClick={downloadTemplate}
                   >
-                    Download PPT Template ⤓
-                  </StarBorder>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                      <polyline points="7 10 12 15 17 10" />
+                      <line x1="12" y1="15" x2="12" y2="3" />
+                    </svg>
+                    Download PPT Template
+                  </button>
                 </div>
               </div>
 
@@ -1124,13 +1132,13 @@ export default function UserDashboard() {
         {/* ── 3. MY TEAM TAB ── */}
         {activeTab === 'team' && (
           <div className={styles.panel}>
-            <div className={styles.panelHeader}>
-              <div>
-                <h2 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 800 }}>{currentTeam?.teamName}</h2>
-                <span style={{ fontFamily: 'JetBrains Mono', color: '#FAB600', fontSize: '0.85rem' }}>Team ID: {currentTeam?.id}</span>
+            <div className={styles.teamHeader}>
+              <div className={styles.teamMeta}>
+                <h2 className={styles.teamName}>{currentTeam?.teamName}</h2>
+                <span className={styles.teamId}>Team ID: {currentTeam?.id}</span>
               </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                <span className={styles.statusPill}>{Icons.statusDot} Registered & Active</span>
+              <div className={styles.teamActions}>
+                <span className={styles.statusPill}>{Icons.statusDot} Registered &amp; Active</span>
                 {isLeader && (
                   <SqBtn onClick={openEditTeamModal} size="sm">
                     <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
@@ -1144,18 +1152,18 @@ export default function UserDashboard() {
             <h3 style={{ marginTop: 24, fontSize: '1.1rem' }}>Team Members ({currentTeam?.members?.length})</h3>
             <div className={styles.memberList} style={{ marginTop: 16 }}>
               {currentTeam?.members?.map((m) => (
-                <div key={m.name} className={styles.memberItem} style={{ padding: 16 }}>
-                  <div className={styles.memberAvatar} style={{ width: 44, height: 44, fontSize: '1rem' }}>
+                <div key={m.name} className={styles.memberItem}>
+                  <div className={styles.memberAvatar} style={{ width: 44, height: 44, fontSize: '1rem', flexShrink: 0 }}>
                     {getRoleIcon(m.role)}
                   </div>
-                  <div style={{ flex: 1 }}>
-                    <strong style={{ fontSize: '1rem' }}>{m.name}</strong>
-                    <div style={{ color: 'rgba(255,255,255,0.55)', fontSize: '0.82rem', display: 'flex', alignItems: 'center', gap: 4 }}>
+                  <div className={styles.memberInfo}>
+                    <strong className={styles.memberName}>{m.name}</strong>
+                    <div className={styles.memberRole}>
                       {getRoleIcon(m.role)} {m.role}
                     </div>
                   </div>
                   {m.role.includes('Leader') && (
-                    <span style={{ background: 'rgba(234,179,8,0.15)', color: '#eab308', padding: '4px 10px', borderRadius: 999, fontSize: '0.75rem', fontFamily: 'JetBrains Mono', display: 'inline-flex', alignItems: 'center', gap: 5 }}>
+                    <span className={styles.teamLeadBadge}>
                       {Icons.crown} Team Lead
                     </span>
                   )}
@@ -1165,9 +1173,22 @@ export default function UserDashboard() {
           </div>
         )}
 
+
         {/* ── 4. SUBMISSION TAB ── */}
         {activeTab === 'submission' && (
           <div className={styles.panel}>
+            <button
+              type="button"
+              className={styles.downloadBtn}
+              onClick={downloadTemplate}
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                <polyline points="7 10 12 15 17 10" />
+                <line x1="12" y1="15" x2="12" y2="3" />
+              </svg>
+              Download PPT Template
+            </button>
             <div className={styles.panelHeader}>
               <div>
                 <h2 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 800 }}>Final Presentation Submission</h2>
