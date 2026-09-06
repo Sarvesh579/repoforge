@@ -4,7 +4,7 @@ const bcrypt = require('bcryptjs');
 const crypto = require('crypto');
 const prisma = require('../lib/prisma');
 const { generateJoinCode } = require('../lib/joinCode');
-const { sendCredentialEmail, sendMemberWelcomeEmail } = require('../lib/email');
+const { sendRegistrationEmail } = require('../lib/mailersend');
 const { requireAuth, requireRole } = require('../middleware/auth');
 const { publicWriteLimiter } = require('../middleware/ratelimit');
 const { verifyTurnstile } = require('../middleware/turnstile');
@@ -222,12 +222,12 @@ router.post(
       });
 
       // Send credential email (non-blocking — don't fail registration if email fails)
-      sendCredentialEmail({
+      sendRegistrationEmail({
         to: leadEmail,
         teamName,
         teamId: team.id,
         joinCode,
-        tempPassword: finalPassword,
+        password: finalPassword,
       })
         .then(() => prisma.credential.update({
           where: { team_id: team.id },
@@ -293,16 +293,13 @@ router.post('/join', publicWriteLimiter, verifyTurnstile, async (req, res) => {
       },
     });
 
-    // Send welcome email (non-blocking)
-    sendMemberWelcomeEmail({ to: email, memberName: name, teamName: team.name, joinCode: team.join_code })
-      .catch((err) => console.error('[Email] Member welcome failed:', err.message));
 
     return res.status(201).json({
       success: true,
       data: {
         memberId: member.id,
         teamName: team.name,
-        message: `You've joined ${team.name}! A confirmation email has been sent to you.`,
+        message: `You've joined ${team.name}!`,
       },
     });
   } catch (err) {
