@@ -3,6 +3,8 @@ const { z } = require('zod');
 const prisma = require('../lib/prisma');
 const { getSubmissionSettings } = require('../lib/submissionSettings');
 const { requireAuth, requireRole } = require('../middleware/auth');
+const { deleteFile } = require('../lib/storage');
+const { deletePaymentScreenshot, deleteParticipantIdFile } = require('../lib/paymentStorage');
 
 const router = Router();
 
@@ -45,6 +47,10 @@ const trackSchema = z.object({
 
 router.get('/registration-status', async (_req, res) => {
   try {
+    const REGISTRATION_DEADLINE = new Date('2026-09-26T18:29:59.000Z'); // 23:59 IST = 18:29 UTC
+    if (new Date() > REGISTRATION_DEADLINE) {
+      return res.json({ success: true, data: { open: false, reason: 'Registration deadline reached (26th Sept).' } });
+    }
     const window = await prisma.registrationWindow.findFirst();
     return res.json({ success: true, data: { open: window?.open ?? true } });
   } catch (err) {
@@ -428,16 +434,17 @@ router.post('/submissions/lock-all', requireAuth, requireRole('admin'), async (_
 });
 
 
-// Add to admin.js (or your settings route file)
+// Settings schema
 const settingsSchema = z.object({
-  name: z.string().min(1),
-  year: z.number().int(),
-  deadline: z.string(),
-  payment_deadline: z.string(),
-  hackathonStatus: z.enum(['Live', 'Paused', 'Closed']),
-  registrationStatus: z.enum(['Open', 'Closed']),
+  name: z.string().min(1).optional().default('RepoForge Hackathon'),
+  year: z.number().int().optional().default(2026),
+  deadline: z.string().optional().default(''),
+  payment_deadline: z.string().optional().default(''),
+  hackathonStatus: z.enum(['Live', 'Paused', 'Closed']).optional().default('Live'),
+  registrationStatus: z.enum(['Open', 'Closed']).optional().default('Closed'),
   acceptingSubmissions: z.boolean(),
 });
+
 
 router.get('/settings', async (_req, res) => {
   try {
@@ -570,4 +577,50 @@ router.patch('/teams/:teamId/payment-status', requireAuth, requireRole('admin', 
     return res.status(500).json({ success: false, error: 'Failed to update payment status.' });
   }
 });
+
+// ─── DELETE /api/admin/teams/:teamId ──────────────────────────────────────────
+router.delete('/teams/:teamId', requireAuth, requireRole('admin'), async (req, res) => {
+  const { teamId } = req.params;
+
+  try {
+    const team = await prisma.team.findUnique({
+      where: { id: teamId },
+      include: {
+        submission: true,
+        payment: true,
+        participantId: true,
+      },
+    });
+
+    if (!team) {
+      return res.status(404).json({ success: false, error: 'Team not found.' });
+    }
+
+    // Clean up files in Cloudflare R2 and Supabase storage if they exist
+    if (team.submission?.file_path) {
+      await deleteFile(team.submission.file_path);
+    }
+    if (team.payment?.file_path) {
+      await deletePaymentScreenshot(team.payment.file_path);
+    }
+    if (team.participantId?.file_path) {
+      await deleteParticipantIdFile(team.participantId.file_path);
+    }
+
+    // Cascade deletion handles: members, credential, submission (and evaluations), payment, participantId, result
+    await prisma.team.delete({
+      where: { id: teamId },
+    });
+
+    return res.json({
+      success: true,
+      message: `Team ${team.name} (${teamId}) and all associated details were successfully deleted.`,
+      data: { deletedTeamId: teamId },
+    });
+  } catch (err) {
+    console.error('[Admin/DeleteTeam]', err);
+    return res.status(500).json({ success: false, error: 'Failed to delete team details.' });
+  }
+});
+
 module.exports = router;

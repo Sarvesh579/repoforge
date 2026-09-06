@@ -144,6 +144,12 @@ router.post(
       themeTrack,
     } = parsed.data;
 
+    // Registration deadline: Sept 26, 2026 23:59:59 IST
+    const REGISTRATION_DEADLINE = new Date('2026-09-26T18:29:59.000Z'); // 23:59 IST = 18:29 UTC
+    if (new Date() > REGISTRATION_DEADLINE) {
+      return res.status(403).json({ success: false, error: 'Registrations closed on 26th September 2026.' });
+    }
+
     // Check registration window is open
     const window = await prisma.registrationWindow.findFirst();
     if (window && !window.open) {

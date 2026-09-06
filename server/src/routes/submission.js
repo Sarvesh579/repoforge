@@ -8,8 +8,8 @@ const { getSubmissionSettings } = require('../lib/submissionSettings');
 
 const router = Router();
 
-// Submission deadline: Sept 25, 2026 23:59:59 IST
-const SUBMISSION_DEADLINE = new Date('2026-09-25T18:29:59.000Z'); // 23:59 IST = 18:29 UTC
+// Submission deadline: Sept 27, 2026 23:59:59 IST
+const SUBMISSION_DEADLINE = new Date('2026-09-27T18:29:59.000Z'); // 23:59 IST = 18:29 UTC
 
 // ─── POST /api/submission/upload ──────────────────────────────────────────────
 

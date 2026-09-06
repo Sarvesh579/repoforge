@@ -79,7 +79,9 @@ export default function Register() {
         ]);
 
         setTracks(tracksRes.data || []);
-        setStatus(statusRes.data || { open: true });
+        const REGISTRATION_DEADLINE = new Date('2026-09-05T18:29:59.000Z'); // 23:59 IST = 18:29 UTC
+        const isPastDeadline = new Date() > REGISTRATION_DEADLINE;
+        setStatus(isPastDeadline ? { open: false, reason: 'Registration window closed on 26th September.' } : (statusRes.data || { open: true }));
       } finally {
         setIsLoading(false);
       }
@@ -205,8 +207,8 @@ export default function Register() {
         <main className={styles.shell}>
           <div className={styles.card}>
             <p className={styles.eyebrow}>REGISTRATIONS</p>
-            <h1>Registrations are currently closed.</h1>
-            <p className={styles.closedDesc}>Check back soon or follow us on social for the next intake window.</p>
+            <h1>Registrations are closed.</h1>
+            <p className={styles.closedDesc}>Check back soon or follow us on social for the next event.</p>
             <SqBtn onClick={() => navigate('/')}>Return Home</SqBtn>
           </div>
         </main>
@@ -298,8 +300,8 @@ export default function Register() {
                           {form.formState.errors.leadEmail && <small>{form.formState.errors.leadEmail.message}</small>}
                         </div>
                         <div className={styles.field}>
-                          <label>Phone</label>
-                          <input {...form.register('leadPhone')} placeholder="9876543210" />
+                          <label>Phone <span className={styles.hint}>(10 digits, no country code)</span></label>
+                          <input {...form.register('leadPhone')} placeholder="9876543210" inputMode="numeric" maxLength={10} />
                           {form.formState.errors.leadPhone && <small>{form.formState.errors.leadPhone.message}</small>}
                         </div>
                       </div>
@@ -362,8 +364,8 @@ export default function Register() {
                               )}
                             </div>
                             <div className={styles.field}>
-                              <label>Phone</label>
-                              <input {...form.register(`members.${index}.phone`)} placeholder="1234567890" />
+                              <label>Phone <span className={styles.hint}>(10 digits)</span></label>
+                              <input {...form.register(`members.${index}.phone`)} placeholder="1234567890" inputMode="numeric" maxLength={10} />
                               {form.formState.errors.members?.[index]?.phone && (
                                 <small>{form.formState.errors.members[index].phone.message}</small>
                               )}

@@ -405,3 +405,8 @@ export async function verifyTeamPayment(teamId) {
     method: 'POST',
   });
 }
+export async function deleteTeam(teamId) {
+  return await apiFetch(`/api/admin/teams/${teamId}`, {
+    method: 'DELETE',
+  });
+}

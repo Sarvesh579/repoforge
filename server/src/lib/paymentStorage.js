@@ -68,4 +68,24 @@ async function uploadParticipantId(filePath, buffer, mimeType) {
     return { path: data.path };
 }
 
-module.exports = { uploadPaymentScreenshot, uploadParticipantId };
+async function deletePaymentScreenshot(filePath) {
+    if (!filePath) return;
+    try {
+        const supabase = getPaymentsSupabase();
+        await supabase.storage.from(BUCKET).remove([filePath]);
+    } catch (err) {
+        console.warn('[PaymentStorage] Failed to delete payment screenshot:', err.message);
+    }
+}
+
+async function deleteParticipantIdFile(filePath) {
+    if (!filePath) return;
+    try {
+        const supabase = getIdsSupabase();
+        await supabase.storage.from(ID_BUCKET).remove([filePath]);
+    } catch (err) {
+        console.warn('[PaymentStorage] Failed to delete participant ID file:', err.message);
+    }
+}
+
+module.exports = { uploadPaymentScreenshot, uploadParticipantId, deletePaymentScreenshot, deleteParticipantIdFile };

@@ -18,7 +18,8 @@ import {
   publishHackathonResults,
   unpublishHackathonResults,
   verifyTeamPayment,
-  updatePaymentStatus
+  updatePaymentStatus,
+  deleteTeam
 } from '../../lib/api'; // <--- Switch from portalStorage to real api.js
 import LoadingOverlay from '../../components/ui/LoadingOverlay';
 
@@ -430,6 +431,40 @@ export default function AdminDashboard() {
       showToast('Failed to assign winner');
     }
   };
+  const handleDeleteTeam = async (team) => {
+    const teamName = team.name || team.teamName || 'this team';
+    const teamId = team.id;
+    const confirmed = window.confirm(
+      `⚠️ ARE YOU SURE YOU WANT TO DELETE THIS TEAM?\n\nTeam: ${teamName} (${teamId})\n\nThis will permanently remove:\n- Team registration details & members\n- Login credentials\n- Presentation submissions & evaluations\n- Payment records & receipts\n- Participant ID proofs\n\nThis action CANNOT be undone!`
+    );
+
+    if (!confirmed) {
+      console.log(`[Admin] Team deletion cancelled for: ${teamName} (${teamId})`);
+      return;
+    }
+
+    console.warn(`[Admin] Confirmed deletion of team: ${teamName} (${teamId})`);
+    setActionLoading(true);
+    try {
+      const res = await deleteTeam(teamId);
+      if (res?.success) {
+        window.alert(`✅ Team "${teamName}" (${teamId}) and all associated details have been deleted.`);
+        showToast(`Team ${teamName} deleted`);
+        await fetchData();
+      } else {
+        const errorMsg = res?.error || 'Failed to delete team.';
+        window.alert(`❌ Error: ${errorMsg}`);
+        showToast(errorMsg);
+      }
+    } catch (err) {
+      console.error('Delete team error:', err);
+      window.alert(`❌ Failed to delete team: ${err.message || 'An unexpected error occurred.'}`);
+      showToast('Failed to delete team');
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
   const [isPublishing, setIsPublishing] = useState(false);
 
   const handlePublishResults = async () => {
@@ -567,12 +602,7 @@ export default function AdminDashboard() {
         <div className={styles.header}>
           <div className={styles.headerTitle}>
             <h1>{NAV_TABS.find((t) => t.id === activeTab)?.label}</h1>
-            <p>{settings.name} — Control Center</p>
-          </div>
-          <div className={styles.headerActions}>
-            <span className={`${styles.badge} ${settings.registrationStatus === 'Open' ? styles.badgeGreen : styles.badgeYellow}`}>
-              Registration: {settings.registrationStatus}
-            </span>
+            <p>{settings.name || 'RepoForge Hackathon'} — Control Center</p>
           </div>
         </div>
 
@@ -834,28 +864,60 @@ export default function AdminDashboard() {
 
                         {/* Merged Shortlist / Remove Action Column */}
                         <td style={{ whiteSpace: 'nowrap' }}>
-                          <select
-                            value={t.shortlistStatus || (t.shortlisted ? 'Shortlisted' : 'Under-Review')}
-                            onChange={(e) => handleToggleShortlist(t.id, e.target.value)}
-                            style={{
-                              background: '#140800',
-                              color:
-                                (t.shortlistStatus || (t.shortlisted ? 'Shortlisted' : 'Under-Review')) === 'Shortlisted' ? '#22c55e' :
-                                  (t.shortlistStatus || '') === 'Waitlisted' ? '#eab308' :
-                                    (t.shortlistStatus || '') === 'Eliminated' ? '#ef4444' : '#94a3b8',
-                              padding: '6px 10px',
-                              borderRadius: '8px',
-                              border: '1px solid rgba(250,182,0,0.25)',
-                              fontSize: '0.78rem',
-                              cursor: 'pointer',
-                              width: '100%',
-                            }}
-                          >
-                            <option value="Under-Review">Under Review</option>
-                            <option value="Shortlisted">Shortlisted</option>
-                            <option value="Waitlisted">Waitlisted</option>
-                            <option value="Eliminated">Eliminated</option>
-                          </select>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <select
+                              value={t.shortlistStatus || (t.shortlisted ? 'Shortlisted' : 'Under-Review')}
+                              onChange={(e) => handleToggleShortlist(t.id, e.target.value)}
+                              style={{
+                                background: '#140800',
+                                color:
+                                  (t.shortlistStatus || (t.shortlisted ? 'Shortlisted' : 'Under-Review')) === 'Shortlisted' ? '#22c55e' :
+                                    (t.shortlistStatus || '') === 'Waitlisted' ? '#eab308' :
+                                      (t.shortlistStatus || '') === 'Eliminated' ? '#ef4444' : '#94a3b8',
+                                padding: '6px 10px',
+                                borderRadius: '8px',
+                                border: '1px solid rgba(250,182,0,0.25)',
+                                fontSize: '0.78rem',
+                                cursor: 'pointer',
+                                minWidth: '110px',
+                              }}
+                            >
+                              <option value="Under-Review">Under Review</option>
+                              <option value="Shortlisted">Shortlisted</option>
+                              <option value="Waitlisted">Waitlisted</option>
+                              <option value="Eliminated">Eliminated</option>
+                            </select>
+
+                            <button
+                              type="button"
+                              onClick={() => handleDeleteTeam(t)}
+                              title={`Delete all details for ${t.name || t.teamName}`}
+                              style={{
+                                padding: '6px 10px',
+                                backgroundColor: 'rgba(239, 68, 68, 0.15)',
+                                color: '#ef4444',
+                                border: '1px solid rgba(239, 68, 68, 0.45)',
+                                borderRadius: '8px',
+                                fontSize: '0.75rem',
+                                fontWeight: '600',
+                                cursor: 'pointer',
+                                transition: 'all 0.2s ease',
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: '4px',
+                              }}
+                              onMouseOver={(e) => {
+                                e.currentTarget.style.backgroundColor = '#ef4444';
+                                e.currentTarget.style.color = '#ffffff';
+                              }}
+                              onMouseOut={(e) => {
+                                e.currentTarget.style.backgroundColor = 'rgba(239, 68, 68, 0.15)';
+                                e.currentTarget.style.color = '#ef4444';
+                              }}
+                            >
+                              🗑️ Delete
+                            </button>
+                          </div>
                         </td>
                       </tr>
                     );
@@ -1037,23 +1099,6 @@ export default function AdminDashboard() {
             </div>
             <form onSubmit={handleSaveSettings} className={styles.formGrid}>
               <div className={styles.field}>
-                <label>Hackathon Name</label>
-                <input
-                  type="text"
-                  value={settings.name}
-                  onChange={(e) => setSettings({ ...settings, name: e.target.value })}
-                />
-              </div>
-
-              <div className={styles.field}>
-                <label>Hackathon Year</label>
-                <input
-                  type="number"
-                  value={settings.year}
-                  onChange={(e) => setSettings({ ...settings, year: Number(e.target.value) })}
-                />
-              </div>
-              <div className={styles.field}>
                 <label>Hackathon PPT Uploads</label>
                 <select
                   value={settings.acceptingSubmissions ? 'Yes' : 'No'}
@@ -1098,17 +1143,6 @@ export default function AdminDashboard() {
                 >
                   <option value="Live">Live</option>
                   <option value="Paused">Paused</option>
-                  <option value="Closed">Closed</option>
-                </select>
-              </div>
-
-              <div className={styles.field}>
-                <label>Registration Status</label>
-                <select
-                  value={settings.registrationStatus}
-                  onChange={(e) => setSettings({ ...settings, registrationStatus: e.target.value })}
-                >
-                  <option value="Open">Open</option>
                   <option value="Closed">Closed</option>
                 </select>
               </div>
