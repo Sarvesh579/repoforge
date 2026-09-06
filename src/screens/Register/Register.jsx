@@ -79,7 +79,7 @@ export default function Register() {
         ]);
 
         setTracks(tracksRes.data || []);
-        const REGISTRATION_DEADLINE = new Date('2026-09-05T18:29:59.000Z'); // 23:59 IST = 18:29 UTC
+        const REGISTRATION_DEADLINE = new Date('2026-09-26T18:29:59.000Z'); // 23:59 IST = 18:29 UTC
         const isPastDeadline = new Date() > REGISTRATION_DEADLINE;
         setStatus(isPastDeadline ? { open: false, reason: 'Registration window closed on 26th September.' } : (statusRes.data || { open: true }));
       } finally {
