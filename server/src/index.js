@@ -125,7 +125,7 @@ const HOST = process.env.RENDER_EXTERNAL_URL || `http://localhost:${PORT}`;
 
 if (require.main === module) {
   app.listen(PORT, () => {
-    console.log(`\n✦  Crucible API running on ${HOST}`);
+    console.log(`\n✦  REPOFORGE running on ${HOST}`);
     console.log(`   Health: ${HOST}/api/health\n`);
     console.log(`   Health: https://project-crucible.onrender.com/api/health`)
   });
