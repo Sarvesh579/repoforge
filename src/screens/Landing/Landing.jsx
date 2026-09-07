@@ -15,6 +15,7 @@ import styles from './Landing.module.css';
 const MotionGlareHover = motion.create ? motion.create(GlareHover) : motion(GlareHover);
 
 const faqItems = [
+  { q: 'When / where do we pay registration fee?', a: "No registration fees for PPT round. Pay ₹300 after you've been shortlisted for Offline Hackathon" },
   { q: 'Who can participate?', a: 'Any year engineering student with a passion for shipping impactful ideas.' },
   { q: 'Do we need a fully working product?', a: 'Ideally yes. Teams shall show a proototype or demo in the first offline judging round, but final judging round would require a product.' },
   { q: 'Is there a theme?', a: 'The event focuses on real-world impact with PSs across various domains. No limitation on APP/WEB deployment' },
@@ -436,7 +437,7 @@ export default function Landing() {
                   <div className={styles.dateLabelDark}>20 SEPT</div>
                   <div className={styles.dateSubtextDark}></div>
                   <h3>Problem Statement Release</h3>
-                  <p>The PS for PPT round are released and PPT submissions are live.</p>
+                  <p>The PS for PPT round are released and PPT submissions are open.</p>
                 </div>
 
                 {/* 03: Registration Deadline */}
@@ -460,7 +461,7 @@ export default function Landing() {
                   <div className={styles.dateLabelDark}>30 SEPT</div>
                   <div className={styles.dateSubtextGreen}></div>
                   <h3>Shortlisting</h3>
-                  <p>Shortlisted teams based on pitch deck will be released.</p>
+                  <p>Shortlisted teams based on PPT will be announced. Payment to be completed by 2nd Oct, 12 NOON.</p>
                 </div>
 
                 {/* 06: Final Registration */}
@@ -468,7 +469,7 @@ export default function Landing() {
                   <div className={styles.dateLabelDark}>2 OCT</div>
                   <div className={styles.dateSubtextGreen}></div>
                   <h3>Final Registration</h3>
-                  <p>Shortlisted teams based have to pay and complete register for final round.</p>
+                  <p>After 12 Noon, Waitlisted teams will be allowed to pay & register for the remaining limited spots.</p>
                 </div>
               </div>
             </div>
@@ -500,7 +501,7 @@ export default function Landing() {
                 <div className={`${styles.milestoneCard} ${isDateReached(milestoneDates['07']) ? styles.cardActive : styles.cardDark}`}>
                   <div className={styles.dateLabelDark}>8:00 AM</div>
                   <h3>Registration Begins</h3>
-                  <p>Entry for offline hackathon begins. Please be on time.</p>
+                  <p>Entry of final 30 teams for offline hackathon begins. Please be on time.</p>
                 </div>
 
                 {/* 08: Inauguration */}
