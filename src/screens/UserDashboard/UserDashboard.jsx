@@ -1193,7 +1193,9 @@ export default function UserDashboard() {
               <div>
                 <h2 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 800 }}>Final Presentation Submission</h2>
                 <p style={{ color: 'rgba(255,255,255,0.6)', margin: '4px 0 0', fontSize: '0.9rem' }}>
-                  Upload your pitch deck (.pdf, .ppt, .pptx up to 10MB) for jury evaluation.
+                  Upload your pitch deck (.pdf, .ppt, .pptx up to 10MB) for jury evaluation.<br />
+                  Name the PPT as "TeamName.pptx".<br />
+                  Use given template only.
                 </p>
               </div>
               <span style={{ fontFamily: 'JetBrains Mono', fontSize: '0.82rem', color: submission ? '#22c55e' : '#eab308' }}>
