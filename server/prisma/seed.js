@@ -38,7 +38,7 @@ async function main() {
       role: 'admin',
     },
   });
-  console.log(`✅ Admin:   ${admin.email} / Admin@2026!`);
+  console.log(`✅ Admin:   ${admin.email}`);
 
   const judge1 = await prisma.judgeUser.upsert({
     where: { email: 'judge1@crucible.dev' },
@@ -50,7 +50,7 @@ async function main() {
       role: 'judge',
     },
   });
-  console.log(`✅ Judge 1: ${judge1.email} / Judge@2026!`);
+  console.log(`✅ Judge 1: ${judge1.email}`);
 
   const judge2 = await prisma.judgeUser.upsert({
     where: { email: 'judge2@crucible.dev' },
@@ -62,7 +62,7 @@ async function main() {
       role: 'judge',
     },
   });
-  console.log(`✅ Judge 2: ${judge2.email} / Judge@2026!\n`);
+  console.log(`✅ Judge 2: ${judge2.email}`);
 
   // ─── Sample Participant Team ──────────────────────────────────────────────────
   const sampleTeam = await prisma.team.upsert({
@@ -135,9 +135,9 @@ async function main() {
   console.log('🎉 Seeding complete!\n');
   console.log('─'.repeat(50));
   console.log('Participant:   participant@crucible.dev / TeamLead@2026!');
-  console.log('Admin login:   admin@crucible.dev / Admin@2026!');
-  console.log('Judge logins:  judge1@crucible.dev / Judge@2026!');
-  console.log('               judge2@crucible.dev / Judge@2026!');
+  console.log('Admin login:   admin@crucible.dev');
+  console.log('Judge logins:  judge1@crucible.dev');
+  console.log('               judge2@crucible.dev');
   console.log('─'.repeat(50));
 }
 
