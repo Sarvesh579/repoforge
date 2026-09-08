@@ -204,7 +204,7 @@ export default function AdminDashboard() {
   const [viewProblem, setViewProblem] = useState(null);
 
   // Form states
-  const [probForm, setProbForm] = useState({ title: '', category: 'General', short_description: '', description: '', difficulty: 'Intermediate', reward: '', tags: '', published: false });
+  const [probForm, setProbForm] = useState({ id: '', title: '', category: 'General', short_description: '', description: '', difficulty: 'Intermediate', reward: '', tags: '', published: false });
   const [settings, setSettings] = useState({
     name: 'RepoForge Hackathon',
     year: 2026,
@@ -365,7 +365,7 @@ export default function AdminDashboard() {
       }
       setShowAddModal(false);
       setEditingProblem(null);
-      setProbForm({ title: '', category: 'General', short_description: '', description: '', difficulty: 'Intermediate', reward: '' });
+      setProbForm({ id: '', title: '', category: 'General', short_description: '', description: '', difficulty: 'Intermediate', reward: '', tags: '', published: false });
       fetchData();
     } catch (err) {
       showToast('Operation failed');
@@ -1164,7 +1164,7 @@ export default function AdminDashboard() {
             <h2>{editingProblem ? 'Edit Problem Statement' : 'Add Problem Statement'}</h2>
             <form onSubmit={handleCreateProblem} style={{ display: 'grid', gap: 16 }}>
               <div className={styles.field}>
-                <label>Problem ID (optional)</label>
+                <label>Problem ID</label>
                 <input
                   type="text"
                   placeholder="e.g. PS011"

@@ -26,6 +26,7 @@ const announcementSchema = z.object({
 });
 
 const trackSchema = z.object({
+  id: z.string().min(1).optional(), // Admin can set a custom Problem ID (e.g. "PS001")
   title: z.string().min(1),
   category: z.string().default('General'),
   domain: z.string().optional(),
@@ -373,36 +374,52 @@ router.post('/tracks', requireAuth, requireRole('admin'), async (req, res) => {
   }
 
   try {
-    const { domain, ...trackData } = parsed.data;
+    const { id, domain, ...trackData } = parsed.data;
     const track = await prisma.track.create({
       data: {
+        ...(id ? { id } : {}), // Use admin-supplied ID if provided; else Prisma generates cuid
         ...trackData,
         ...(domain && { category: domain }),
       },
     });
     return res.status(201).json({ success: true, data: track });
   } catch (err) {
+    console.error('Create track error:', err);
     return res.status(500).json({ success: false, error: 'Failed to create track.' });
   }
 });
 
 router.patch('/tracks/:id', requireAuth, requireRole('admin'), async (req, res) => {
-  // 1. Validate and transform incoming data using Zod (handles tags array and mapping)
   const parsed = trackSchema.safeParse(req.body);
   if (!parsed.success) {
     return res.status(400).json({ success: false, error: 'Validation failed.', details: parsed.error.format() });
   }
 
   try {
-    // 2. Map frontend 'domain' to database 'category' if your schema uses category
-    const { domain, ...restData } = parsed.data;
+    const { id: newId, domain, ...restData } = parsed.data;
+    const currentId = req.params.id;
+    const updateData = {
+      ...restData,
+      ...(domain && { category: domain }),
+    };
 
+    // If admin supplied a new ID that differs from the current one,
+    // delete-then-recreate since Prisma can't update a primary key in-place.
+    if (newId && newId !== currentId) {
+      const existing = await prisma.track.findUnique({ where: { id: currentId } });
+      if (!existing) return res.status(404).json({ success: false, error: 'Track not found.' });
+
+      await prisma.track.delete({ where: { id: currentId } });
+      const track = await prisma.track.create({
+        data: { id: newId, ...updateData },
+      });
+      return res.json({ success: true, data: track });
+    }
+
+    // Normal update — ID unchanged
     const track = await prisma.track.update({
-      where: { id: req.params.id },
-      data: {
-        ...restData,
-        ...(domain && { category: domain }), // maps domain to category safely
-      },
+      where: { id: currentId },
+      data: updateData,
     });
     return res.json({ success: true, data: track });
   } catch (err) {
