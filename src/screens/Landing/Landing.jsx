@@ -10,6 +10,7 @@ import SpecularButton from '../../components/ui/SpecularButton';
 import GlareHover from '../../components/ui/GlareHover';
 import { useParallax } from '../../hooks/useParallax';
 import { smoothScrollTo } from '../../utils/smoothScroll';
+import n8nLogo from '../../assets/sponsors/n8n.png';
 import styles from './Landing.module.css';
 
 const MotionGlareHover = motion.create ? motion.create(GlareHover) : motion(GlareHover);
@@ -39,6 +40,7 @@ const sponsorRow2 = [
   { name: 'Pizza Hut', tier: 'SNACKS PARTNER', tierClass: 'tierBlue', bg: '#1a237e', logoimg: '/Pizza_Hut.png', links: { website: 'https://www.pizzahut.co.in/' } },
   { name: 'Scroll Connect', tier: 'PARTNER', tierClass: 'tierBlue', bg: '#1a237e', logoimg: '/scroll-connect-light.png', links: { website: 'https://www.scrollconnect.com/' } },
   { name: 'MiniMoth.dev', tier: 'PARTNER', tierClass: 'tierBlue', bg: '#1a237e', logoimg: '/moth-light.png', links: { linkedin: 'https://www.linkedin.com/company/minimoth', X: 'https://x.com/minimoth_dev' } },
+  { name: 'n8n', tier: 'PARTNER', tierClass: 'tierBlue', bg: '#1a237e', logoimg: n8nLogo, links: { website: 'https://n8n.io/' } },
 ];
 
 const stats = [
