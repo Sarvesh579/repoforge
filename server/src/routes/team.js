@@ -303,7 +303,7 @@ router.post(
           where: { team_id: team.id },
           data: { email_sent_at: new Date() },
         }))
-        .catch((err) => console.error('[Email] Credential email failed:', err.message));
+        .catch((err) => console.error('[Email] Credential email failed:', err.message || err.body?.message || err));
 
       return res.status(201).json({
         success: true,

@@ -376,7 +376,17 @@ async function sendRegistrationEmail({
     )
     .setHtml(html);
 
-  return await mailerSend.email.send(emailParams);
+  try {
+    return await mailerSend.email.send(emailParams);
+  } catch (err) {
+    const detail =
+      err?.body?.message ||
+      (err?.body?.errors ? JSON.stringify(err.body.errors) : null) ||
+      err?.message ||
+      'Unknown MailerSend error';
+    console.error('[MailerSend] API delivery failed:', detail);
+    throw new Error(detail);
+  }
 }
 
 module.exports = {
