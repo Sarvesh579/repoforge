@@ -446,8 +446,8 @@ export default function Landing() {
                 <div className={`${styles.milestoneCard} ${isDateReached(milestoneDates['03']) ? styles.cardActive : styles.cardDark}`}>
                   <div className={styles.dateLabelDark}>26 SEPT</div>
                   <div className={styles.dateSubtextDark}></div>
-                  <h3>Registration Deadline</h3>
-                  <p>Last date to register for RepoForge hackathon 2026.</p>
+                  <h3>Free Registration Deadline</h3>
+                  <p>Last date to register for RepoForge hackathon 2026. First PPT round is Free of Cost.</p>
                 </div>
 
                 {/* 04: PPT Submission Deadline */}
