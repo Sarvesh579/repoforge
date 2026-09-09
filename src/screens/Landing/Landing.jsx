@@ -38,9 +38,9 @@ const sponsorRow2 = [
   { name: 'Mumbai Tech Community', tier: 'COMMUNITY PARTNER', tierClass: 'tierBlue', bg: '#1a237e', logoimg: '/Mumbai_Tech_Community.png', links: { linkedin: 'https://www.linkedin.com/company/mumbai-tech-community/', instagram: 'https://www.instagram.com/mumbaitechcommunity' } },
   { name: 'Third Wave Coffee', tier: 'DRINKS PARTNER', tierClass: 'tierBlue', bg: '#3b1a0d', logoimg: '/Third_Wave_Coffee.png', links: { website: 'https://www.thirdwavecoffeeroasters.com/' } },
   { name: 'Pizza Hut', tier: 'SNACKS PARTNER', tierClass: 'tierBlue', bg: '#1a237e', logoimg: '/Pizza_Hut.png', links: { website: 'https://www.pizzahut.co.in/' } },
-  { name: 'Scroll Connect', tier: 'PARTNER', tierClass: 'tierBlue', bg: '#1a237e', logoimg: '/scroll-connect-light.png', links: { website: 'https://www.scrollconnect.com/' } },
-  { name: 'MiniMoth.dev', tier: 'PARTNER', tierClass: 'tierBlue', bg: '#1a237e', logoimg: '/moth-light.png', links: { linkedin: 'https://www.linkedin.com/company/minimoth', X: 'https://x.com/minimoth_dev' } },
-  { name: 'n8n', tier: 'PARTNER', tierClass: 'tierBlue', bg: '#1a237e', logoimg: n8nLogo, links: { website: 'https://n8n.io/' } },
+  { name: 'Scroll Connect', tier: 'CAMPUS PARTNER', tierClass: 'tierBlue', bg: '#1a237e', logoimg: '/scroll-connect-light.png', links: { website: 'https://www.scrollconnect.com/' } },
+  { name: 'MiniMoth.dev', tier: 'MESSAGING PARTNER', tierClass: 'tierBlue', bg: '#1a237e', logoimg: '/moth-light.png', links: { linkedin: 'https://www.linkedin.com/company/minimoth', X: 'https://x.com/minimoth_dev' } },
+  { name: 'n8n', tier: 'CLOUD PARTNER', tierClass: 'tierBlue', bg: '#1a237e', logoimg: n8nLogo, links: { website: 'https://n8n.io/' } },
 ];
 
 const stats = [
