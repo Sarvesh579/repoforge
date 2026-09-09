@@ -64,8 +64,8 @@ export default function Register() {
       password: '',
       confirmPassword: '',
       members: [
-        { name: '', email: '', phone: '', role: 'Developer', year: '1st Year', dept: '' },
-        { name: '', email: '', phone: '', role: 'Designer', year: '1st Year', dept: '' },
+        { name: '', email: '', phone: '', college: '', role: 'Developer', year: '1st Year', dept: '' },
+        { name: '', email: '', phone: '', college: '', role: 'Designer', year: '1st Year', dept: '' },
       ],
     },
   });
@@ -106,7 +106,7 @@ export default function Register() {
     const members = form.getValues('members') || [];
     if (members.length >= 3) return;
     form.setValue('teamSize', 4);
-    form.setValue('members', [...members, { name: '', email: '', phone: '', role: '', year: '1st Year', dept: '' }]);
+    form.setValue('members', [...members, { name: '', email: '', phone: '', college: '', role: '', year: '1st Year', dept: '' }]);
   };
 
   const removeMember = (index) => {
@@ -308,7 +308,7 @@ export default function Register() {
                       <div className={styles.splitFields}>
                         <div className={styles.field}>
                           <label>College</label>
-                          <input {...form.register('college')} placeholder="Xavier Institute of Engineering" />
+                          <input {...form.register('college')} placeholder="E.g. Xavier Institute of Engineering" />
                           {form.formState.errors.college && <small>{form.formState.errors.college.message}</small>}
                         </div>
                         <div className={styles.field}>
@@ -373,6 +373,13 @@ export default function Register() {
                           </div>
                           <div className={styles.splitFields}>
                             <div className={styles.field}>
+                              <label>College</label>
+                              <input {...form.register(`members.${index}.college`)} placeholder="E.g. Xavier Institute of Engineering" />
+                              {form.formState.errors.members?.[index]?.college && (
+                                <small>{form.formState.errors.members[index].college.message}</small>
+                              )}
+                            </div>
+                            <div className={styles.field}>
                               <label>Year</label>
                               <select {...form.register(`members.${index}.year`)}>
                                 {['1st Year', '2nd Year', '3rd Year', '4th Year'].map((y) => <option key={y} style={{ backgroundColor: '#3f1200ff', color: '#fff' }}>{y}</option>)}
@@ -419,7 +426,7 @@ export default function Register() {
                               <strong>{m.name || `Member ${i + 1}`}</strong>
                               {m.role && <span style={{ marginLeft: 8, color: '#fab600', opacity: 0.9 }}>({m.role})</span>}
                               <div style={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.65)', marginTop: '3px' }}>
-                                {m.email || 'No email'} · {m.phone || 'No phone'} · {m.dept || 'No dept'} · {m.year || '1st Year'}
+                                {m.email || 'No email'} · {m.phone || 'No phone'} · {m.college || 'No college'} · {m.dept || 'No dept'} · {m.year || '1st Year'}
                               </div>
                             </div>
                           </div>

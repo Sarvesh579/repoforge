@@ -275,6 +275,7 @@ export default function UserDashboard() {
           email: m.email || '',
           phone: m.phone || '',
           role: m.custom_role || (m.role === 'lead' ? 'Team Leader' : m.role) || `Member`,
+          college: m.college || liveTeam.college || '',
           year: m.year || '',
           dept: m.dept || '',
           avatar: ((m.name || `M${idx + 1}`).trim().split(' ').map((w) => w[0]).slice(0, 2).join('') || `M${idx + 1}`).toUpperCase(),
@@ -534,6 +535,7 @@ export default function UserDashboard() {
     const list = JSON.parse(JSON.stringify(rawMembers)).map((m) => ({
       ...m,
       role: m.custom_role || m.role || 'Member',
+      college: m.college || liveTeam?.college || currentTeam?.college || '',
       avatar: (m.name || 'TM').split(' ').map((w) => w[0]).slice(0, 2).join('').toUpperCase(),
     }));
     setMembersForm(list);
@@ -576,6 +578,7 @@ export default function UserDashboard() {
       email: '',
       phone: '',
       role: 'Developer',
+      college: liveTeam?.college || currentTeam?.college || '',
       year: '',
       dept: '',
       avatar: 'TM',
@@ -1161,6 +1164,11 @@ export default function UserDashboard() {
                     <div className={styles.memberRole}>
                       {getRoleIcon(m.role)} {m.role}
                     </div>
+                    {(m.college || m.dept || m.year) && (
+                      <div style={{ fontSize: '0.8rem', color: 'rgba(255, 255, 255, 0.6)', marginTop: 4 }}>
+                        {[m.college, m.dept, m.year].filter(Boolean).join(' • ')}
+                      </div>
+                    )}
                   </div>
                   {m.role.includes('Leader') && (
                     <span className={styles.teamLeadBadge}>
@@ -1681,6 +1689,19 @@ export default function UserDashboard() {
                           value={m.phone || ''}
                           onChange={(e) => handleMemberChange(idx, 'phone', e.target.value)}
                           placeholder="10-digit phone number"
+                          required
+                          style={fieldInputStyle}
+                        />
+                      </div>
+
+                      {/* College */}
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                        <label style={fieldLabelStyle}>College</label>
+                        <input
+                          type="text"
+                          value={m.college || ''}
+                          onChange={(e) => handleMemberChange(idx, 'college', e.target.value)}
+                          placeholder="College Name"
                           required
                           style={fieldInputStyle}
                         />

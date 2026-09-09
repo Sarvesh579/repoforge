@@ -81,8 +81,8 @@ async function main() {
       year: '3rd Year',
       members: {
         create: [
-          { name: 'Alex Lead', email: 'participant@crucible.dev', phone: '+91 98765 43210', role: 'lead' },
-          { name: 'Rohan Dev', email: 'rohan@example.com', phone: '+91 98765 43211', role: 'member' },
+          { name: 'Alex Lead', email: 'participant@crucible.dev', phone: '+91 98765 43210', role: 'lead', college: 'Xavier Institute of Engineering' },
+          { name: 'Rohan Dev', email: 'rohan@example.com', phone: '+91 98765 43211', role: 'member', college: 'Xavier Institute of Engineering' },
         ],
       },
       credential: {

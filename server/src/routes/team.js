@@ -26,6 +26,7 @@ const memberSchema = z.object({
   role: z.string().optional().default(''),
   year: z.string().optional().default(''),
   dept: z.string().optional().default(''),
+  college: z.string().optional().default(''),
 });
 
 const registerSchema = z.object({
@@ -55,6 +56,7 @@ const joinSchema = z.object({
   role: z.string().optional().default(''),
   year: z.string().optional().default(''),
   dept: z.string().optional().default(''),
+  college: z.string().optional().default(''),
   cf_turnstile_response: z.string().optional(),
 });
 
@@ -217,6 +219,7 @@ router.post(
                   phone: leadPhone,
                   role: 'lead',
                   custom_role: 'Team Lead',
+                  college: college,
                   year,
                   dept: dept || '',
                 },
@@ -226,6 +229,7 @@ router.post(
                   phone: m.phone,
                   role: 'member',
                   custom_role: m.role || 'Member',
+                  college: m.college || college,
                   year: m.year || '',
                   dept: m.dept || '',
                 })),
@@ -294,7 +298,7 @@ router.post('/join', publicWriteLimiter, verifyTurnstile, async (req, res) => {
     });
   }
 
-  const { joinCode, name, email, phone, role } = parsed.data;
+  const { joinCode, name, email, phone, role, year, dept, college } = parsed.data;
 
   try {
     const lookupKey = (joinCode || '').toUpperCase().trim();
@@ -328,6 +332,9 @@ router.post('/join', publicWriteLimiter, verifyTurnstile, async (req, res) => {
         email: email.toLowerCase(),
         phone,
         role: 'member',
+        year: year || '',
+        dept: dept || '',
+        college: college || team.college || '',
       },
     });
 
@@ -525,10 +532,20 @@ router.put('/members', requireAuth, requireRole('team'), async (req, res) => {
           custom_role: m.role || (isLead ? 'Team Lead' : 'Member'),
           year: m.year || '',
           dept: m.dept || '',
+          college: m.college || '',
         };
       });
 
       await tx.teamMember.createMany({ data: newMembersData });
+
+      // If lead's college is updated, sync it to team.college as well
+      const leadCollege = newMembersData[0]?.college;
+      if (leadCollege) {
+        await tx.team.update({
+          where: { id: teamId },
+          data: { college: leadCollege },
+        });
+      }
 
       // 2. Return final updated team
       return await tx.team.findUnique({

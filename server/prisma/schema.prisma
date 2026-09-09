@@ -47,6 +47,7 @@ model TeamMember {
   custom_role String @default("")
   year      String   @default("")
   dept      String   @default("")
+  college   String   @default("")
   joined_at DateTime @default(now())
 
   team Team @relation(fields: [team_id], references: [id], onDelete: Cascade)

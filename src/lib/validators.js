@@ -31,6 +31,7 @@ export const registerSchema = z
         role: z.string().optional().default(''),
         email: emailSchema,
         phone: phoneSchema,
+        college: z.string().trim().min(2, 'College name is required.'),
         year: z.string().min(1, 'Year is required.'),
         dept: z.string().trim().min(1, 'Department is required.'),
       }),
