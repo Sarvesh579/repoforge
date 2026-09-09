@@ -184,6 +184,115 @@ const NAV_TABS = [
   { id: 'settings', label: 'Settings', icon: NavIcons.settings },
 ];
 
+const formatDetailLabel = (key) => {
+  return String(key)
+    .replace(/([a-z])([A-Z])/g, '$1 $2')
+    .replace(/[_-]+/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim()
+    .replace(/\b\w/g, (char) => char.toUpperCase());
+};
+
+const displayValue = (value) => {
+  if (value === null || value === undefined || value === '') {
+    return '—';
+  }
+
+  if (typeof value === 'boolean') {
+    return value ? 'Yes' : 'No';
+  }
+
+  return String(value);
+};
+
+/*
+ * Only display actual member information here.
+ * Team-level fields such as submission, problem, rank, etc.
+ * NEVER go into this component.
+ */
+const MEMBER_FIELDS = [
+  'name',
+  'email',
+  'phone',
+  'mobile',
+  'contact',
+  'year',
+  'branch',
+  'department',
+  'college',
+  'role',
+  'participantId',
+  'participant_id',
+  'id',
+];
+
+const TeamMemberCard = ({ member, index }) => {
+  const visibleFields = MEMBER_FIELDS
+    .filter((key) => {
+      const value = member?.[key];
+
+      return (
+        value !== undefined &&
+        value !== null &&
+        value !== ''
+      );
+    })
+    .filter((key, index, array) => array.indexOf(key) === index);
+
+  return (
+    <div className={styles.teamMemberCard}>
+      <div className={styles.teamMemberHeader}>
+        <div className={styles.teamMemberNumber}>
+          MEMBER {String(index + 1).padStart(2, '0')}
+        </div>
+
+        {member?.role && (
+          <span
+            className={`${styles.badge} ${String(member.role).toLowerCase() === 'leader'
+              ? styles.badgeBlue
+              : styles.badgeYellow
+              }`}
+          >
+            {member.role}
+          </span>
+        )}
+      </div>
+
+      <div className={styles.teamMemberName}>
+        {member?.name || `Member ${index + 1}`}
+      </div>
+
+      <div className={styles.teamMemberDetails}>
+        {visibleFields
+          .filter((key) => key !== 'name' && key !== 'role')
+          .map((key) => (
+            <div
+              key={key}
+              className={styles.teamMemberDetailRow}
+            >
+              <span>{formatDetailLabel(key)}</span>
+              <strong>{displayValue(member[key])}</strong>
+            </div>
+          ))}
+      </div>
+    </div>
+  );
+};
+
+const TeamInfoRow = ({ label, value }) => {
+  return (
+    <div className={styles.teamInfoRow}>
+      <span className={styles.teamInfoLabel}>
+        {label}
+      </span>
+
+      <div className={styles.teamInfoValue}>
+        {displayValue(value)}
+      </div>
+    </div>
+  );
+};
+
 export default function AdminDashboard() {
   const { logout } = useAuth();
   const navigate = useNavigate();
@@ -202,6 +311,7 @@ export default function AdminDashboard() {
   const [showAddModal, setShowAddModal] = useState(false);
   const [editingProblem, setEditingProblem] = useState(null);
   const [viewProblem, setViewProblem] = useState(null);
+  const [viewTeam, setViewTeam] = useState(null);
 
   // Form states
   const [probForm, setProbForm] = useState({ id: '', title: '', category: 'General', short_description: '', description: '', difficulty: 'Intermediate', reward: '', tags: '', published: false });
@@ -247,6 +357,16 @@ export default function AdminDashboard() {
       showToast('Failed to sync data from database.');
     }
   };
+
+  useEffect(() => {
+    if (!viewTeam) return;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [viewTeam]);
+
   useEffect(() => {
     fetchData();
     getHackathonSettings().then((res) => {
@@ -255,6 +375,22 @@ export default function AdminDashboard() {
       showToast('Failed to load hackathon settings.');
     });
   }, []);
+
+  useEffect(() => {
+    const handleEscape = (event) => {
+      if (event.key === 'Escape') {
+        setViewTeam(null);
+      }
+    };
+
+    if (viewTeam) {
+      document.addEventListener('keydown', handleEscape);
+    }
+
+    return () => {
+      document.removeEventListener('keydown', handleEscape);
+    };
+  }, [viewTeam]);
 
   useLiveRefresh(async () => {
     await Promise.all([
@@ -431,6 +567,11 @@ export default function AdminDashboard() {
       showToast('Failed to assign winner');
     }
   };
+
+  const openTeamModal = (team) => {
+    setViewTeam(team);
+  };
+
   const handleDeleteTeam = async (team) => {
     const teamName = team.name || team.teamName || 'this team';
     const teamId = team.id;
@@ -653,7 +794,13 @@ export default function AdminDashboard() {
                       <tr key={t.id}>
                         <td style={{ fontFamily: 'JetBrains Mono', color: '#FAB600', whiteSpace: 'nowrap' }}>{t.id}</td>
                         <td style={{ whiteSpace: 'nowrap' }}>
-                          <strong>{t.name}</strong>
+                          <button
+                            type="button"
+                            className={styles.teamNameButton}
+                            onClick={() => openTeamModal(t)}
+                          >
+                            <strong>{t.name || t.teamName || 'Unnamed Team'}</strong>
+                          </button>
                         </td>
                         <td style={{ whiteSpace: 'nowrap' }}>{t.members?.find((m) => m.role === 'leader')?.name || t.members?.[0]?.name || ''}</td>
                         <td style={{ minWidth: 180, maxWidth: 280, lineHeight: 1.4 }}>{t.problemStatementId || 'Pending Selection'}</td>
@@ -779,9 +926,11 @@ export default function AdminDashboard() {
                     <th>Team ID</th>
                     <th>Team Name</th>
                     <th>Leader Email</th>
+                    <th>Members</th>
                     <th>Problem</th>
                     <th>Submission</th>
-                    <th>Payment & Verification</th>
+                    <th>Payment</th>
+                    <th>Verification</th>
                     <th>Action</th>
                   </tr>
                 </thead>
@@ -794,11 +943,26 @@ export default function AdminDashboard() {
                     return (
                       <tr key={t.id}>
                         <td style={{ fontFamily: 'JetBrains Mono', color: '#FAB600', whiteSpace: 'nowrap' }}>{t.id}</td>
+
                         <td style={{ whiteSpace: 'nowrap' }}>
-                          <strong>{t.name || t.teamName}</strong>
+                          <button
+                            type="button"
+                            className={styles.teamNameButton}
+                            onClick={() => openTeamModal(t)}
+                          >
+                            <strong>{t.name || t.teamName || 'Unnamed Team'}</strong>
+                          </button>
                         </td>
+
                         <td style={{ whiteSpace: 'nowrap' }}>{t.members?.find((m) => m.role === 'leader')?.email || t.members?.[0]?.email || 'No Email'}</td>
-                        <td style={{ minWidth: 180, maxWidth: 300, lineHeight: 1.4 }}>{t.problemStatementId || t.problem_statement_id || 'None'}</td>
+
+                        <td style={{ whiteSpace: 'nowrap', textAlign: 'center' }}>
+                          {Array.isArray(t.members)
+                            ? t.members.length
+                            : t.memberCount || t.numberOfMembers || 0}
+                        </td>
+
+                        <td style={{ minWidth: 80, maxWidth: 90, lineHeight: 1.4 }}>{t.problemStatementId || t.problem_statement_id || 'None'}</td>
 
                         {/* Submission Status */}
                         <td style={{ whiteSpace: 'nowrap' }}>
@@ -860,6 +1024,19 @@ export default function AdminDashboard() {
                               </div>
                             </div>
                           )}
+                        </td>
+
+                        <td style={{ whiteSpace: 'nowrap' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <select
+                              style={{
+                                background: '#140800',
+                                color: '#aaa'
+                              }}
+                            >
+
+                            </select>
+                          </div>
                         </td>
 
                         {/* Merged Shortlist / Remove Action Column */}
@@ -1242,6 +1419,338 @@ export default function AdminDashboard() {
             </div>
             <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 16 }}>
               <SqBtn onClick={() => setViewProblem(null)}>Close</SqBtn>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── Team Details Modal ────────────────────────────────────────────────── */}
+      {viewTeam && (
+        <div
+          className={styles.teamModalBackdrop}
+          onMouseDown={(e) => {
+            if (e.target === e.currentTarget) {
+              setViewTeam(null);
+            }
+          }}
+        >
+          <div
+            className={styles.teamModal}
+            onMouseDown={(e) => e.stopPropagation()}
+          >
+            {/* Header */}
+            <div className={styles.teamModalHeader}>
+              <div className={styles.teamModalHeading}>
+                <span className={styles.teamModalEyebrow}>
+                  TEAM DETAILS
+                </span>
+
+                <h2 className={styles.teamModalTitle}>
+                  {viewTeam.name ||
+                    viewTeam.teamName ||
+                    'Unnamed Team'}
+                </h2>
+
+                <span className={styles.teamModalId}>
+                  {viewTeam.id || '—'}
+                </span>
+              </div>
+
+              <button
+                type="button"
+                className={styles.teamModalClose}
+                onClick={() => setViewTeam(null)}
+                aria-label="Close team details"
+              >
+                ×
+              </button>
+            </div>
+
+            {/* ── ONLY THIS AREA SCROLLS ─────────────────────────────────────── */}
+            <div
+              className={styles.teamModalBody}
+              onWheel={(e) => {
+                e.stopPropagation();
+              }}
+            >
+
+              {/* ================================================================
+                  TEAM INFORMATION
+              ================================================================= */}
+              <section className={styles.teamModalSection}>
+                <div className={styles.teamModalSectionTitle}>
+                  Team Information
+                </div>
+
+                <div className={styles.teamInfoGrid}>
+
+                  <TeamInfoRow
+                    label="Team ID"
+                    value={viewTeam.id}
+                  />
+
+                  <TeamInfoRow
+                    label="Team Name"
+                    value={viewTeam.name || viewTeam.teamName}
+                  />
+
+                  <TeamInfoRow
+                    label="College"
+                    value={viewTeam.college}
+                  />
+
+                  <TeamInfoRow
+                    label="No. of Members"
+                    value={
+                      Array.isArray(viewTeam.members)
+                        ? viewTeam.members.length
+                        : viewTeam.memberCount ||
+                        viewTeam.numberOfMembers ||
+                        '—'
+                    }
+                  />
+
+                  <TeamInfoRow
+                    label="Leader"
+                    value={
+                      viewTeam.members?.find(
+                        (member) =>
+                          String(member.role).toLowerCase() === 'leader'
+                      )?.name ||
+                      viewTeam.members?.[0]?.name
+                    }
+                  />
+
+                  <TeamInfoRow
+                    label="Leader Email"
+                    value={
+                      viewTeam.members?.find(
+                        (member) =>
+                          String(member.role).toLowerCase() === 'leader'
+                      )?.email ||
+                      viewTeam.members?.[0]?.email
+                    }
+                  />
+
+                </div>
+              </section>
+
+
+              {/* ================================================================
+                  PROBLEM / TRACK
+              ================================================================= */}
+              <section className={styles.teamModalSection}>
+                <div className={styles.teamModalSectionTitle}>
+                  Problem & Track
+                </div>
+
+                <div className={styles.teamInfoGrid}>
+
+                  <TeamInfoRow
+                    label="PS ID"
+                    value={
+                      viewTeam.problemStatementId ||
+                      viewTeam.problem_statement_id
+                    }
+                  />
+
+                  <TeamInfoRow
+                    label="Track"
+                    value={
+                      viewTeam.trackName ||
+                      viewTeam.track ||
+                      viewTeam.problemStatement?.trackName ||
+                      viewTeam.problemStatement?.track
+                    }
+                  />
+
+                  <TeamInfoRow
+                    label="Problem Statement"
+                    value={
+                      viewTeam.problemStatement?.title ||
+                      viewTeam.problemStatement?.name ||
+                      viewTeam.problemTitle
+                    }
+                  />
+
+                </div>
+              </section>
+
+
+              {/* ================================================================
+                  COMPETITION STATUS
+              ================================================================= */}
+              <section className={styles.teamModalSection}>
+                <div className={styles.teamModalSectionTitle}>
+                  Competition Status
+                </div>
+
+                <div className={styles.teamInfoGrid}>
+
+                  <TeamInfoRow
+                    label="Submission"
+                    value={
+                      viewTeam.submissionStatus ||
+                      (
+                        viewTeam.submission ||
+                          viewTeam.submitted ||
+                          viewTeam.submissionFile
+                          ? 'Submitted'
+                          : 'Pending'
+                      )
+                    }
+                  />
+
+                  <TeamInfoRow
+                    label="Shortlist Status"
+                    value={
+                      viewTeam.shortlistStatus ||
+                      (viewTeam.shortlisted
+                        ? 'Shortlisted'
+                        : 'Under-Review')
+                    }
+                  />
+
+                  <TeamInfoRow
+                    label="Rank"
+                    value={
+                      viewTeam.rank ||
+                      viewTeam.position ||
+                      viewTeam.result?.rank ||
+                      viewTeam.result?.position
+                    }
+                  />
+
+                  <TeamInfoRow
+                    label="Result"
+                    value={
+                      typeof viewTeam.result === 'string'
+                        ? viewTeam.result
+                        : viewTeam.result?.status ||
+                        viewTeam.verdict ||
+                        viewTeam.finalVerdict
+                    }
+                  />
+
+                </div>
+              </section>
+
+
+              {/* ================================================================
+                  SUBMISSION
+              ================================================================= */}
+              {(viewTeam.submission ||
+                viewTeam.submissionFile ||
+                viewTeam.submissionDate) && (
+                  <section className={styles.teamModalSection}>
+                    <div className={styles.teamModalSectionTitle}>
+                      Submission Details
+                    </div>
+
+                    <div className={styles.teamInfoGrid}>
+
+                      <TeamInfoRow
+                        label="File"
+                        value={
+                          viewTeam.submission?.original_name ||
+                          viewTeam.submissionFile
+                        }
+                      />
+
+                      <TeamInfoRow
+                        label="Submitted At"
+                        value={
+                          viewTeam.submission?.submitted_at
+                            ? new Date(
+                              viewTeam.submission.submitted_at
+                            ).toLocaleString()
+                            : viewTeam.submissionDate
+                        }
+                      />
+
+                    </div>
+                  </section>
+                )}
+
+
+              {/* ================================================================
+                  PAYMENT
+              ================================================================= */}
+              {viewTeam.payment && (
+                <section className={styles.teamModalSection}>
+                  <div className={styles.teamModalSectionTitle}>
+                    Payment & Verification
+                  </div>
+
+                  <div className={styles.teamInfoGrid}>
+
+                    <TeamInfoRow
+                      label="Payment Status"
+                      value={viewTeam.payment.status}
+                    />
+
+                    <TeamInfoRow
+                      label="Payment ID"
+                      value={
+                        viewTeam.payment.paymentId ||
+                        viewTeam.payment.payment_id ||
+                        viewTeam.payment.transactionId
+                      }
+                    />
+
+                    <TeamInfoRow
+                      label="Amount"
+                      value={viewTeam.payment.amount}
+                    />
+
+                  </div>
+                </section>
+              )}
+
+
+              {/* ================================================================
+                  MEMBERS
+              ================================================================= */}
+              <section className={styles.teamModalSection}>
+                <div className={styles.teamModalSectionTitle}>
+                  Team Members
+                  {Array.isArray(viewTeam.members) &&
+                    ` (${viewTeam.members.length})`}
+                </div>
+
+                {Array.isArray(viewTeam.members) &&
+                  viewTeam.members.length > 0 ? (
+                  <div className={styles.teamMembersGrid}>
+                    {viewTeam.members.map((member, index) => (
+                      <TeamMemberCard
+                        key={
+                          member.id ||
+                          member.email ||
+                          index
+                        }
+                        member={member}
+                        index={index}
+                      />
+                    ))}
+                  </div>
+                ) : (
+                  <div className={styles.teamEmptyState}>
+                    No member information available.
+                  </div>
+                )}
+              </section>
+
+            </div>
+
+            {/* Footer */}
+            <div className={styles.teamModalFooter}>
+              <SqBtn
+                onClick={() => setViewTeam(null)}
+                lineColor="#FAB600"
+                baseColor="#261005"
+              >
+                Close
+              </SqBtn>
             </div>
           </div>
         </div>

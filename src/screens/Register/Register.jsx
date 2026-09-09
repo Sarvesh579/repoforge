@@ -175,24 +175,69 @@ export default function Register() {
     return (
       <div className={styles.page}>
         <Navbar />
+
         <main className={styles.shell}>
-          <motion.div className={styles.card} initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }}>
-            <div className={styles.successIcon}>✦</div>
-            <p className={styles.eyebrow}>REGISTRATION COMPLETE</p>
-            <h1 className={styles.successTitle}>You're in.</h1>
-            {/* <p className={styles.successDesc}>Credentials also sent to your mail. Please check the Spam Folder.</p> */}
-            <p className={styles.successDesc}>{successData.message}</p>
-            <div className={styles.teamIdBox}>
-              <span>Team ID</span>
-              <strong>{successData.teamId || '—'}</strong>
+          <motion.div
+            className={styles.card}
+            style={{ maxWidth: '720px', gap: '5px' }}
+            initial={{ opacity: 0, scale: 0.96 }}
+            animate={{ opacity: 1, scale: 1 }}
+          >
+            <div className={styles.cardContent}>
+              <div className={styles.successIcon}>✦</div>
+              <p className={styles.eyebrow}>REGISTRATION COMPLETE</p>
+              <h1 className={styles.successTitle}>You're in.</h1>
+              {/* <p className={styles.successDesc}>
+                Credentials also sent to your mail. Please check the Spam Folder.
+              </p> */}
+
+              <p className={styles.successDesc}>
+                {successData?.message || "-"}
+              </p>
+
+              <div className={styles.teamIdBox}>
+                <span>Team ID</span>
+                <strong>{successData?.teamId || '—'}</strong>
+              </div>
+
+              <div className={styles.teamIdBox}>
+                <span>Team login mail</span>
+                <strong>
+                  {successData?.email || form.getValues('leadEmail') || '—'}
+                </strong>
+              </div>
+
+              <div className={styles.actions}>
+                <SqBtn
+                  onClick={() => navigate('/login')}
+                  lineColor="#FAB600"
+                  baseColor="#261005"
+                  intensity={1.2}
+                >
+                  Go to Login
+                </SqBtn>
+
+                <SqBtn
+                  onClick={() => navigate('/')}
+                  lineColor="#FAB600"
+                  baseColor="#261005"
+                >
+                  Back Home
+                </SqBtn>
+              </div>
             </div>
-            <div className={styles.teamIdBox}>
-              <span>Team login mail</span>
-              <strong>{successData.email || form.getValues('leadEmail') || '—'}</strong>
-            </div>
-            <div className={styles.actions}>
-              <SqBtn onClick={() => navigate('/login')} lineColor="#FAB600" baseColor="#261005" intensity={1.2}>Go to Login</SqBtn>
-              <SqBtn onClick={() => navigate('/')} lineColor="#FAB600" baseColor="#261005">Back Home</SqBtn>
+
+            {/* WhatsApp QR */}
+            <div className={styles.qrSection}>
+              <p className={styles.qrText}>
+                Join WhatsApp group for timely updates
+              </p>
+
+              <img
+                src="/whatsapp-qr.png"
+                alt="WhatsApp Group QR Code"
+                className={styles.qrCode}
+              />
             </div>
           </motion.div>
         </main>
@@ -281,7 +326,7 @@ export default function Register() {
                           data-callback={(token) => setTurnstileToken(token)}
                           data-theme="dark"
                         /> */}
-                        <small style={{ color: '#c99a2e' }}>Verification your details before submission.</small>
+                        <small style={{ color: '#c99a2e' }}>Verify your details before submission.</small>
                       </div>
                     </>
                   )}
@@ -436,9 +481,9 @@ export default function Register() {
                       {/* Participant ID proofs (single combined PDF) */}
                       <div className={styles.reviewSection}>
                         <div className={styles.reviewSectionHeader}>
-                          <h4 className={styles.reviewSectionTitle}>Participant ID Proofs</h4>
+                          <h4 className={styles.reviewSectionTitle}>Participant College ID Cards</h4>
                           <p className={styles.reviewDesc}>
-                            Upload one PDF containing the ID proof of every team member (combined into a single file).
+                            Upload one combined PDF containing the College ID Cards of every team member.
                           </p>
                         </div>
                         <div className={styles.field}>

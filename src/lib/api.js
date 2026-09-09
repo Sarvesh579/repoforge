@@ -409,4 +409,4 @@ export async function deleteTeam(teamId) {
   return await apiFetch(`/api/admin/teams/${teamId}`, {
     method: 'DELETE',
   });
-}
+}

@@ -736,6 +736,684 @@
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
+/* ── Clickable Team Name ─────────────────────────────────────────────────── */
+
+.teamNameButton {
+  appearance: none;
+  border: none;
+  background: transparent;
+  color: inherit;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.teamNameButton strong {
+  color: #ffffff;
+  transition: color 0.2s ease;
+}
+
+.teamNameButton:hover strong {
+  color: #FAB600;
+}
+
+
+/* ── Team Details Modal ─────────────────────────────────────────────────── */
+
+.teamModal {
+  width: min(100%, 900px);
+  max-width: 900px;
+  height: min(90vh, 820px);
+  max-height: 90vh;
+  padding: 0;
+  gap: 0;
+  overflow: hidden;
+}
+
+
+/* ── Team Modal Header ──────────────────────────────────────────────────── */
+
+.teamModalHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 28px 32px 22px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.09);
+  background:
+    linear-gradient(135deg,
+      rgba(250, 182, 0, 0.08),
+      rgba(176, 37, 1, 0.04));
+  flex-shrink: 0;
+}
+
+.teamModalHeading {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.teamModalEyebrow {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  color: #FAB600;
+  text-transform: uppercase;
+}
+
+.teamModalTitle {
+  margin: 0;
+  color: #ffffff;
+  font-size: 1.65rem;
+  font-weight: 800;
+  line-height: 1.25;
+  word-break: break-word;
+}
+
+.teamModalId {
+  width: fit-content;
+  color: #FAB600;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.78rem;
+  font-weight: 600;
+  padding: 4px 9px;
+  border-radius: 7px;
+  background: rgba(250, 182, 0, 0.08);
+  border: 1px solid rgba(250, 182, 0, 0.2);
+}
+
+.teamModalClose {
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.04);
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 1.5rem;
+  line-height: 1;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.teamModalClose:hover {
+  color: #ffffff;
+  border-color: rgba(250, 182, 0, 0.5);
+  background: rgba(250, 182, 0, 0.1);
+}
+
+
+/* ── Scrollable Team Modal Content ──────────────────────────────────────── */
+
+.teamModalScroll {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 26px 32px 30px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(250, 182, 0, 0.4) transparent;
+  -webkit-overflow-scrolling: touch;
+}
+
+.teamModalScroll::-webkit-scrollbar {
+  width: 6px;
+}
+
+.teamModalScroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.teamModalScroll::-webkit-scrollbar-thumb {
+  background: rgba(250, 182, 0, 0.35);
+  border-radius: 999px;
+}
+
+.teamModalScroll::-webkit-scrollbar-thumb:hover {
+  background: rgba(250, 182, 0, 0.6);
+}
+
+
+/* ── Team Detail Sections ───────────────────────────────────────────────── */
+
+.teamDetailSection {
+  margin-bottom: 26px;
+}
+
+.teamDetailSection:last-child {
+  margin-bottom: 0;
+}
+
+.teamDetailSectionHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.teamDetailSectionHeader h3 {
+  margin: 0;
+  color: #ffffff;
+  font-size: 0.95rem;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+}
+
+.teamDetailSectionHeader h3::before {
+  content: '';
+  display: inline-block;
+  width: 3px;
+  height: 15px;
+  margin-right: 9px;
+  vertical-align: -2px;
+  border-radius: 999px;
+  background: #FAB600;
+}
+
+
+/* ── Overview Cards ─────────────────────────────────────────────────────── */
+
+.teamOverviewGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.teamOverviewCard {
+  min-width: 0;
+  padding: 14px 15px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  background: rgba(255, 255, 255, 0.035);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.teamOverviewCard span {
+  color: rgba(255, 255, 255, 0.48);
+  font-size: 0.68rem;
+  font-family: 'JetBrains Mono', monospace;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.teamOverviewCard strong {
+  color: #ffffff;
+  font-size: 0.86rem;
+  font-weight: 650;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+
+
+/* ── Team Members ───────────────────────────────────────────────────────── */
+
+.teamMembersGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.teamMemberCard {
+  min-width: 0;
+  padding: 16px;
+  border-radius: 14px;
+  border: 1px solid rgba(250, 182, 0, 0.15);
+  background: rgba(250, 182, 0, 0.035);
+}
+
+.teamMemberTop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.teamMemberNumber {
+  color: rgba(255, 255, 255, 0.35);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.teamMemberName {
+  margin-bottom: 14px;
+  color: #ffffff;
+  font-size: 1rem;
+  font-weight: 750;
+  overflow-wrap: anywhere;
+}
+
+
+/* ── Generic Team Detail Renderer ───────────────────────────────────────── */
+
+.teamCompleteDetails {
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.025);
+}
+
+.teamDetailObject {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.teamDetailRow {
+  display: grid;
+  grid-template-columns: minmax(150px, 0.7fr) minmax(0, 1.3fr);
+  gap: 20px;
+  padding: 13px 15px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.teamDetailRow:last-child {
+  border-bottom: none;
+}
+
+.teamDetailLabel {
+  color: rgba(255, 255, 255, 0.48);
+  font-size: 0.72rem;
+  font-family: 'JetBrains Mono', monospace;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  overflow-wrap: anywhere;
+}
+
+.teamDetailField {
+  min-width: 0;
+  color: #ffffff;
+}
+
+.teamDetailValue {
+  display: block;
+  color: rgba(255, 255, 255, 0.88);
+  font-size: 0.86rem;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.teamDetailEmpty {
+  color: rgba(255, 255, 255, 0.3);
+  font-size: 0.86rem;
+}
+
+.teamDetailLink {
+  color: #FAB600;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.teamDetailLink:hover {
+  text-decoration: underline;
+}
+
+
+/* ── Nested Objects / Arrays ────────────────────────────────────────────── */
+
+.teamDetailArray {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+
+.teamDetailArrayItem {
+  min-width: 0;
+  padding: 10px;
+  border-radius: 9px;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  background: rgba(0, 0, 0, 0.14);
+}
+
+.teamDetailArrayItem>.teamDetailObject {
+  width: 100%;
+}
+
+
+/* ── Team Modal Footer ──────────────────────────────────────────────────── */
+
+.teamModalFooter {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding: 16px 32px;
+  border-top: 1px solid rgba(255, 255, 255, 0.09);
+  background: rgba(0, 0, 0, 0.12);
+  flex-shrink: 0;
+}
+
+.teamDetailEmptyBlock {
+  padding: 20px;
+  text-align: center;
+  border: 1px dashed rgba(255, 255, 255, 0.12);
+  border-radius: 12px;
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 0.85rem;
+}
+
+/* ==========================================================================
+   TEAM DETAILS MODAL
+   ========================================================================== */
+.teamModalBackdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  box-sizing: border-box;
+  background: rgba(0, 0, 0, 0.82);
+  backdrop-filter: blur(10px);
+  /* Prevent the page itself from becoming the scroll target */
+  overflow: hidden;
+  overscroll-behavior: contain;
+}
+
+.teamModal {
+  width: min(920px, 100%);
+  height: min(88vh, 820px);
+  max-height: 88vh;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  background: #140800;
+  color: #ffffff;
+  border: 1px solid rgba(250, 182, 0, 0.2);
+  border-radius: 22px;
+  box-shadow:
+    0 30px 80px rgba(0, 0, 0, 0.75),
+    0 0 0 1px rgba(255, 255, 255, 0.03);
+  overflow: hidden;
+}
+
+/* ── Header ─────────────────────────────────────────────────────────────── */
+.teamModalHeader {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 24px 28px 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  background:
+    linear-gradient(135deg,
+      rgba(250, 182, 0, 0.07),
+      rgba(250, 182, 0, 0.015));
+}
+
+.teamModalHeading {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.teamModalEyebrow {
+  color: #FAB600;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+}
+
+.teamModalTitle {
+  margin: 0;
+  color: #ffffff;
+  font-size: 1.55rem;
+  font-weight: 800;
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+}
+
+.teamModalId {
+  width: fit-content;
+  margin-top: 2px;
+  padding: 4px 8px;
+  color: #FAB600;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.72rem;
+  font-weight: 600;
+  background: rgba(250, 182, 0, 0.07);
+  border: 1px solid rgba(250, 182, 0, 0.16);
+  border-radius: 6px;
+}
+
+.teamModalClose {
+  flex: 0 0 auto;
+  width: 36px;
+  height: 36px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 9px;
+  background: rgba(255, 255, 255, 0.035);
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 1.45rem;
+  line-height: 1;
+  cursor: pointer;
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease;
+}
+
+.teamModalClose:hover {
+  color: #ffffff;
+  background: rgba(250, 182, 0, 0.1);
+  border-color: rgba(250, 182, 0, 0.4);
+}
+
+/* ── BODY: The ONLY scrolling region ────────────────────────────────────── */
+.teamModalBody {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 24px 28px 30px;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color:
+    rgba(250, 182, 0, 0.45) transparent;
+}
+
+.teamModalBody::-webkit-scrollbar {
+  width: 7px;
+}
+
+.teamModalBody::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.teamModalBody::-webkit-scrollbar-thumb {
+  background: rgba(250, 182, 0, 0.35);
+  border-radius: 999px;
+}
+
+.teamModalBody::-webkit-scrollbar-thumb:hover {
+  background: rgba(250, 182, 0, 0.6);
+}
+
+/* ── Sections ───────────────────────────────────────────────────────────── */
+.teamModalSection {
+  margin-bottom: 28px;
+}
+
+.teamModalSection:last-child {
+  margin-bottom: 0;
+}
+
+.teamModalSectionTitle {
+  margin-bottom: 12px;
+  color: rgba(255, 255, 255, 0.55);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.teamModalSectionTitle::before {
+  content: '';
+  display: inline-block;
+  width: 3px;
+  height: 13px;
+  margin-right: 8px;
+  vertical-align: -2px;
+  background: #FAB600;
+  border-radius: 999px;
+}
+
+
+/* ── Team information ───────────────────────────────────────────────────── */
+.teamInfoGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.teamInfoRow {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: minmax(120px, 0.7fr) minmax(0, 1.3fr);
+  gap: 14px;
+  padding: 13px 15px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.teamInfoRow:nth-child(odd) {
+  border-right: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.teamInfoLabel {
+  min-width: 0;
+  color: rgba(255, 255, 255, 0.42);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.67rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.035em;
+  overflow-wrap: anywhere;
+}
+
+.teamInfoValue {
+  min-width: 0;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 0.84rem;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+/* ── Members ────────────────────────────────────────────────────────────── */
+.teamMembersGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.teamMemberCard {
+  min-width: 0;
+  padding: 16px;
+  background: rgba(255, 255, 255, 0.025);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+}
+
+.teamMemberHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.teamMemberNumber {
+  color: rgba(255, 255, 255, 0.35);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+}
+
+.teamMemberName {
+  margin-bottom: 13px;
+  color: #ffffff;
+  font-size: 0.98rem;
+  font-weight: 750;
+  overflow-wrap: anywhere;
+}
+
+.teamMemberDetails {
+  display: flex;
+  flex-direction: column;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.teamMemberDetailRow {
+  display: grid;
+  grid-template-columns: minmax(80px, 0.6fr) minmax(0, 1.4fr);
+  gap: 12px;
+  padding: 9px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.045);
+}
+
+.teamMemberDetailRow:last-child {
+  border-bottom: none;
+}
+
+.teamMemberDetailRow span {
+  color: rgba(255, 255, 255, 0.38);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.64rem;
+  text-transform: uppercase;
+}
+
+.teamMemberDetailRow strong {
+  min-width: 0;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 0.78rem;
+  font-weight: 500;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+/* ── Empty state ────────────────────────────────────────────────────────── */
+.teamEmptyState {
+  padding: 24px;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.35);
+  border: 1px dashed rgba(255, 255, 255, 0.12);
+  border-radius: 12px;
+}
+
+
+/* ── Footer ─────────────────────────────────────────────────────────────── */
+.teamModalFooter {
+  flex: 0 0 auto;
+  display: flex;
+  justify-content: flex-end;
+  padding: 14px 28px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(0, 0, 0, 0.12);
+}
+
 /* ── Responsive Styling for Tablets & Smartphones ────────────────────────── */
 @media (max-width: 900px) {
   .container {
@@ -927,5 +1605,80 @@
     padding: 22px 16px;
     border-radius: 20px;
     width: 96%;
+  }
+
+  /* ── Team Details Modal ──────────────────────────────────────────────── */
+
+  .teamModal {
+    width: 96%;
+    height: 92vh;
+    max-height: 92vh;
+    border-radius: 20px;
+  }
+
+  .teamModalHeader {
+    padding: 20px 16px 16px;
+    gap: 12px;
+  }
+
+  .teamModalTitle {
+    font-size: 1.3rem;
+  }
+
+  .teamModalEyebrow {
+    font-size: 0.62rem;
+  }
+
+  .teamModalId {
+    font-size: 0.68rem;
+  }
+
+  .teamModalClose {
+    width: 32px;
+    height: 32px;
+    font-size: 1.3rem;
+  }
+
+  .teamModalScroll {
+    padding: 20px 16px 24px;
+  }
+
+  .teamOverviewGrid {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .teamOverviewCard {
+    padding: 12px 13px;
+  }
+
+  .teamMembersGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .teamMemberCard {
+    padding: 14px;
+  }
+
+  .teamDetailRow {
+    grid-template-columns: 1fr;
+    gap: 5px;
+    padding: 12px 13px;
+  }
+
+  .teamDetailLabel {
+    font-size: 0.65rem;
+  }
+
+  .teamDetailValue {
+    font-size: 0.82rem;
+  }
+
+  .teamModalFooter {
+    padding: 12px 16px;
+  }
+
+  .teamModalFooter .sqBtn {
+    width: 100%;
   }
 }

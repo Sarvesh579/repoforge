@@ -13,6 +13,7 @@
   min-height: 100vh;
 }
 
+
 /* ── Back Row ────────────────────────────────────────────────────────────── */
 .backRow {
   position: absolute;
@@ -20,6 +21,7 @@
   left: 32px;
   z-index: 10;
 }
+
 
 /* ── Main Card ───────────────────────────────────────────────────────────── */
 .card {
@@ -47,6 +49,7 @@
   pointer-events: none;
 }
 
+
 /* ── Card Header ─────────────────────────────────────────────────────────── */
 .cardHeader {
   margin-bottom: 28px;
@@ -68,6 +71,7 @@
   margin: 0;
   letter-spacing: -0.03em;
 }
+
 
 /* ── Stepper ─────────────────────────────────────────────────────────────── */
 .stepper {
@@ -136,6 +140,7 @@
   background: rgba(250, 182, 0, 0.35);
 }
 
+
 /* ── Form ────────────────────────────────────────────────────────────────── */
 .form {
   display: flex;
@@ -153,6 +158,7 @@
   flex-direction: column;
   gap: 18px;
 }
+
 
 /* ── Field ───────────────────────────────────────────────────────────────── */
 .field {
@@ -233,6 +239,7 @@
   gap: 16px;
 }
 
+
 /* ── Members ─────────────────────────────────────────────────────────────── */
 .membersHeader {
   display: flex;
@@ -271,6 +278,7 @@
   font-family: 'JetBrains Mono', monospace;
   font-weight: 600;
 }
+
 
 /* ── Review ──────────────────────────────────────────────────────────────── */
 .reviewHeading {
@@ -389,6 +397,7 @@
   line-height: 1.4;
 }
 
+
 /* ── Form Actions ────────────────────────────────────────────────────────── */
 .formActions {
   display: flex;
@@ -398,6 +407,7 @@
   padding-top: 8px;
   border-top: 1px solid rgba(255, 255, 255, 0.07);
 }
+
 
 /* ── Success State ───────────────────────────────────────────────────────── */
 .successIcon {
@@ -445,6 +455,7 @@
   gap: 14px;
 }
 
+
 /* ── Closed State ────────────────────────────────────────────────────────── */
 .closedDesc {
   color: #8f9bba;
@@ -452,10 +463,106 @@
   margin: 0 0 28px;
 }
 
+
 /* ── Full width button modifier ──────────────────────────────────────────── */
 .fullWidthBtn {
   width: 100%;
 }
+
+
+/* ── WhatsApp QR ─────────────────────────────────────────────────────────── */
+.qrSection {
+  flex: 0 0 220px;
+  width: 220px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  position: relative;
+  z-index: 1;
+  border-left: #8b3300 solid 2px;
+  padding-left: 20px;
+  margin-left: 20px;
+}
+
+.qrText {
+  margin: 0 0 12px;
+  width: 220px;
+  font-size: 0.8rem;
+  line-height: 1.4;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #fab600;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.qrCode {
+  width: 220px;
+  height: 220px;
+  object-fit: contain;
+  display: block;
+}
+
+
+/* ── Success Card QR Layout ──────────────────────────────────────────────── */
+/*
+ * Scoped specifically to the success card containing the QR.
+ * Shared .card styles remain unchanged.
+ */
+
+.card:has(.qrSection) {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 25px;
+}
+
+
+/* Existing content occupies all available space left of QR */
+.card:has(.qrSection) .cardContent {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+
+/* Tighten only the success-card spacing */
+.card:has(.qrSection) .successIcon {
+  margin-bottom: 10px;
+}
+
+.card:has(.qrSection) .eyebrow {
+  margin-bottom: 8px;
+}
+
+.card:has(.qrSection) .successTitle {
+  margin-bottom: 6px;
+}
+
+.card:has(.qrSection) .successDesc {
+  margin-bottom: 18px;
+}
+
+
+/*
+ * Keep the two information boxes visually grouped.
+ * Their combined height now aligns naturally with the 220px QR.
+ */
+.card:has(.qrSection) .teamIdBox {
+  margin-bottom: 16px;
+}
+
+
+/* Don't add unnecessary space after the final information box */
+.card:has(.qrSection) .teamIdBox:last-of-type {
+  margin-bottom: 18px;
+}
+
+.card:has(.qrSection) .actions {
+  gap: 14px;
+}
+
 
 /* ── Responsive ──────────────────────────────────────────────────────────── */
 @media (max-width: 640px) {
@@ -479,6 +586,63 @@
     width: 100%;
     box-sizing: border-box;
   }
+
+
+  /* ── Success card mobile layout ───────────────────────────────────────── */
+  .card:has(.qrSection) {
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
+    gap: 20px;
+  }
+
+  .card:has(.qrSection) .qrSection {
+    order: -1;
+    flex: none;
+    width: 100%;
+    padding: 0;
+  }
+
+  .card:has(.qrSection) .qrText {
+    width: 100%;
+    max-width: 220px;
+    margin: 0 auto 10px;
+  }
+
+  .card:has(.qrSection) .qrCode {
+    width: 220px;
+    height: 220px;
+    margin: 0 auto;
+  }
+
+  .card:has(.qrSection) .cardContent {
+    width: 100%;
+  }
+
+  .card:has(.qrSection) .successIcon {
+    margin-bottom: 8px;
+  }
+
+  .card:has(.qrSection) .eyebrow {
+    margin-bottom: 8px;
+  }
+
+  .card:has(.qrSection) .successTitle {
+    margin-bottom: 6px;
+  }
+
+  .card:has(.qrSection) .successDesc {
+    margin-bottom: 16px;
+  }
+
+  .card:has(.qrSection) .teamIdBox {
+    margin-bottom: 16px;
+  }
+
+  .card:has(.qrSection) .teamIdBox:last-of-type {
+    margin-bottom: 16px;
+  }
+
 
   .cardTitle {
     font-size: 1.65rem;
@@ -544,7 +708,7 @@
     width: 100%;
   }
 
-  .actions > * {
+  .actions>* {
     width: 100% !important;
   }
 
@@ -554,7 +718,7 @@
     width: 100%;
   }
 
-  .formActions > * {
+  .formActions>* {
     width: 100% !important;
   }
 }

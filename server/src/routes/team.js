@@ -80,16 +80,20 @@ async function generateNextTeamId(tx = prisma) {
     select: { id: true },
   });
 
-  let maxNum = 0;
+  const usedNumbers = new Set();
+
   for (const t of teams) {
     const match = String(t.id).match(/^CSI26-(\d{3,})$/i);
     if (match) {
-      const num = parseInt(match[1], 10);
-      if (num > maxNum) maxNum = num;
+      usedNumbers.add(parseInt(match[1], 10));
     }
   }
 
-  const nextNum = maxNum + 1;
+  let nextNum = 1;
+  while (usedNumbers.has(nextNum)) {
+    nextNum++;
+  }
+
   return `CSI26-${String(nextNum).padStart(3, '0')}`;
 }
 
@@ -358,35 +362,35 @@ router.post('/join', publicWriteLimiter, verifyTurnstile, async (req, res) => {
       return res.status(409).json({ success: false, error: 'This email is already a member of a team.' });
     }
 
-      const hasMemberCollegeField = Boolean(prisma.teamMember?.fields?.college);
-      const memberData = {
-        team_id: team.id,
-        name,
-        email: email.toLowerCase(),
-        phone,
-        role: 'member',
-        year: year || '',
-        dept: dept || '',
-      };
-      if (hasMemberCollegeField) {
-        memberData.college = college || team.college || '';
-      }
+    const hasMemberCollegeField = Boolean(prisma.teamMember?.fields?.college);
+    const memberData = {
+      team_id: team.id,
+      name,
+      email: email.toLowerCase(),
+      phone,
+      role: 'member',
+      year: year || '',
+      dept: dept || '',
+    };
+    if (hasMemberCollegeField) {
+      memberData.college = college || team.college || '';
+    }
 
-      const member = await prisma.teamMember.create({
-        data: memberData,
-      });
+    const member = await prisma.teamMember.create({
+      data: memberData,
+    });
 
-      if (!hasMemberCollegeField && (college || team.college)) {
-        try {
-          await prisma.$executeRawUnsafe(
-            `UPDATE team_members SET college = $1 WHERE id = $2`,
-            college || team.college,
-            member.id
-          );
-        } catch (rawErr) {
-          console.warn('[Team/Join] Fallback college update note:', rawErr.message);
-        }
+    if (!hasMemberCollegeField && (college || team.college)) {
+      try {
+        await prisma.$executeRawUnsafe(
+          `UPDATE team_members SET college = $1 WHERE id = $2`,
+          college || team.college,
+          member.id
+        );
+      } catch (rawErr) {
+        console.warn('[Team/Join] Fallback college update note:', rawErr.message);
       }
+    }
 
 
     return res.status(201).json({
