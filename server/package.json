@@ -7,6 +7,7 @@
   "scripts": {
     "dev": "nodemon src/index.js",
     "build": "prisma generate",
+    "postinstall": "prisma generate",
     "start": "node src/index.js",
     "db:generate": "prisma generate",
     "db:push": "prisma db push",
@@ -34,12 +35,12 @@
     "mailersend": "^3.3.0",
     "multer": "^1.4.5-lts.1",
     "nodemailer": "^9.1.1",
+    "prisma": "^5.22.0",
     "resend": "^4.1.2",
     "zod": "^3.24.1"
   },
   "devDependencies": {
-    "nodemon": "^3.1.9",
-    "prisma": "^5.22.0"
+    "nodemon": "^3.1.9"
   },
   "engines": {
     "node": ">=18"

@@ -197,6 +197,37 @@ router.post(
         return res.status(500).json({ success: false, error: 'Failed to upload participant ID proofs. Please try again.' });
       }
 
+      const hasMemberCollegeField = Boolean(prisma.teamMember?.fields?.college);
+
+      const leadMemberData = {
+        name: leadName,
+        email: leadEmail.toLowerCase(),
+        phone: leadPhone,
+        role: 'lead',
+        custom_role: 'Team Lead',
+        year,
+        dept: dept || '',
+      };
+      if (hasMemberCollegeField) {
+        leadMemberData.college = college;
+      }
+
+      const otherMembersData = members.map((m) => {
+        const item = {
+          name: m.name,
+          email: m.email.toLowerCase(),
+          phone: m.phone,
+          role: 'member',
+          custom_role: m.role || 'Member',
+          year: m.year || '',
+          dept: m.dept || '',
+        };
+        if (hasMemberCollegeField) {
+          item.college = m.college || college;
+        }
+        return item;
+      });
+
       const team = await prisma.$transaction(async (tx) => {
         const newTeam = await tx.team.create({
           data: {
@@ -213,26 +244,8 @@ router.post(
             dept: dept || '',
             members: {
               create: [
-                {
-                  name: leadName,
-                  email: leadEmail.toLowerCase(),
-                  phone: leadPhone,
-                  role: 'lead',
-                  custom_role: 'Team Lead',
-                  college: college,
-                  year,
-                  dept: dept || '',
-                },
-                ...members.map((m) => ({
-                  name: m.name,
-                  email: m.email.toLowerCase(),
-                  phone: m.phone,
-                  role: 'member',
-                  custom_role: m.role || 'Member',
-                  college: m.college || college,
-                  year: m.year || '',
-                  dept: m.dept || '',
-                })),
+                leadMemberData,
+                ...otherMembersData,
               ],
             },
             credential: {
@@ -243,6 +256,26 @@ router.post(
             },
           },
         });
+
+        // If running on a server before prisma generate updated the client, update college via raw SQL
+        if (!hasMemberCollegeField) {
+          try {
+            await tx.$executeRawUnsafe(
+              `UPDATE team_members SET college = $1 WHERE email = $2`,
+              college,
+              leadEmail.toLowerCase()
+            );
+            for (const m of members) {
+              await tx.$executeRawUnsafe(
+                `UPDATE team_members SET college = $1 WHERE email = $2`,
+                m.college || college,
+                m.email.toLowerCase()
+              );
+            }
+          } catch (rawErr) {
+            console.warn('[Team/Register] Raw SQL college fallback note:', rawErr.message);
+          }
+        }
 
         // Create an initial Result row (not shortlisted/published yet)
         await tx.result.create({ data: { team_id: newTeam.id } });
@@ -325,8 +358,8 @@ router.post('/join', publicWriteLimiter, verifyTurnstile, async (req, res) => {
       return res.status(409).json({ success: false, error: 'This email is already a member of a team.' });
     }
 
-    const member = await prisma.teamMember.create({
-      data: {
+      const hasMemberCollegeField = Boolean(prisma.teamMember?.fields?.college);
+      const memberData = {
         team_id: team.id,
         name,
         email: email.toLowerCase(),
@@ -334,9 +367,26 @@ router.post('/join', publicWriteLimiter, verifyTurnstile, async (req, res) => {
         role: 'member',
         year: year || '',
         dept: dept || '',
-        college: college || team.college || '',
-      },
-    });
+      };
+      if (hasMemberCollegeField) {
+        memberData.college = college || team.college || '';
+      }
+
+      const member = await prisma.teamMember.create({
+        data: memberData,
+      });
+
+      if (!hasMemberCollegeField && (college || team.college)) {
+        try {
+          await prisma.$executeRawUnsafe(
+            `UPDATE team_members SET college = $1 WHERE id = $2`,
+            college || team.college,
+            member.id
+          );
+        } catch (rawErr) {
+          console.warn('[Team/Join] Fallback college update note:', rawErr.message);
+        }
+      }
 
 
     return res.status(201).json({
@@ -521,9 +571,10 @@ router.put('/members', requireAuth, requireRole('team'), async (req, res) => {
       // 1. Delete old members and bulk insert new ones in parallel or direct sequence without extra findMany overhead
       await tx.teamMember.deleteMany({ where: { team_id: teamId } });
 
+      const hasMemberCollegeField = Boolean(prisma.teamMember?.fields?.college);
       const newMembersData = members.map((m, idx) => {
         const isLead = idx === 0 || m.role?.toLowerCase() === 'lead' || m.role?.toLowerCase() === 'team leader';
-        return {
+        const data = {
           team_id: teamId,
           name: m.name,
           email: m.email || `${teamId.toLowerCase()}_m${idx + 1}@placeholder.com`,
@@ -532,14 +583,34 @@ router.put('/members', requireAuth, requireRole('team'), async (req, res) => {
           custom_role: m.role || (isLead ? 'Team Lead' : 'Member'),
           year: m.year || '',
           dept: m.dept || '',
-          college: m.college || '',
         };
+        if (hasMemberCollegeField) {
+          data.college = m.college || '';
+        }
+        return data;
       });
 
       await tx.teamMember.createMany({ data: newMembersData });
 
+      if (!hasMemberCollegeField) {
+        for (const m of members) {
+          if (m.college && m.email) {
+            try {
+              await tx.$executeRawUnsafe(
+                `UPDATE team_members SET college = $1 WHERE team_id = $2 AND email = $3`,
+                m.college,
+                teamId,
+                m.email.toLowerCase()
+              );
+            } catch (rawErr) {
+              console.warn('[Team/UpdateMembers] Fallback college update note:', rawErr.message);
+            }
+          }
+        }
+      }
+
       // If lead's college is updated, sync it to team.college as well
-      const leadCollege = newMembersData[0]?.college;
+      const leadCollege = members[0]?.college;
       if (leadCollege) {
         await tx.team.update({
           where: { id: teamId },
