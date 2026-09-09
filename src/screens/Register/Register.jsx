@@ -234,7 +234,7 @@ export default function Register() {
               </p>
 
               <img
-                src="/whatsapp-qr.png"
+                src="/whatsapp-qr-orange.png"
                 alt="WhatsApp Group QR Code"
                 className={styles.qrCode}
               />
