@@ -314,7 +314,7 @@ router.post(
         data: {
           teamId: team.id,
           email: leadEmail.toLowerCase(),
-          message: 'Registration successful! Login credentials have been sent to your email.',
+          message: 'Registration successful!',
         },
       });
     } catch (err) {
