@@ -485,6 +485,7 @@ export default function Register() {
                           <p className={styles.reviewDesc}>
                             Upload one combined PDF containing the College ID Cards of every team member.
                           </p>
+                          <p>Max size accepted is 1MB. Please compress your file within the limit.</p>
                         </div>
                         <div className={styles.field}>
                           <label>Combined ID Proofs (PDF)</label>
