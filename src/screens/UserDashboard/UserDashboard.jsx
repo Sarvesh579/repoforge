@@ -856,7 +856,7 @@ export default function UserDashboard() {
                 <p>Track your team progress, selected problem statement, and presentation deadline.</p>
               </div>
               <div className={styles.statusPill}>
-                {Icons.statusDot} Hackathon Status: {dynamicSettings.acceptingSubmissions === false ? 'Submissions Closed' : settings.hackathonStatus}
+                {Icons.statusDot} Hackathon Status: {settings.hackathonStatus}
               </div>
             </div>
 

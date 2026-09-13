@@ -18,7 +18,7 @@ const MotionGlareHover = motion.create ? motion.create(GlareHover) : motion(Glar
 const faqItems = [
   { q: 'When / where do we pay registration fee?', a: "No registration fees for PPT round. Pay ₹300 after you've been shortlisted for Offline Hackathon" },
   { q: 'Who can participate?', a: 'Any year engineering student with a passion for shipping impactful ideas.' },
-  { q: 'Do we need a fully working product?', a: 'Ideally yes. Teams shall show a proototype or demo in the first offline judging round, but final judging round would require a product.' },
+  { q: 'Do we need a fully working product?', a: 'Ideally yes. Teams shall show a prototype or demo in the first offline judging round, but final judging round would require a product.' },
   { q: 'Is there a theme?', a: 'The event focuses on real-world impact with PSs across various domains. No limitation on APP/WEB deployment' },
   { q: 'Are the PS same for PPT and Offline rounds?', a: 'Yes. Your PS for offline round will be same as your selected PS for PPT round.' },
 ];
