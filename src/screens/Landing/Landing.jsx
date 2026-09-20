@@ -8,6 +8,7 @@ import CountdownTimer from '../../components/ui/CountdownTimer';
 import MagneticButton from '../../components/ui/MagneticButton';
 import SpecularButton from '../../components/ui/SpecularButton';
 import GlareHover from '../../components/ui/GlareHover';
+import ProblemStatementsModal from '../../components/ui/ProblemStatementsModal';
 import { useParallax } from '../../hooks/useParallax';
 import { smoothScrollTo } from '../../utils/smoothScroll';
 import n8nLogo from '../../assets/sponsors/n8n.png';
@@ -93,6 +94,7 @@ export default function Landing() {
   const location = useLocation();
   const [openFaq, setOpenFaq] = useState(-1);
   const [selectedSponsor, setSelectedSponsor] = useState(null);
+  const [showProblemsModal, setShowProblemsModal] = useState(false);
 
   // ── Parallax refs ────────────────────────────────────────────────────────
   const hero = useParallax(80);   // hero visual drifts up
@@ -103,12 +105,20 @@ export default function Landing() {
 
   useEffect(() => {
     const id = location.hash.replace('#', '');
-    if (id) {
+    if (id === 'problem-statements' || id === 'problems') {
+      setShowProblemsModal(true);
+    } else if (id) {
       setTimeout(() => {
         smoothScrollTo(id, { offset: 80, duration: 850 });
       }, 100);
     }
   }, [location.hash]);
+
+  useEffect(() => {
+    const handleOpen = () => setShowProblemsModal(true);
+    window.addEventListener('open-problem-statements', handleOpen);
+    return () => window.removeEventListener('open-problem-statements', handleOpen);
+  }, []);
 
 
   return (
@@ -185,11 +195,7 @@ export default function Landing() {
                   textColor="#ffffff"
                   intensity={1}
                   speed={0.35}
-                  onClick={() => {
-                    const el = document.getElementById('problem-statements');
-                    if (el) el.scrollIntoView({ behavior: 'smooth' })
-                    else alert("Not released yet! All PS will be released on 20th September 2026. Thank you");
-                  }}
+                  onClick={() => setShowProblemsModal(true)}
                 >
                   Explore Problem Statements &rsaquo;
                 </SpecularButton>
@@ -897,6 +903,11 @@ export default function Landing() {
         </motion.section>
 
       </main>
+
+      <ProblemStatementsModal
+        isOpen={showProblemsModal}
+        onClose={() => setShowProblemsModal(false)}
+      />
 
       <Footer />
     </div>
