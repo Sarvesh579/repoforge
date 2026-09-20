@@ -502,6 +502,9 @@ router.get('/participant_tracks', async (req, res) => {
     const tracks = await prisma.track.findMany({
       where: {
         published: true
+      },
+      orderBy: {
+        id: 'asc'
       }
     });
 

@@ -405,6 +405,11 @@ export default function UserDashboard() {
             domain: track.domain || track.category || track.theme || 'General',
             tags: track.tags || []
           }));
+          mappedProblems.sort((a, b) => {
+            const idA = String(a.id || '');
+            const idB = String(b.id || '');
+            return idA.localeCompare(idB, undefined, { numeric: true, sensitivity: 'base' });
+          });
           setProblems(mappedProblems);
         }
       })

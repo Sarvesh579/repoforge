@@ -336,10 +336,16 @@ export default function AdminDashboard() {
       ]);
 
       if (tracksRes.success) {
-        setProblems(tracksRes.data.map((track) => ({
+        const sortedTracks = tracksRes.data.map((track) => ({
           ...track,
           domain: track.domain || track.category || 'General',
-        })));
+        }));
+        sortedTracks.sort((a, b) => {
+          const idA = String(a.id || '');
+          const idB = String(b.id || '');
+          return idA.localeCompare(idB, undefined, { numeric: true, sensitivity: 'base' });
+        });
+        setProblems(sortedTracks);
       }
       if (teamsRes.success) setTeams(teamsRes.data);
       if (subsRes.success) setSubmissions(subsRes.data);

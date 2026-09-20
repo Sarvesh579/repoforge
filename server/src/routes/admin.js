@@ -360,7 +360,7 @@ router.post('/announcements', requireAuth, requireRole('admin'), async (req, res
 
 router.get('/tracks', async (_req, res) => {
   try {
-    const tracks = await prisma.track.findMany({ orderBy: { title: 'asc' } });
+    const tracks = await prisma.track.findMany({ orderBy: { id: 'asc' } });
     return res.json({ success: true, data: tracks });
   } catch (err) {
     return res.status(500).json({ success: false, error: 'Failed to fetch tracks.' });
