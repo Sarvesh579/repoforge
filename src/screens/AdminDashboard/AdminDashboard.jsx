@@ -314,6 +314,7 @@ export default function AdminDashboard() {
   const [viewProblem, setViewProblem] = useState(null);
   const [viewTeam, setViewTeam] = useState(null);
   const [resetPassword, setResetPassword] = useState({ newPassword: '', confirmPassword: '' });
+  const [showResetPassword, setShowResetPassword] = useState(false);
 
   // Form states
   const [probForm, setProbForm] = useState({ id: '', title: '', category: 'General', short_description: '', description: '', difficulty: 'Intermediate', reward: '', tags: '', published: false });
@@ -579,6 +580,7 @@ export default function AdminDashboard() {
   const openTeamModal = (team) => {
     setViewTeam(team);
     setResetPassword({ newPassword: '', confirmPassword: '' });
+    setShowResetPassword(false);
   };
 
   const handleResetTeamPassword = async (event) => {
@@ -598,6 +600,7 @@ export default function AdminDashboard() {
     try {
       await resetTeamPassword(viewTeam.id, resetPassword.newPassword);
       setResetPassword({ newPassword: '', confirmPassword: '' });
+      setShowResetPassword(false);
       showToast('Team password reset successfully.');
     } catch (err) {
       showToast(err.message || 'Failed to reset team password.');
@@ -1779,35 +1782,87 @@ export default function AdminDashboard() {
                   Reset Team Password
                 </div>
                 <form className={styles.resetPasswordForm} onSubmit={handleResetTeamPassword}>
-                  <p className={styles.resetPasswordHint}>
-                    Set a new password for the team lead. The existing password cannot be viewed.
-                  </p>
-                  <div className={styles.resetPasswordFields}>
-                    <label className={styles.resetPasswordField}>
-                      New password
-                      <input
-                        type="password"
-                        value={resetPassword.newPassword}
-                        onChange={(event) => setResetPassword((current) => ({ ...current, newPassword: event.target.value }))}
-                        minLength={8}
-                        autoComplete="new-password"
-                        required
-                      />
-                    </label>
-                    <label className={styles.resetPasswordField}>
-                      Confirm password
-                      <input
-                        type="password"
-                        value={resetPassword.confirmPassword}
-                        onChange={(event) => setResetPassword((current) => ({ ...current, confirmPassword: event.target.value }))}
-                        minLength={8}
-                        autoComplete="new-password"
-                        required
-                      />
-                    </label>
+                  <div className={styles.resetPasswordNotice}>
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#FAB600" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                      <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                    </svg>
+                    <span>Set a new password for the team lead. Existing passwords cannot be viewed.</span>
                   </div>
+
+                  <div className={styles.resetPasswordFields}>
+                    <div className={styles.resetPasswordField}>
+                      <label htmlFor="team-new-password" className={styles.resetPasswordLabel}>
+                        <span>New password</span>
+                        <span className={styles.resetPasswordLabelSub}>(min. 8 chars)</span>
+                      </label>
+                      <div className={styles.resetPasswordInputWrapper}>
+                        <svg className={styles.resetPasswordInputIcon} width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                          <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                        </svg>
+                        <input
+                          id="team-new-password"
+                          type={showResetPassword ? 'text' : 'password'}
+                          className={styles.resetPasswordInput}
+                          value={resetPassword.newPassword}
+                          onChange={(event) => setResetPassword((current) => ({ ...current, newPassword: event.target.value }))}
+                          minLength={8}
+                          autoComplete="new-password"
+                          placeholder="Enter new password"
+                          required
+                        />
+                        <button
+                          type="button"
+                          className={styles.resetPasswordToggleBtn}
+                          onClick={() => setShowResetPassword(!showResetPassword)}
+                          title={showResetPassword ? 'Hide password' : 'Show password'}
+                          tabIndex="-1"
+                        >
+                          {showResetPassword ? (
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                              <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24" />
+                              <line x1="1" y1="1" x2="23" y2="23" />
+                            </svg>
+                          ) : (
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                              <circle cx="12" cy="12" r="3" />
+                            </svg>
+                          )}
+                        </button>
+                      </div>
+                    </div>
+
+                    <div className={styles.resetPasswordField}>
+                      <label htmlFor="team-confirm-password" className={styles.resetPasswordLabel}>
+                        <span>Confirm password</span>
+                      </label>
+                      <div className={styles.resetPasswordInputWrapper}>
+                        <svg className={styles.resetPasswordInputIcon} width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                          <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                        </svg>
+                        <input
+                          id="team-confirm-password"
+                          type={showResetPassword ? 'text' : 'password'}
+                          className={styles.resetPasswordInput}
+                          value={resetPassword.confirmPassword}
+                          onChange={(event) => setResetPassword((current) => ({ ...current, confirmPassword: event.target.value }))}
+                          minLength={8}
+                          autoComplete="new-password"
+                          placeholder="Re-enter password"
+                          required
+                        />
+                      </div>
+                    </div>
+                  </div>
+
                   <SqBtn type="submit" success fullWidth>
-                    {actionLoading ? 'Resetting...' : 'Reset Password'}
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4" />
+                    </svg>
+                    {actionLoading ? 'Resetting Password...' : 'Reset Password'}
                   </SqBtn>
                 </form>
               </section>
