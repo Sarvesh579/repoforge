@@ -1139,8 +1139,54 @@ export default function UserDashboard() {
                           <StarBorder onClick={() => setViewProblemModal(prob)} color="#FAB600" backgroundColor="#261005" borderColor="rgba(250, 182, 0, 0.4)" textColor="#ffffff" speed="5s">
                             View Details
                           </StarBorder>
-                          <StarBorder onClick={() => handleSelectProblem(prob)} disabled={hasSubmittedPresentation} color={isSelected ? '#22c55e' : '#FAB600'} backgroundColor={isSelected ? '#0a2a16' : '#261005'} borderColor={isSelected ? 'rgba(34, 197, 94, 0.5)' : 'rgba(250, 182, 0, 0.4)'} textColor={isSelected ? '#22c55e' : '#ffffff'} speed="4s">
-                            {hasSubmittedPresentation ? 'Problem Statement Locked' : isSelected ? <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>{Icons.check} Selected</span> : 'Select Problem'}
+                          <StarBorder
+                            onClick={() => !hasSubmittedPresentation && handleSelectProblem(prob)}
+                            disabled={hasSubmittedPresentation}
+                            color={
+                              isSelected
+                                ? '#22c55e'
+                                : hasSubmittedPresentation
+                                  ? 'rgba(255, 255, 255, 0.2)'
+                                  : '#FAB600'
+                            }
+                            backgroundColor={
+                              isSelected
+                                ? '#0a2a16'
+                                : hasSubmittedPresentation
+                                  ? 'rgba(255, 255, 255, 0.03)'
+                                  : '#261005'
+                            }
+                            borderColor={
+                              isSelected
+                                ? 'rgba(34, 197, 94, 0.5)'
+                                : hasSubmittedPresentation
+                                  ? 'rgba(255, 255, 255, 0.08)'
+                                  : 'rgba(250, 182, 0, 0.4)'
+                            }
+                            textColor={
+                              isSelected
+                                ? '#22c55e'
+                                : hasSubmittedPresentation
+                                  ? 'rgba(255, 255, 255, 0.35)'
+                                  : '#ffffff'
+                            }
+                            speed={hasSubmittedPresentation ? '0s' : '4s'}
+                          >
+                            {hasSubmittedPresentation ? (
+                              isSelected ? (
+                                <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+                                  {Icons.check} Selected & Locked
+                                </span>
+                              ) : (
+                                'Selection Locked'
+                              )
+                            ) : isSelected ? (
+                              <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+                                {Icons.check} Selected
+                              </span>
+                            ) : (
+                              'Select Problem'
+                            )}
                           </StarBorder>
                         </div>
                       </div>
