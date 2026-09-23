@@ -343,6 +343,10 @@ export default function UserDashboard() {
 
     if (teamRes?.data) {
       setLiveTeam(teamRes.data);
+        setSelectedProb(teamRes.data.problemStatement || (teamRes.data.problem_statement_id ? {
+          id: teamRes.data.problem_statement_id,
+          title: teamRes.data.problem_statement || 'Selected Problem Statement',
+        } : null));
       try {
         sessionStorage.setItem(cacheKey, JSON.stringify(teamRes.data));
       } catch { }
@@ -377,6 +381,7 @@ export default function UserDashboard() {
   const [submission, setSubmissionState] = useState(null);
   const [paymentRecord, setPaymentRecord] = useState(null);
   const paymentStatus = paymentRecord?.status || null;
+  const hasSubmittedPresentation = Boolean(submission || liveTeam?.submission);
 
   // UI state
   const [searchQuery, setSearchQuery] = useState('');
@@ -429,6 +434,10 @@ export default function UserDashboard() {
 
       if (teamRes?.data) {
         setLiveTeam(teamRes.data);
+        setSelectedProb(teamRes.data.problemStatement || (teamRes.data.problem_statement_id ? {
+          id: teamRes.data.problem_statement_id,
+          title: teamRes.data.problem_statement || 'Selected Problem Statement',
+        } : null));
         if (teamRes.data.payment) {
           const paymentData = {
             fileName: teamRes.data.payment.original_name,
@@ -613,6 +622,11 @@ export default function UserDashboard() {
   // Inside UserDashboard.jsx
 
   const handleSelectProblem = async (prob) => {
+    if (hasSubmittedPresentation) {
+      showToast('Problem statement cannot be changed after submitting a presentation.');
+      return;
+    }
+
     try {
       setActionLoading(true);
       // Call your API helper to save selection on the backend
@@ -892,14 +906,15 @@ export default function UserDashboard() {
                     type="button"
                     className={styles.downloadBtn}
                     style={{ marginBottom: 0 }}
-                    onClick={() => setActiveTab('problems')}
+                    onClick={() => !hasSubmittedPresentation && setActiveTab('problems')}
+                    disabled={hasSubmittedPresentation}
                   >
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                       <path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2" />
                       <rect x="9" y="3" width="6" height="4" rx="1" />
                       <path d="M9 14l2 2 4-4" />
                     </svg>
-                    {selectedProb ? 'Change / Explore Problems →' : 'Select a Problem Statement →'}
+                    {hasSubmittedPresentation ? 'Problem Statement Locked' : selectedProb ? 'Change / Explore Problems →' : 'Select a Problem Statement →'}
                   </button>
                   <button
                     type="button"
@@ -1124,8 +1139,8 @@ export default function UserDashboard() {
                           <StarBorder onClick={() => setViewProblemModal(prob)} color="#FAB600" backgroundColor="#261005" borderColor="rgba(250, 182, 0, 0.4)" textColor="#ffffff" speed="5s">
                             View Details
                           </StarBorder>
-                          <StarBorder onClick={() => handleSelectProblem(prob)} color={isSelected ? '#22c55e' : '#FAB600'} backgroundColor={isSelected ? '#0a2a16' : '#261005'} borderColor={isSelected ? 'rgba(34, 197, 94, 0.5)' : 'rgba(250, 182, 0, 0.4)'} textColor={isSelected ? '#22c55e' : '#ffffff'} speed="4s">
-                            {isSelected ? <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>{Icons.check} Selected</span> : 'Select Problem'}
+                          <StarBorder onClick={() => handleSelectProblem(prob)} disabled={hasSubmittedPresentation} color={isSelected ? '#22c55e' : '#FAB600'} backgroundColor={isSelected ? '#0a2a16' : '#261005'} borderColor={isSelected ? 'rgba(34, 197, 94, 0.5)' : 'rgba(250, 182, 0, 0.4)'} textColor={isSelected ? '#22c55e' : '#ffffff'} speed="4s">
+                            {hasSubmittedPresentation ? 'Problem Statement Locked' : isSelected ? <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>{Icons.check} Selected</span> : 'Select Problem'}
                           </StarBorder>
                         </div>
                       </div>
