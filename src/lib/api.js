@@ -410,3 +410,10 @@ export async function deleteTeam(teamId) {
     method: 'DELETE',
   });
 }
+
+export async function resetTeamPassword(teamId, newPassword) {
+  return await apiFetch(`/api/admin/teams/${teamId}/reset-password`, {
+    method: 'POST',
+    body: JSON.stringify({ newPassword }),
+  });
+}

@@ -19,7 +19,8 @@ import {
   unpublishHackathonResults,
   verifyTeamPayment,
   updatePaymentStatus,
-  deleteTeam
+  deleteTeam,
+  resetTeamPassword
 } from '../../lib/api'; // <--- Switch from portalStorage to real api.js
 import LoadingOverlay from '../../components/ui/LoadingOverlay';
 
@@ -312,6 +313,7 @@ export default function AdminDashboard() {
   const [editingProblem, setEditingProblem] = useState(null);
   const [viewProblem, setViewProblem] = useState(null);
   const [viewTeam, setViewTeam] = useState(null);
+  const [resetPassword, setResetPassword] = useState({ newPassword: '', confirmPassword: '' });
 
   // Form states
   const [probForm, setProbForm] = useState({ id: '', title: '', category: 'General', short_description: '', description: '', difficulty: 'Intermediate', reward: '', tags: '', published: false });
@@ -576,6 +578,32 @@ export default function AdminDashboard() {
 
   const openTeamModal = (team) => {
     setViewTeam(team);
+    setResetPassword({ newPassword: '', confirmPassword: '' });
+  };
+
+  const handleResetTeamPassword = async (event) => {
+    event.preventDefault();
+    if (!viewTeam) return;
+    if (resetPassword.newPassword.length < 8) {
+      showToast('Password must be at least 8 characters.');
+      return;
+    }
+    if (resetPassword.newPassword !== resetPassword.confirmPassword) {
+      showToast('Passwords do not match.');
+      return;
+    }
+    if (!window.confirm(`Reset the password for ${viewTeam.name || viewTeam.teamName || 'this team'}?`)) return;
+
+    setActionLoading(true);
+    try {
+      await resetTeamPassword(viewTeam.id, resetPassword.newPassword);
+      setResetPassword({ newPassword: '', confirmPassword: '' });
+      showToast('Team password reset successfully.');
+    } catch (err) {
+      showToast(err.message || 'Failed to reset team password.');
+    } finally {
+      setActionLoading(false);
+    }
   };
 
   const handleDeleteTeam = async (team) => {
@@ -1744,6 +1772,44 @@ export default function AdminDashboard() {
                     No member information available.
                   </div>
                 )}
+              </section>
+
+              <section className={styles.teamModalSection}>
+                <div className={styles.teamModalSectionTitle}>
+                  Reset Team Password
+                </div>
+                <form className={styles.resetPasswordForm} onSubmit={handleResetTeamPassword}>
+                  <p className={styles.resetPasswordHint}>
+                    Set a new password for the team lead. The existing password cannot be viewed.
+                  </p>
+                  <div className={styles.resetPasswordFields}>
+                    <label className={styles.resetPasswordField}>
+                      New password
+                      <input
+                        type="password"
+                        value={resetPassword.newPassword}
+                        onChange={(event) => setResetPassword((current) => ({ ...current, newPassword: event.target.value }))}
+                        minLength={8}
+                        autoComplete="new-password"
+                        required
+                      />
+                    </label>
+                    <label className={styles.resetPasswordField}>
+                      Confirm password
+                      <input
+                        type="password"
+                        value={resetPassword.confirmPassword}
+                        onChange={(event) => setResetPassword((current) => ({ ...current, confirmPassword: event.target.value }))}
+                        minLength={8}
+                        autoComplete="new-password"
+                        required
+                      />
+                    </label>
+                  </div>
+                  <SqBtn type="submit" success fullWidth>
+                    {actionLoading ? 'Resetting...' : 'Reset Password'}
+                  </SqBtn>
+                </form>
               </section>
 
             </div>

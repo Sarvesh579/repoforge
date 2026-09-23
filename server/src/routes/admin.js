@@ -1,5 +1,6 @@
 const { Router } = require('express');
 const { z } = require('zod');
+const bcrypt = require('bcryptjs');
 const prisma = require('../lib/prisma');
 const { getSubmissionSettings } = require('../lib/submissionSettings');
 const { requireAuth, requireRole } = require('../middleware/auth');
@@ -42,6 +43,10 @@ const trackSchema = z.object({
     return [];
   }, z.array(z.string())).default([]),
   published: z.boolean().default(false),
+});
+
+const resetTeamPasswordSchema = z.object({
+  newPassword: z.string().min(8, 'Password must be at least 8 characters.'),
 });
 
 // ─── Registration window ──────────────────────────────────────────────────────
@@ -116,6 +121,41 @@ router.get('/teams', requireAuth, requireRole('admin', 'judge'), async (_req, re
   } catch (err) {
     console.error('[Admin/Teams]', err);
     return res.status(500).json({ success: false, error: 'Failed to fetch teams.' });
+  }
+});
+
+// ─── Reset team password (admin only) ─────────────────────────────────────────
+
+router.post('/teams/:teamId/reset-password', requireAuth, requireRole('admin'), async (req, res) => {
+  const parsed = resetTeamPasswordSchema.safeParse(req.body);
+  if (!parsed.success) {
+    return res.status(400).json({
+      success: false,
+      error: parsed.error.flatten().fieldErrors.newPassword?.[0] || 'Invalid password.',
+    });
+  }
+
+  try {
+    const team = await prisma.team.findUnique({
+      where: { id: req.params.teamId },
+      select: { id: true },
+    });
+
+    if (!team) {
+      return res.status(404).json({ success: false, error: 'Team not found.' });
+    }
+
+    const passwordHash = await bcrypt.hash(parsed.data.newPassword, 12);
+    await prisma.credential.upsert({
+      where: { team_id: team.id },
+      create: { team_id: team.id, password_hash: passwordHash },
+      update: { password_hash: passwordHash, email_sent_at: null },
+    });
+
+    return res.json({ success: true, message: 'Team password reset successfully.' });
+  } catch (err) {
+    console.error('[Admin/ResetTeamPassword]', err);
+    return res.status(500).json({ success: false, error: 'Failed to reset team password.' });
   }
 });
 
