@@ -81,9 +81,8 @@ const milestoneDates = {
   '09': '2026-10-03T09:00:00',
   '10': '2026-10-03T11:00:00',
   '11': '2026-10-03T13:00:00',
-  '12': '2026-10-03T14:00:00',
-  '13': '2026-10-03T15:00:00',
-  '14': '2026-10-03T17:00:00',
+  '12': '2026-10-03T15:00:00',
+  '13': '2026-10-03T17:00:00',
 };
 
 const isDateReached = (dateStr) => {
@@ -541,11 +540,11 @@ export default function Landing() {
               <div className={styles.dividerLine} />
             </div>
 
-            {/* Bottom Row: Milestones 11 to 14*/}
+            {/* Bottom Row: Milestones 11 to 13 */}
             <div className={styles.milestoneRowBottom}>
               {/* Badges Header */}
-              <div className={styles.milestoneLineHeaderBottom}>
-                {['11', '12', '13', '14'].map((num) => (
+              <div className={styles.milestoneLineHeaderBottomThree}>
+                {['11', '12', '13'].map((num) => (
                   <div
                     key={num}
                     className={`${styles.milestoneBadgeCircle} ${isDateReached(milestoneDates[num]) ? styles.badgeActive : ''}`}
@@ -556,7 +555,7 @@ export default function Landing() {
               </div>
 
               {/* Cards Grid Bottom */}
-              <div className={styles.milestoneGridBottom}>
+              <div className={styles.milestoneGridBottomThree}>
                 {/* 11: Lunch */}
                 <div className={`${styles.milestoneCard} ${isDateReached(milestoneDates['11']) ? styles.cardActive : styles.cardDark}`}>
                   <div className={styles.dateLabelDark}>1:00 PM</div>
@@ -564,22 +563,15 @@ export default function Landing() {
                   <p>Lunch will be served to all participants</p>
                 </div>
 
-                {/* 12: Result of Judging 1 */}
+                {/* 12: Judging Round 2 */}
                 <div className={`${styles.milestoneCard} ${isDateReached(milestoneDates['12']) ? styles.cardActive : styles.cardDark}`}>
-                  <div className={styles.dateLabelDark}>2:00 PM</div>
-                  <h3>Results of Judging Round 1</h3>
-                  <p>The final Shortlisted teams will be announced</p>
-                </div>
-
-                {/* 13: Judging Round 2 */}
-                <div className={`${styles.milestoneCard} ${isDateReached(milestoneDates['13']) ? styles.cardActive : styles.cardDark}`}>
                   <div className={styles.dateLabelDark}>3:00 PM</div>
                   <h3>Judging Round 2</h3>
                   <p>Present the final product on-stage in front of the full judging panel and audience.</p>
                 </div>
 
-                {/* 14 : Valedictory Ceremony */}
-                <div className={`${styles.milestoneCard} ${isDateReached(milestoneDates['14']) ? styles.cardActive : styles.cardDark}`}>
+                {/* 13: Valedictory Ceremony */}
+                <div className={`${styles.milestoneCard} ${isDateReached(milestoneDates['13']) ? styles.cardActive : styles.cardDark}`}>
                   <div className={styles.dateLabelDark}>5:00 PM</div>
                   <h3>Valedictory Ceremony</h3>
                   <p>Felicitation of the winners and closing of the event.</p>
