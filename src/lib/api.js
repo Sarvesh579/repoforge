@@ -18,6 +18,13 @@ function getToken() {
   }
 }
 
+function handleUnauthorized(response) {
+  if (response.status === 401) {
+    localStorage.removeItem(STORAGE_KEY);
+    window.location.assign('/login');
+  }
+}
+
 export async function apiFetch(path, options = {}) {
   const token = getToken();
   const headers = {
@@ -34,6 +41,7 @@ export async function apiFetch(path, options = {}) {
   const data = await response.json();
 
   if (!response.ok) {
+    handleUnauthorized(response);
     throw new Error(data.error || `Request failed (${response.status})`);
   }
 
@@ -51,7 +59,10 @@ async function apiFetchFormData(path, formData) {
   });
 
   const data = await response.json();
-  if (!response.ok) throw new Error(data.error || `Upload failed (${response.status})`);
+  if (!response.ok) {
+    handleUnauthorized(response);
+    throw new Error(data.error || `Upload failed (${response.status})`);
+  }
   return data;
 }
 
@@ -74,7 +85,10 @@ async function apiFetchMultipart(path, formData, options = {}) {
   });
 
   const data = await response.json();
-  if (!response.ok) throw new Error(data.error || `Request failed (${response.status})`);
+  if (!response.ok) {
+    handleUnauthorized(response);
+    throw new Error(data.error || `Request failed (${response.status})`);
+  }
   return data;
 }
 

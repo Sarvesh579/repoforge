@@ -425,7 +425,11 @@ router.get('/me', requireAuth, requireRole('team'), async (req, res) => {
       return res.status(404).json({ success: false, error: 'Team not found.' });
     }
 
-    return res.json({ success: true, data: team });
+    const problemStatement = team.problem_statement_id
+      ? await prisma.track.findUnique({ where: { id: team.problem_statement_id } })
+      : null;
+
+    return res.json({ success: true, data: { ...team, problemStatement } });
   } catch (err) {
     console.error('[Team/Me]', err);
     return res.status(500).json({ success: false, error: 'Failed to fetch team data.' });
@@ -525,6 +529,14 @@ router.post('/select-track', requireAuth, requireRole('team'), async (req, res) 
   try {
     const { trackId } = req.body;
     const teamId = req.user.teamId;
+
+    const existingSubmission = await prisma.submission.findUnique({
+      where: { team_id: teamId },
+      select: { id: true },
+    });
+    if (existingSubmission) {
+      return res.status(409).json({ success: false, error: 'Problem statement cannot be changed after submitting a presentation.' });
+    }
 
     // 1. Find the selected track to pull its details
     const track = await prisma.track.findUnique({

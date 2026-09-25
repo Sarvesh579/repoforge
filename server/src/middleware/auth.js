@@ -46,7 +46,7 @@ function signTeamToken(team) {
   return jwt.sign(
     { id: team.id, role: 'team', teamId: team.id, email: team.lead_email },
     JWT_SECRET,
-    { expiresIn: process.env.JWT_EXPIRES_IN || '7d' }
+    { expiresIn: '14d' }
   );
 }
 
@@ -57,7 +57,7 @@ function signJudgeToken(judgeUser) {
   return jwt.sign(
     { id: judgeUser.id, role: judgeUser.role, email: judgeUser.email },
     JWT_SECRET,
-    { expiresIn: process.env.JWT_EXPIRES_IN || '7d' }
+    { expiresIn: '14d' }
   );
 }
 
