@@ -13,6 +13,7 @@ import { useParallax } from '../../hooks/useParallax';
 import { smoothScrollTo } from '../../utils/smoothScroll';
 import n8nLogo from '../../assets/sponsors/n8n.png';
 import styles from './Landing.module.css';
+import { label } from 'framer-motion/client';
 
 const MotionGlareHover = motion.create ? motion.create(GlareHover) : motion(GlareHover);
 
@@ -46,8 +47,8 @@ const sponsorRow2 = [
 
 const stats = [
   { value: '₹25k', label: 'Prize Pool' },
-  { value: '200+', label: 'Members' },
-  { value: 'Mahim', label: 'Location' },
+  { value: '160+', label: 'Teams' },
+  { value: 'XIE-Mahim', label: 'Location' },
   { value: '5', label: 'Problem Statements' },
 ];
 
@@ -530,7 +531,7 @@ export default function Landing() {
                 <div className={`${styles.milestoneCard} ${isDateReached(milestoneDates['10']) ? styles.cardActive : styles.cardDark}`}>
                   <div className={styles.dateLabelDark}>11:00 AM</div>
                   <h3>Judging Round 1</h3>
-                  <p>Panel of judges will judge the product and shortlist teams for final round</p>
+                  <p>Panel of judges will judge the product</p>
                 </div>
               </div>
             </div>
