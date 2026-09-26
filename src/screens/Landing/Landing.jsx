@@ -43,6 +43,8 @@ const sponsorRow2 = [
   { name: 'Scroll Connect', tier: 'CAMPUS PARTNER', tierClass: 'tierBlue', bg: '#1a237e', logoimg: '/scroll-connect-light.png', links: { website: 'https://www.scrollconnect.com/' } },
   { name: 'MiniMoth.dev', tier: 'MESSAGING PARTNER', tierClass: 'tierBlue', bg: '#1a237e', logoimg: '/moth-light.png', links: { linkedin: 'https://www.linkedin.com/company/minimoth', X: 'https://x.com/minimoth_dev' } },
   { name: 'n8n', tier: 'CLOUD PARTNER', tierClass: 'tierBlue', bg: '#1a237e', logoimg: n8nLogo, links: { website: 'https://n8n.io/' } },
+  { name: 'OSEN', tier: 'COMMUNITY PARTNER', tierClass: 'tierBlue', bg: '#1a237e', logoimg: '/osenLogo.png', links: { website: 'https://osen.co' } },
+  { name: 'Enginow', tier: 'COMMUNITY PARTNER', tierClass: 'tierBlue', bg: '#1a237e', logoimg: '/enginow.png', links: { website: 'https://www.enginow.in', linkedin: 'https://www.linkedin.com/company/enginow', instagram: 'https://www.instagram.com/enginow' } },
 ];
 
 const stats = [
