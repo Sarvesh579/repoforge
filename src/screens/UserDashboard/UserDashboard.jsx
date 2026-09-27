@@ -779,7 +779,7 @@ export default function UserDashboard() {
     if (file) handleFileUpload(file);
   };
 
-  const acceptingSubmissions = dynamicSettings?.acceptingSubmissions !== false;
+  const acceptingSubmissions = false;
 
   const handleLogout = () => {
     logout();
