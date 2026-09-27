@@ -425,6 +425,21 @@ export default function AdminDashboard() {
   }, [teams, problems]);
 
   // Handlers connected to Backend APIs
+  const handleToggleAcceptingSubmissions = async (newVal) => {
+    const updated = { ...settings, acceptingSubmissions: newVal };
+    setSettings(updated);
+    setActionLoading(true);
+    try {
+      const response = await updateHackathonSettings(updated);
+      if (response?.data) setSettings(response.data);
+      showToast(newVal ? 'PPT Submissions are now OPEN (Window reopened)!' : 'PPT Submissions are now CLOSED.');
+    } catch (err) {
+      showToast('Failed to update PPT submission status.');
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
   const handleSaveSettings = async (e) => {
     e.preventDefault();
     setActionLoading(true);
@@ -1316,11 +1331,20 @@ export default function AdminDashboard() {
                 <label>Hackathon PPT Uploads</label>
                 <select
                   value={settings.acceptingSubmissions ? 'Yes' : 'No'}
-                  onChange={(e) => setSettings({ ...settings, acceptingSubmissions: e.target.value === 'Yes' })}
+                  onChange={(e) => handleToggleAcceptingSubmissions(e.target.value === 'Yes')}
                 >
                   <option value="Yes">Open (Accepting PPTs)</option>
                   <option value="No">Closed (PPT uploads stopped)</option>
                 </select>
+                <SqBtn
+                  type="button"
+                  onClick={() => handleToggleAcceptingSubmissions(!settings.acceptingSubmissions)}
+                  lineColor={settings.acceptingSubmissions ? '#ef4444' : '#22c55e'}
+                  baseColor={settings.acceptingSubmissions ? '#2a0a0a' : '#0a2a16'}
+                  style={{ marginTop: 10, width: 'fit-content' }}
+                >
+                  {settings.acceptingSubmissions ? 'Close PPT Submissions' : 'Open PPT Submissions'}
+                </SqBtn>
               </div>
               <div className={styles.field}>
                 <label>Submission Deadline</label>

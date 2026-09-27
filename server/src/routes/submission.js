@@ -8,9 +8,6 @@ const { getSubmissionSettings } = require('../lib/submissionSettings');
 
 const router = Router();
 
-// Submission deadline: Sept 27, 2026 23:59:59 IST
-const SUBMISSION_DEADLINE = new Date('2026-09-27T18:29:59.000Z'); // 23:59 IST = 18:29 UTC
-
 // ─── POST /api/submission/upload ──────────────────────────────────────────────
 
 router.post(
@@ -29,14 +26,6 @@ router.post(
         error: settings.submissionCount >= settings.submissionLimit
           ? 'Presentation submissions are closed because the 800-submission limit has been reached.'
           : 'Presentation submissions are currently closed by the hackathon organizers.',
-      });
-    }
-
-    // Check deadline lock
-    if (new Date() > SUBMISSION_DEADLINE) {
-      return res.status(403).json({
-        success: false,
-        error: 'The submission window has closed (deadline: Sept 25, 2026).',
       });
     }
 
