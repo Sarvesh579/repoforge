@@ -358,6 +358,13 @@
   margin-bottom: 8px;
 }
 
+.milestoneLineHeaderBottomThree {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  position: relative;
+  margin-bottom: 8px;
+}
+
 .horizontalLine {
   position: absolute;
   top: 50%;
@@ -404,6 +411,12 @@
 .milestoneGridBottom {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.milestoneGridBottomThree {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 16px;
 }
 
@@ -579,16 +592,28 @@
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
+  .milestoneGridBottomThree {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
   .milestoneLineHeader,
-  .milestoneLineHeaderBottom {
+  .milestoneLineHeaderBottom,
+  .milestoneLineHeaderBottomThree {
     display: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .milestoneGridBottomThree {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
 @media (max-width: 640px) {
 
   .milestoneGridTop,
-  .milestoneGridBottom {
+  .milestoneGridBottom,
+  .milestoneGridBottomThree {
     grid-template-columns: 1fr;
   }
 }
