@@ -354,8 +354,15 @@ export default function UserDashboard() {
     if (subRes?.data) {
       setSubmissionState({
         fileName: subRes.data.original_name || subRes.data.fileName,
-        fileSize: subRes.data.file_size || 'PDF/PPT',
-        date: new Date(subRes.data.uploaded_at || Date.now()).toLocaleDateString(),
+        fileSize: subRes.data.file_size
+          ? `${Math.round((subRes.data.file_size / 1024 / 1024) * 100) / 100} MB`
+          : '',
+        date: new Date(
+          subRes.data.submitted_at ||
+          subRes.data.uploaded_at ||
+          Date.now()
+        ).toLocaleDateString(),
+        status: 'Submitted',
       });
     }
     if (settingsRes?.data) {
@@ -450,8 +457,15 @@ export default function UserDashboard() {
       if (subRes?.data) {
         setSubmissionState({
           fileName: subRes.data.original_name || subRes.data.fileName,
-          fileSize: subRes.data.file_size || 'PDF/PPT',
-          date: new Date(subRes.data.uploaded_at || Date.now()).toLocaleDateString(),
+          fileSize: subRes.data.file_size
+            ? `${Math.round((subRes.data.file_size / 1024 / 1024) * 100) / 100} MB`
+            : '',
+          date: new Date(
+            subRes.data.submitted_at ||
+            subRes.data.uploaded_at ||
+            Date.now()
+          ).toLocaleDateString(),
+          status: 'Submitted',
         });
       }
     }).finally(() => {
@@ -669,37 +683,87 @@ export default function UserDashboard() {
 
   const handleFileUpload = async (file) => {
     if (!file) return;
-    const ext = file.name.slice(file.name.lastIndexOf('.')).toLowerCase();
-    if (!['.pdf', '.ppt', '.pptx'].includes(ext)) {
-      alert('Invalid file format. Please upload a .pdf, .ppt, or .pptx file.');
+
+    // Check whether a Problem Statement has been selected
+    const selectedProblemId =
+      selectedProb?.id || liveTeam?.problem_statement_id;
+
+    if (!selectedProblemId) {
+      alert(
+        'Please select a Problem Statement from the Problem Statements Tab before uploading your presentation.'
+      );
       return;
     }
+
+    // Validate file format
+    const ext = file.name
+      .slice(file.name.lastIndexOf('.'))
+      .toLowerCase();
+
+    if (!['.pdf', '.ppt', '.pptx'].includes(ext)) {
+      alert(
+        'Invalid file format. Please upload a .pdf, .ppt, or .pptx file.'
+      );
+      return;
+    }
+
+    // Validate file size
     if (file.size > 10 * 1024 * 1024) {
       alert('Presentation file must be 10 MB or smaller.');
       return;
     }
 
+    // Confirmation before upload
+    const confirmed = window.confirm(
+      `Are you sure you want to upload "${file.name}" as your final presentation?\n\n` +
+      `Once submitted, make sure this is the correct presentation for your selected Problem Statement.`
+    );
+
+    if (!confirmed) {
+      return;
+    }
+
     try {
       setActionLoading(true);
+
       const res = await uploadSubmission(file);
+
       if (res.success) {
-        setSubmissionState({
-          ...res.data,
-          fileName: res.data.fileName || res.data.filename,
-          fileSize: res.data.fileSize || `${Math.round((res.data.size || file.size) / 1024 / 1024 * 100) / 100} MB`,
-          date: res.data.date || new Date(res.data.uploadedAt || Date.now()).toLocaleDateString(),
-          status: 'Submitted',
-        });
+        // Fetch the saved submission from the backend.
+        // The backend's original_name is the source of truth.
         const submissionRes = await getMySubmission();
+
         if (submissionRes?.data) {
           setSubmissionState({
-            fileName: submissionRes.data.original_name || submissionRes.data.fileName,
-            fileSize: submissionRes.data.file_size || 'PDF/PPT',
-            date: new Date(submissionRes.data.uploaded_at || Date.now()).toLocaleDateString(),
+            fileName:
+              submissionRes.data.original_name ||
+              submissionRes.data.fileName ||
+              file.name,
+
+            fileSize:
+              submissionRes.data.file_size
+                ? `${Math.round((submissionRes.data.file_size / 1024 / 1024) * 100) / 100} MB`
+                : `${Math.round((file.size / 1024 / 1024) * 100) / 100} MB`,
+
+            date: new Date(
+              submissionRes.data.submitted_at ||
+              submissionRes.data.uploaded_at ||
+              Date.now()
+            ).toLocaleDateString(),
+
+            status: 'Submitted',
+          });
+        } else {
+          // Fallback only if backend submission fetch fails
+          setSubmissionState({
+            fileName: file.name,
+            fileSize: `${Math.round((file.size / 1024 / 1024) * 100) / 100} MB`,
+            date: new Date().toLocaleDateString(),
             status: 'Submitted',
           });
         }
-        showToast('Presentation submitted successfully to Supabase & Neon!');
+
+        showToast('Presentation submitted successfully!');
       }
     } catch (err) {
       alert(err.message || 'Upload failed. Please try again.');
@@ -707,6 +771,7 @@ export default function UserDashboard() {
       setActionLoading(false);
     }
   };
+
   const handleDrop = (e) => {
     e.preventDefault();
     setIsDragging(false);

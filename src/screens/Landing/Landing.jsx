@@ -205,10 +205,10 @@ export default function Landing() {
 
               {/* Digital Countdown Timer */}
               <div className={styles.countdownContainer}>
-                <CountdownTimer targetDate="2026-09-26T00:00:00Z" />
+                <CountdownTimer targetDate="2026-10-03T00:00:00Z" />
               </div>
               <div className={styles.heroMetaLine} style={{ margin: '5px 0' }}>
-                REMAINING FOR REGISTRATION
+                REMAINING FOR HACKATHON
               </div>
             </motion.div>
           </div>
