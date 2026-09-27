@@ -343,10 +343,10 @@ export default function UserDashboard() {
 
     if (teamRes?.data) {
       setLiveTeam(teamRes.data);
-        setSelectedProb(teamRes.data.problemStatement || (teamRes.data.problem_statement_id ? {
-          id: teamRes.data.problem_statement_id,
-          title: teamRes.data.problem_statement || 'Selected Problem Statement',
-        } : null));
+      setSelectedProb(teamRes.data.problemStatement || (teamRes.data.problem_statement_id ? {
+        id: teamRes.data.problem_statement_id,
+        title: teamRes.data.problem_statement || 'Selected Problem Statement',
+      } : null));
       try {
         sessionStorage.setItem(cacheKey, JSON.stringify(teamRes.data));
       } catch { }
@@ -967,7 +967,11 @@ export default function UserDashboard() {
                 <span className={styles.cardIcon}>{Icons.clock}</span>
                 <span className={styles.cardLabel}>Submission Deadline</span>
                 <span className={styles.cardValue}>
-                  {daysRemaining > 0 ? `${daysRemaining} Days Remaining` : 'Deadline Passed'}
+                  {daysRemaining > 0
+                    ? `${daysRemaining} Days Remaining`
+                    : daysRemaining === 0
+                      ? 'Today! Hurry'
+                      : 'Deadline Passed'}
                 </span>
               </div>
 
