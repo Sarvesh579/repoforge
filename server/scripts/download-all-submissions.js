@@ -1,0 +1,194 @@
+// in server/
+// node scripts/download-all-submissions.js
+
+const fs = require('fs');
+const path = require('path');
+const {
+  S3Client,
+  GetObjectCommand,
+} = require('@aws-sdk/client-s3');
+
+const prisma = require('../src/lib/prisma');
+
+const BUCKET =
+  process.env.CLOUDFLARE_R2_BUCKET || 'hackathon-submissions';
+
+const OUTPUT_DIR = path.join(
+  __dirname,
+  'downloaded-submissions'
+);
+
+const r2Client = new S3Client({
+  region: 'auto',
+  endpoint: `https://${process.env.CLOUDFLARE_ACCOUNT_ID}.r2.cloudflarestorage.com`,
+  credentials: {
+    accessKeyId: process.env.CLOUDFLARE_R2_ACCESS_KEY_ID,
+    secretAccessKey: process.env.CLOUDFLARE_R2_SECRET_ACCESS_KEY,
+  },
+});
+
+function sanitizeFilename(filename) {
+  return filename
+    .replace(/[<>:"/\\|?*]/g, '_')
+    .trim();
+}
+
+async function downloadFile(filePath, outputPath) {
+  const command = new GetObjectCommand({
+    Bucket: BUCKET,
+    Key: filePath,
+  });
+
+  const response = await r2Client.send(command);
+
+  if (!response.Body) {
+    throw new Error('R2 returned no file data.');
+  }
+
+  const fileStream = fs.createWriteStream(outputPath);
+
+  await new Promise((resolve, reject) => {
+    response.Body.pipe(fileStream);
+
+    response.Body.on('error', reject);
+    fileStream.on('finish', resolve);
+    fileStream.on('error', reject);
+  });
+}
+
+async function downloadSubmissions() {
+  try {
+    /*
+     * Get all submissions and their team's
+     * problem statement information.
+     */
+    const submissions = await prisma.submission.findMany({
+      include: {
+        team: {
+          select: {
+            id: true,
+            name: true,
+            lead_email: true,
+            problem_statement_id: true,
+            problem_statement: true,
+          },
+        },
+      },
+      orderBy: {
+        submitted_at: 'asc',
+      },
+    });
+
+    console.log(`Found ${submissions.length} submissions.\n`);
+
+    if (submissions.length === 0) {
+      console.log('No submissions found.');
+      return;
+    }
+
+    // Create root output directory
+    fs.mkdirSync(OUTPUT_DIR, { recursive: true });
+
+    let downloaded = 0;
+    let skipped = 0;
+    let failed = 0;
+
+    for (const submission of submissions) {
+      const team = submission.team;
+
+      /*
+       * Use problem_statement_id as the PS folder.
+       *
+       * Example:
+       * problem_statement_id = PS001
+       *
+       * becomes:
+       * downloaded-submissions/PS001/
+       */
+      const psId = team.problem_statement_id?.trim();
+
+      if (!psId) {
+        console.log('----------------------------------------');
+        console.log(`Team: ${team.id} - ${team.name}`);
+        console.log('⚠ No problem statement ID. Skipping.');
+        failed++;
+        continue;
+      }
+
+      /*
+       * Sanitize names for Windows filesystem compatibility.
+       */
+      const safePsId = sanitizeFilename(psId);
+      const safeFilename = sanitizeFilename(
+        submission.original_name
+      );
+
+      /*
+       * Create PS folder.
+       */
+      const psFolder = path.join(
+        OUTPUT_DIR,
+        safePsId
+      );
+
+      fs.mkdirSync(psFolder, { recursive: true });
+
+      const outputPath = path.join(
+        psFolder,
+        safeFilename
+      );
+
+      console.log('----------------------------------------');
+      console.log(`PS:         ${psId}`);
+      console.log(`Team ID:    ${team.id}`);
+      console.log(`Team Name:  ${team.name}`);
+      console.log(`File:       ${submission.original_name}`);
+      console.log(`R2 Path:    ${submission.file_path}`);
+
+      /*
+       * IMPORTANT:
+       * If the file already exists locally,
+       * don't download it again.
+       */
+      if (fs.existsSync(outputPath)) {
+        console.log(`↷ Already exists. Skipping.`);
+        skipped++;
+        continue;
+      }
+
+      try {
+        await downloadFile(
+          submission.file_path,
+          outputPath
+        );
+
+        console.log(`✓ Downloaded: ${outputPath}`);
+        downloaded++;
+      } catch (error) {
+        console.error(`✗ Download failed: ${error.message}`);
+        failed++;
+      }
+    }
+
+    console.log('\n========================================');
+    console.log('DOWNLOAD COMPLETE');
+    console.log('========================================');
+    console.log(`Downloaded: ${downloaded}`);
+    console.log(`Skipped:    ${skipped}`);
+    console.log(`Failed:     ${failed}`);
+    console.log(`Total:      ${submissions.length}`);
+    console.log(`Output:     ${OUTPUT_DIR}`);
+    console.log('========================================');
+  } catch (error) {
+    console.error(
+      'Failed to retrieve submissions:',
+      error
+    );
+
+    process.exitCode = 1;
+  } finally {
+    await prisma.$disconnect();
+  }
+}
+
+downloadSubmissions();
