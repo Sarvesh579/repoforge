@@ -9,7 +9,7 @@ const { getSubmissionSettings } = require('../lib/submissionSettings');
 const router = Router();
 
 // Submission deadline: Sept 27, 2026 23:59:59 IST
-const SUBMISSION_DEADLINE = new Date('2026-09-27T18:29:59.000Z'); // 23:59 IST = 18:29 UTC
+const SUBMISSION_DEADLINE = new Date('2026-09-28T18:29:59.000Z'); // 23:59 IST = 18:29 UTC
 
 // ─── POST /api/submission/upload ──────────────────────────────────────────────
 
@@ -36,7 +36,7 @@ router.post(
     if (new Date() > SUBMISSION_DEADLINE) {
       return res.status(403).json({
         success: false,
-        error: 'The submission window has closed (deadline: Sept 25, 2026).',
+        error: 'The submission window has closed (deadline: Sept 27, 2026).',
       });
     }
 
