@@ -15,7 +15,6 @@ const BUCKET =
 
 const OUTPUT_DIR = path.join(
   __dirname,
-  '..',
   'downloaded-submissions'
 );
 
