@@ -1,8 +1,11 @@
-// in server/
+// server/
 // node scripts/download-all-submissions.js
+
+require('dotenv').config();
 
 const fs = require('fs');
 const path = require('path');
+
 const {
   S3Client,
   GetObjectCommand,
@@ -59,8 +62,11 @@ async function downloadFile(filePath, outputPath) {
 async function downloadSubmissions() {
   try {
     /*
-     * Get all submissions and their team's
-     * problem statement information.
+     * Get all PPT/PPTX/PDF submissions and their team information.
+     *
+     * The submission itself determines whether the file should
+     * be downloaded. Problem Statement is only used to determine
+     * the destination folder.
      */
     const submissions = await prisma.submission.findMany({
       include: {
@@ -97,38 +103,34 @@ async function downloadSubmissions() {
       const team = submission.team;
 
       /*
-       * Use problem_statement_id as the PS folder.
+       * The submission exists, so we download it regardless
+       * of whether a Problem Statement has been selected.
        *
-       * Example:
-       * problem_statement_id = PS001
+       * If PS exists:
+       *   downloaded-submissions/PS001/
        *
-       * becomes:
-       * downloaded-submissions/PS001/
+       * If PS does not exist:
+       *   downloaded-submissions/PS000/
        */
       const psId = team.problem_statement_id?.trim();
 
-      if (!psId) {
-        console.log('----------------------------------------');
-        console.log(`Team: ${team.id} - ${team.name}`);
-        console.log('⚠ No problem statement ID. Skipping.');
-        failed++;
-        continue;
-      }
+      const folderName = psId || 'PS000';
 
       /*
        * Sanitize names for Windows filesystem compatibility.
        */
-      const safePsId = sanitizeFilename(psId);
+      const safeFolderName = sanitizeFilename(folderName);
+
       const safeFilename = sanitizeFilename(
         submission.original_name
       );
 
       /*
-       * Create PS folder.
+       * Create destination folder.
        */
       const psFolder = path.join(
         OUTPUT_DIR,
-        safePsId
+        safeFolderName
       );
 
       fs.mkdirSync(psFolder, { recursive: true });
@@ -139,14 +141,20 @@ async function downloadSubmissions() {
       );
 
       console.log('----------------------------------------');
-      console.log(`PS:         ${psId}`);
+      console.log(`PS:         ${psId || 'NONE'}`);
+      console.log(`Folder:     ${safeFolderName}`);
       console.log(`Team ID:    ${team.id}`);
       console.log(`Team Name:  ${team.name}`);
       console.log(`File:       ${submission.original_name}`);
       console.log(`R2 Path:    ${submission.file_path}`);
 
+      if (!psId) {
+        console.log(
+          '⚠ No problem statement selected. Downloading to PS000.'
+        );
+      }
+
       /*
-       * IMPORTANT:
        * If the file already exists locally,
        * don't download it again.
        */
@@ -165,7 +173,9 @@ async function downloadSubmissions() {
         console.log(`✓ Downloaded: ${outputPath}`);
         downloaded++;
       } catch (error) {
-        console.error(`✗ Download failed: ${error.message}`);
+        console.error(
+          `✗ Download failed: ${error.message}`
+        );
         failed++;
       }
     }

@@ -76,7 +76,7 @@ const milestoneDates = {
   '03': '2026-09-26T00:00:00',
   '04': '2026-09-27T00:00:00',
   '05': '2026-09-30T00:00:00',
-  '06': '2026-10-02T00:00:00',
+  '06': '2026-10-01T00:00:00',
   '07': '2026-10-03T08:00:00',
   '08': '2026-10-03T08:30:00',
   '09': '2026-10-03T09:00:00',
@@ -471,15 +471,15 @@ export default function Landing() {
                   <div className={styles.dateLabelDark}>30 SEPT</div>
                   <div className={styles.dateSubtextGreen}></div>
                   <h3>Shortlisting</h3>
-                  <p>Shortlisted teams based on PPT will be announced. Payment to be completed by 2nd Oct, 12 NOON.</p>
+                  <p>Shortlisted teams based on PPT will be announced. Payment to be completed by 1st Oct, 6 PM.</p>
                 </div>
 
                 {/* 06: Final Registration */}
                 <div className={`${styles.milestoneCard} ${isDateReached(milestoneDates['06']) ? styles.cardActive : styles.cardDark}`}>
-                  <div className={styles.dateLabelDark}>2 OCT</div>
+                  <div className={styles.dateLabelDark}>1 OCT</div>
                   <div className={styles.dateSubtextGreen}></div>
                   <h3>Final Registration</h3>
-                  <p>After 12 Noon, Waitlisted teams will be allowed to pay & register for the remaining limited spots.</p>
+                  <p>After 6 PM on 1st October, Waitlisted teams will be allowed to pay & register for the remaining limited spots on FCFS.</p>
                 </div>
               </div>
             </div>
