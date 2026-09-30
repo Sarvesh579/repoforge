@@ -38,7 +38,6 @@ const sponsorRow1 = [
 ];
 const sponsorRow2 = [
   { name: 'Mumbai Tech Community', tier: 'COMMUNITY PARTNER', tierClass: 'tierBlue', bg: '#1a237e', logoimg: '/Mumbai_Tech_Community.png', links: { linkedin: 'https://www.linkedin.com/company/mumbai-tech-community/', instagram: 'https://www.instagram.com/mumbaitechcommunity' } },
-  { name: 'Third Wave Coffee', tier: 'DRINKS PARTNER', tierClass: 'tierBlue', bg: '#3b1a0d', logoimg: '/Third_Wave_Coffee.png', links: { website: 'https://www.thirdwavecoffeeroasters.com/' } },
   { name: 'Pizza Hut', tier: 'SNACKS PARTNER', tierClass: 'tierBlue', bg: '#1a237e', logoimg: '/Pizza_Hut.png', links: { website: 'https://www.pizzahut.co.in/' } },
   { name: 'Scroll Connect', tier: 'CAMPUS PARTNER', tierClass: 'tierBlue', bg: '#1a237e', logoimg: '/scroll-connect-light.png', links: { website: 'https://www.scrollconnect.com/' } },
   { name: 'MiniMoth.dev', tier: 'MESSAGING PARTNER', tierClass: 'tierBlue', bg: '#1a237e', logoimg: '/moth-light.png', links: { linkedin: 'https://www.linkedin.com/company/minimoth', X: 'https://x.com/minimoth_dev' } },
@@ -83,8 +82,9 @@ const milestoneDates = {
   '09': '2026-10-03T09:00:00',
   '10': '2026-10-03T11:00:00',
   '11': '2026-10-03T13:00:00',
-  '12': '2026-10-03T15:00:00',
-  '13': '2026-10-03T17:00:00',
+  '12': '2026-10-03T13:30:00',
+  '13': '2026-10-03T15:00:00',
+  '14': '2026-10-03T17:00:00',
 };
 
 const isDateReached = (dateStr) => {
@@ -542,11 +542,11 @@ export default function Landing() {
               <div className={styles.dividerLine} />
             </div>
 
-            {/* Bottom Row: Milestones 11 to 13 */}
+            {/* Bottom Row: Milestones 11 to 14 */}
             <div className={styles.milestoneRowBottom}>
               {/* Badges Header */}
-              <div className={styles.milestoneLineHeaderBottomThree}>
-                {['11', '12', '13'].map((num) => (
+              <div className={styles.milestoneLineHeaderBottom}>
+                {['11', '12', '13', '14'].map((num) => (
                   <div
                     key={num}
                     className={`${styles.milestoneBadgeCircle} ${isDateReached(milestoneDates[num]) ? styles.badgeActive : ''}`}
@@ -557,7 +557,7 @@ export default function Landing() {
               </div>
 
               {/* Cards Grid Bottom */}
-              <div className={styles.milestoneGridBottomThree}>
+              <div className={styles.milestoneGridBottom}>
                 {/* 11: Lunch */}
                 <div className={`${styles.milestoneCard} ${isDateReached(milestoneDates['11']) ? styles.cardActive : styles.cardDark}`}>
                   <div className={styles.dateLabelDark}>1:00 PM</div>
@@ -565,15 +565,22 @@ export default function Landing() {
                   <p>Lunch will be served to all participants</p>
                 </div>
 
-                {/* 12: Judging Round 2 */}
+                {/* 12: Shortlist Announcement */}
                 <div className={`${styles.milestoneCard} ${isDateReached(milestoneDates['12']) ? styles.cardActive : styles.cardDark}`}>
+                  <div className={styles.dateLabelDark}>1:30 PM</div>
+                  <h3>Shortlist Announcement</h3>
+                  <p>Announcement of shortlisted teams from Round 1 advancing to Round 2.</p>
+                </div>
+
+                {/* 13: Judging Round 2 */}
+                <div className={`${styles.milestoneCard} ${isDateReached(milestoneDates['13']) ? styles.cardActive : styles.cardDark}`}>
                   <div className={styles.dateLabelDark}>3:00 PM</div>
                   <h3>Judging Round 2</h3>
                   <p>Present the final product on-stage in front of the full judging panel and audience.</p>
                 </div>
 
-                {/* 13: Valedictory Ceremony */}
-                <div className={`${styles.milestoneCard} ${isDateReached(milestoneDates['13']) ? styles.cardActive : styles.cardDark}`}>
+                {/* 14: Valedictory Ceremony */}
+                <div className={`${styles.milestoneCard} ${isDateReached(milestoneDates['14']) ? styles.cardActive : styles.cardDark}`}>
                   <div className={styles.dateLabelDark}>5:00 PM</div>
                   <h3>Valedictory Ceremony</h3>
                   <p>Felicitation of the winners and closing of the event.</p>
