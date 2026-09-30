@@ -9,6 +9,7 @@ import MagneticButton from '../../components/ui/MagneticButton';
 import SpecularButton from '../../components/ui/SpecularButton';
 import GlareHover from '../../components/ui/GlareHover';
 import ProblemStatementsModal from '../../components/ui/ProblemStatementsModal';
+import ResultsModal from '../../components/ui/ResultsModal';
 import { useParallax } from '../../hooks/useParallax';
 import { smoothScrollTo } from '../../utils/smoothScroll';
 import n8nLogo from '../../assets/sponsors/n8n.png';
@@ -38,20 +39,43 @@ const sponsorRow1 = [
 ];
 const sponsorRow2 = [
   { name: 'Mumbai Tech Community', tier: 'COMMUNITY PARTNER', tierClass: 'tierBlue', bg: '#1a237e', logoimg: '/Mumbai_Tech_Community.png', links: { linkedin: 'https://www.linkedin.com/company/mumbai-tech-community/', instagram: 'https://www.instagram.com/mumbaitechcommunity' } },
-  { name: 'Third Wave Coffee', tier: 'DRINKS PARTNER', tierClass: 'tierBlue', bg: '#3b1a0d', logoimg: '/Third_Wave_Coffee.png', links: { website: 'https://www.thirdwavecoffeeroasters.com/' } },
-  { name: 'Pizza Hut', tier: 'SNACKS PARTNER', tierClass: 'tierBlue', bg: '#1a237e', logoimg: '/Pizza_Hut.png', links: { website: 'https://www.pizzahut.co.in/' } },
   { name: 'Scroll Connect', tier: 'CAMPUS PARTNER', tierClass: 'tierBlue', bg: '#1a237e', logoimg: '/scroll-connect-light.png', links: { website: 'https://www.scrollconnect.com/' } },
   { name: 'MiniMoth.dev', tier: 'MESSAGING PARTNER', tierClass: 'tierBlue', bg: '#1a237e', logoimg: '/moth-light.png', links: { linkedin: 'https://www.linkedin.com/company/minimoth', X: 'https://x.com/minimoth_dev' } },
   { name: 'n8n', tier: 'CLOUD PARTNER', tierClass: 'tierBlue', bg: '#1a237e', logoimg: n8nLogo, links: { website: 'https://n8n.io/' } },
   { name: 'OSEN', tier: 'COMMUNITY PARTNER', tierClass: 'tierBlue', bg: '#1a237e', logoimg: '/osenLogo.png', links: { website: 'https://osen.co' } },
   { name: 'Enginow', tier: 'COMMUNITY PARTNER', tierClass: 'tierBlue', bg: '#1a237e', logoimg: '/enginow.png', links: { website: 'https://www.enginow.in', linkedin: 'https://www.linkedin.com/company/enginow', instagram: 'https://www.instagram.com/enginow' } },
+  { name: 'Pizza Hut', tier: 'SNACKS PARTNER', tierClass: 'tierBlue', bg: '#1a237e', logoimg: '/Pizza_Hut.png', links: { website: 'https://www.pizzahut.co.in/' } },
 ];
 
 const stats = [
   { value: '₹25k', label: 'Prize Pool' },
-  { value: '160+', label: 'Teams' },
+  { value: '180+', label: 'Teams' },
   { value: 'XIE-Mahim', label: 'Location' },
   { value: '5', label: 'Problem Statements' },
+];
+
+// Milestone dates for automatic active status activation
+const milestoneDates = {
+  '01': '2026-08-20T00:00:00',
+  '02': '2026-09-20T00:00:00',
+  '03': '2026-09-26T00:00:00',
+  '04': '2026-09-27T00:00:00',
+  '05': '2026-09-30T00:00:00',
+  '06': '2026-10-01T18:00:00',
+  '07': '2026-10-03T08:00:00',
+  '08': '2026-10-03T08:30:00',
+  '09': '2026-10-03T09:00:00',
+  '10': '2026-10-03T11:00:00',
+  '11': '2026-10-03T13:00:00',
+  '12': '2026-10-03T13:30:00',
+  '13': '2026-10-03T15:30:00',
+  '14': '2026-10-03T17:00:00',
+};
+
+const resultImages = [
+  "Shortlist-1.png",
+  "Shortlist-2.png",
+  "Waitlist.png"
 ];
 
 const sectionVariants = {
@@ -70,23 +94,6 @@ const cardReveal = {
   show: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] } },
 };
 
-// Milestone dates for automatic active status activation
-const milestoneDates = {
-  '01': '2026-08-20T00:00:00',
-  '02': '2026-09-20T00:00:00',
-  '03': '2026-09-26T00:00:00',
-  '04': '2026-09-27T00:00:00',
-  '05': '2026-09-30T00:00:00',
-  '06': '2026-10-01T00:00:00',
-  '07': '2026-10-03T08:00:00',
-  '08': '2026-10-03T08:30:00',
-  '09': '2026-10-03T09:00:00',
-  '10': '2026-10-03T11:00:00',
-  '11': '2026-10-03T13:00:00',
-  '12': '2026-10-03T15:00:00',
-  '13': '2026-10-03T17:00:00',
-};
-
 const isDateReached = (dateStr) => {
   if (!dateStr) return false;
   return new Date(dateStr).getTime() <= Date.now();
@@ -97,6 +104,9 @@ export default function Landing() {
   const [openFaq, setOpenFaq] = useState(-1);
   const [selectedSponsor, setSelectedSponsor] = useState(null);
   const [showProblemsModal, setShowProblemsModal] = useState(false);
+  const [showResultsModal, setShowResultsModal] = useState(false);
+  const [resultIndex, setResultIndex] = useState(0);
+  const [resultDirection, setResultDirection] = useState(1);
 
   // ── Parallax refs ────────────────────────────────────────────────────────
   const hero = useParallax(80);   // hero visual drifts up
@@ -177,7 +187,7 @@ export default function Landing() {
 
               {/* Action Buttons */}
               <div className={styles.heroActionsCenter}>
-                <SpecularButton
+                {/* <SpecularButton
                   size="md"
                   radius={14}
                   lineColor="#FAB600"
@@ -188,7 +198,8 @@ export default function Landing() {
                   onClick={() => window.location.assign('/register')}
                 >
                   Register Now &rarr;
-                </SpecularButton>
+                </SpecularButton> */}
+
                 <SpecularButton
                   size="md"
                   radius={14}
@@ -200,6 +211,19 @@ export default function Landing() {
                   onClick={() => setShowProblemsModal(true)}
                 >
                   Explore Problem Statements &rsaquo;
+                </SpecularButton>
+
+                <SpecularButton
+                  size="md"
+                  radius={14}
+                  lineColor="#FAB600"
+                  baseColor="#261005"
+                  textColor="#ffffff"
+                  intensity={1}
+                  speed={0.35}
+                  onClick={() => setShowResultsModal(true)}
+                >
+                  Results &rsaquo;
                 </SpecularButton>
               </div>
 
@@ -542,11 +566,11 @@ export default function Landing() {
               <div className={styles.dividerLine} />
             </div>
 
-            {/* Bottom Row: Milestones 11 to 13 */}
+            {/* Bottom Row: Milestones 11 to 14 */}
             <div className={styles.milestoneRowBottom}>
               {/* Badges Header */}
-              <div className={styles.milestoneLineHeaderBottomThree}>
-                {['11', '12', '13'].map((num) => (
+              <div className={styles.milestoneLineHeaderBottom}>
+                {['11', '12', '13', '14'].map((num) => (
                   <div
                     key={num}
                     className={`${styles.milestoneBadgeCircle} ${isDateReached(milestoneDates[num]) ? styles.badgeActive : ''}`}
@@ -557,7 +581,7 @@ export default function Landing() {
               </div>
 
               {/* Cards Grid Bottom */}
-              <div className={styles.milestoneGridBottomThree}>
+              <div className={styles.milestoneGridBottom}>
                 {/* 11: Lunch */}
                 <div className={`${styles.milestoneCard} ${isDateReached(milestoneDates['11']) ? styles.cardActive : styles.cardDark}`}>
                   <div className={styles.dateLabelDark}>1:00 PM</div>
@@ -565,15 +589,22 @@ export default function Landing() {
                   <p>Lunch will be served to all participants</p>
                 </div>
 
-                {/* 12: Judging Round 2 */}
+                {/* 12: Result Declaration */}
                 <div className={`${styles.milestoneCard} ${isDateReached(milestoneDates['12']) ? styles.cardActive : styles.cardDark}`}>
-                  <div className={styles.dateLabelDark}>3:00 PM</div>
+                  <div className={styles.dateLabelDark}>1:30 PM</div>
+                  <h3>Result of Round 1</h3>
+                  <p>Based upon the result of round 1, only top 10 teams will go further to Final Round.</p>
+                </div>
+
+                {/* 13: Judging Round 2 */}
+                <div className={`${styles.milestoneCard} ${isDateReached(milestoneDates['13']) ? styles.cardActive : styles.cardDark}`}>
+                  <div className={styles.dateLabelDark}>3:30 PM</div>
                   <h3>Judging Round 2</h3>
                   <p>Present the final product on-stage in front of the full judging panel and audience.</p>
                 </div>
 
-                {/* 13: Valedictory Ceremony */}
-                <div className={`${styles.milestoneCard} ${isDateReached(milestoneDates['13']) ? styles.cardActive : styles.cardDark}`}>
+                {/* 14: Valedictory Ceremony */}
+                <div className={`${styles.milestoneCard} ${isDateReached(milestoneDates['14']) ? styles.cardActive : styles.cardDark}`}>
                   <div className={styles.dateLabelDark}>5:00 PM</div>
                   <h3>Valedictory Ceremony</h3>
                   <p>Felicitation of the winners and closing of the event.</p>
@@ -896,12 +927,16 @@ export default function Landing() {
             </div>
           </div>
         </motion.section>
-
       </main>
 
       <ProblemStatementsModal
         isOpen={showProblemsModal}
         onClose={() => setShowProblemsModal(false)}
+      />
+
+      <ResultsModal
+        isOpen={showResultsModal}
+        onClose={() => setShowResultsModal(false)}
       />
 
       <Footer />

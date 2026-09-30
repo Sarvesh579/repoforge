@@ -32,3 +32,5 @@ config
 downloaded-submissions/
 downloaded-submissions/*
 *.xlsx
+shortlisted-waitlisted-ids/
+shortlisted-waitlisted-ids/*

@@ -230,6 +230,8 @@ button {
 }
 
 @media (max-width: 640px) {
+  .title-logo-img {display: none;}
+  
   .nav-sponsors-container {
     max-width: 120px;
     height: 32px;

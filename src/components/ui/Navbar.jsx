@@ -77,7 +77,7 @@ export default function Navbar() {
         <Link to="/" className="brand" aria-label="RepoForge home">
           <div style={{ display: 'flex', flexDirection: 'row', lineHeight: 1.2, gap: '20px' }}>
             <img style={{ maxHeight: '50px', width: 'auto', height: 'auto', objectFit: 'contain' }} src="/logo.png" alt="RepoForge" />
-            <img style={{ maxHeight: '50px', width: 'auto', height: 'auto', objectFit: 'contain' }} src="/title-logo.png" alt="RepoForge" />
+            <img className="title-logo-img" style={{ maxHeight: '50px', width: 'auto', height: 'auto', objectFit: 'contain' }} src="/title-logo.png" alt="RepoForge" />
           </div>
         </Link>
 
