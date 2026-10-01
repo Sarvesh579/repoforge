@@ -326,7 +326,7 @@ export default function AdminDashboard() {
     hackathonStatus: 'Live',
     registrationStatus: 'Open',
     acceptingSubmissions: true,
-    acceptingPayments: true,
+    acceptingPayments: false,
   });
   // Fetch Database Data on Mount & Tab Change
   // Inside fetchData() in AdminDashboard.jsx

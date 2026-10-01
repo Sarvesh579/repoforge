@@ -231,7 +231,7 @@ model HackathonSetting {
   hackathonStatus      String   @default("Live") // 'Live' | 'Paused' | 'Closed'
   registrationStatus   String   @default("Open") // 'Open' | 'Closed'
   acceptingSubmissions Boolean  @default(true)   // <--- Controls PPT submissions
-  acceptingPayments    Boolean  @default(true)   // Controls payment tab and uploads
+  acceptingPayments    Boolean  @default(false)  // Controls payment tab and uploads
   updated_at           DateTime @updatedAt
 
   @@map("hackathon_settings")

@@ -41,7 +41,7 @@ async function checkPaymentEligibility(prisma, userId) {
   }
 
   const eligible = Boolean(
-    settings?.acceptingPayments !== false &&
+    settings?.acceptingPayments === true &&
     team && !paid && successfulPayments < PAYMENT_CAP &&
     (shortlistStatus === 'Shortlisted' ||
       shortlistStatus === 'Waitlisted'),
