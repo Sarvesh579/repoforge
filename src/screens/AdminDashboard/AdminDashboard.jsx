@@ -326,6 +326,7 @@ export default function AdminDashboard() {
     hackathonStatus: 'Live',
     registrationStatus: 'Open',
     acceptingSubmissions: true,
+    acceptingPayments: true,
   });
   // Fetch Database Data on Mount & Tab Change
   // Inside fetchData() in AdminDashboard.jsx
@@ -435,6 +436,21 @@ export default function AdminDashboard() {
       showToast(newVal ? 'PPT Submissions are now OPEN (Window reopened)!' : 'PPT Submissions are now CLOSED.');
     } catch (err) {
       showToast('Failed to update PPT submission status.');
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  const handleToggleAcceptingPayments = async (newVal) => {
+    const updated = { ...settings, acceptingPayments: newVal };
+    setSettings(updated);
+    setActionLoading(true);
+    try {
+      const response = await updateHackathonSettings(updated);
+      if (response?.data) setSettings(response.data);
+      showToast(newVal ? 'Payment tab is now OPEN for eligible teams.' : 'Payment tab is now CLOSED for everyone.');
+    } catch (err) {
+      showToast('Failed to update payment availability.');
     } finally {
       setActionLoading(false);
     }
@@ -1370,6 +1386,26 @@ export default function AdminDashboard() {
                   style={{ marginTop: 10, width: 'fit-content' }}
                 >
                   Set Payment Deadline
+                </SqBtn>
+              </div>
+
+              <div className={styles.field}>
+                <label>Offline Payments</label>
+                <select
+                  value={settings.acceptingPayments ? 'Yes' : 'No'}
+                  onChange={(e) => handleToggleAcceptingPayments(e.target.value === 'Yes')}
+                >
+                  <option value="Yes">Open (Payment tab visible)</option>
+                  <option value="No">Closed (Payment tab hidden)</option>
+                </select>
+                <SqBtn
+                  type="button"
+                  onClick={() => handleToggleAcceptingPayments(!settings.acceptingPayments)}
+                  lineColor={settings.acceptingPayments ? '#ef4444' : '#22c55e'}
+                  baseColor={settings.acceptingPayments ? '#2a0a0a' : '#0a2a16'}
+                  style={{ marginTop: 10, width: 'fit-content' }}
+                >
+                  {settings.acceptingPayments ? 'Close Payment Tab' : 'Open Payment Tab'}
                 </SqBtn>
               </div>
 

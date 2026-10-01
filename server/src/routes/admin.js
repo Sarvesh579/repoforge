@@ -500,6 +500,7 @@ const settingsSchema = z.object({
   hackathonStatus: z.enum(['Live', 'Paused', 'Closed']).optional().default('Live'),
   registrationStatus: z.enum(['Open', 'Closed']).optional().default('Closed'),
   acceptingSubmissions: z.boolean(),
+  acceptingPayments: z.boolean(),
 });
 
 
