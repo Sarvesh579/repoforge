@@ -73,9 +73,8 @@ const milestoneDates = {
 };
 
 const resultImages = [
-  "Shortlist-1.png",
-  "Shortlist-2.png",
-  "Waitlist.png"
+  "1.png",
+  "2.png"
 ];
 
 const sectionVariants = {

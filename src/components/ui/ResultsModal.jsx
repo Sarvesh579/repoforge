@@ -4,9 +4,8 @@ import { useLenis } from '../../context/LenisContext.jsx';
 import styles from './ResultsModal.module.css';
 
 const resultImages = [
-  'Shortlist-1.png',
-  'Shortlist-2.png',
-  'Waitlist.png',
+  '1.png',
+  '2.png',
 ];
 
 export default function ResultsModal({ isOpen, onClose }) {
